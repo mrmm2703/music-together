@@ -1,0 +1,73 @@
+@import "constants";
+
+@font-face {
+    font-family: "Crete Round";
+    src: url("fonts/CreteRound.ttf");
+}
+
+@font-face {
+    font-family: "Raleway";
+    src: url("fonts/Raleway.ttf");
+}
+
+a {
+    text-decoration: none;
+    color: $white;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: $blue;
+    color: $white;
+    font-family: $raleway;
+    box-sizing: border-box;
+}
+
+@mixin bigHeader {
+    font-family: $crete;
+    font-size: $bigHeaderSize;
+}
+
+@mixin shadow {
+    -webkit-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.5);
+}
+
+@mixin noSelect {
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+@mixin greenBtn {
+    height: 45px;
+    padding: 20px 50px 6px 50px;
+    font: {
+        family: $crete;
+        size: 1.5em;
+    }
+    border-radius: 50px;
+    @include shadow;
+    @include noSelect;
+    background-color: $green;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+    
+}
+
+.footer {
+    font: {
+        family: $raleway;
+        size: 18px;
+    }
+    position: fixed;
+    bottom: 40px;
+    text-align: center;
+    right: 0;
+    left: 0;
+}
