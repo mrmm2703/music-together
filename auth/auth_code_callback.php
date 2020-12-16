@@ -5,10 +5,6 @@ require "../constants.php";
 
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 use GuzzleHttp\Client;
 
 // Check if user session exists
@@ -18,13 +14,11 @@ checkSessionExists();
 if (isset($_GET["state"])) {
     // Check state to prevent CSRF attacks
     if ($_GET["state"] != $_SESSION["state"]) {
-        header("Location: {$homepage}/index.php?error=state");
-        exit();
+        errorToHome("state");
     } else {
         // Check if an error occured with Spotify
         if (isset($_GET["error"])) {
-            header("Location: {$homepage}/index.php?error=spotify");
-            exit();
+            errorToHome("spotify");
         } else {
             // Store the authorisation code in the session
             $_SESSION["auth_code"] = $_GET["code"];
@@ -47,16 +41,17 @@ if (isset($_GET["state"])) {
                 );
             } catch (Exception $e) {
                 // Error with the POST request
-                header("Location: {$homepage}/index.php?error=post");
-                exit();
+                errorToHome("post");
             }
             
             // Parse the response object, e.g. read the headers, body, etc.
             $headers = $response->getHeaders();
             $body = json_decode($response->getBody()->getContents());
+            
+            $_SESSION["access_token"] = $body->{"access_token"};
 
-            // Output headers and body for debugging purposes
-            var_dump($body->{"access_token"});
+            header("Location: {$homepage}/auth/login.php");
+            exit();
         }
     }
 }

@@ -11,9 +11,11 @@
     <div id="header">
         Music Together!
     </div>
-    <div id="btn-continue" class="hvr-shrink">
-        <a href="auth/initialise.php">Continue with Spotify</a>
-    </div>
+    <a href="auth/initialise.php" id="btn-continue" class="hvr-shrink">
+        <div>
+            Continue with Spotify   
+        </div>
+    </a>
     <div class="footer">
         Copyright © 2020 Muhammad Rahman. All right reserved.
     </div>
