@@ -22,11 +22,15 @@ html, body {
     color: $white;
     font-family: $raleway;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 @mixin bigHeader {
     font-family: $crete;
     font-size: $bigHeaderSize;
+    text-align: center;
 }
 
 @mixin shadow {
@@ -40,6 +44,12 @@ html, body {
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
+}
+
+@mixin subHeader {
+    font-family: $raleway;
+    font-size: $subHeaderSize;
+    font-weight: 700;
 }
 
 @mixin greenBtn {

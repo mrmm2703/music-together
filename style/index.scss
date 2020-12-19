@@ -3,17 +3,10 @@
 #header {
     @include bigHeader;
     width: 100%;
-    text-align: center;
     padding-top: 15vh;
 }
 
 #btn-continue {
     @include greenBtn;
     margin-top: 15vh;
-}
-
-html, body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }

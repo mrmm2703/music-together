@@ -1,0 +1,34 @@
+@font-face {
+  font-family: "Crete Round";
+  src: url("fonts/CreteRound.ttf");
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("fonts/Raleway.ttf");
+}
+a {
+  text-decoration: none;
+  color: #FFFFFF;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #118AB2;
+  color: #FFFFFF;
+  font-family: "Raleway", sans-serif;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.footer {
+  font-family: "Raleway", sans-serif;
+  font-size: 18px;
+  position: fixed;
+  bottom: 40px;
+  text-align: center;
+  right: 0;
+  left: 0;
+}
