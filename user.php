@@ -11,9 +11,11 @@ class User {
     
     public function __construct($access_token, $db_con) {
         // Get the user's data from Spotify
-        $user_data = $this->getUserData($access_token);
-        $id = $user_data->{"id"};
         $this->access_token = $access_token;
+        $user_data = $this->getUserData();
+        echo "<br><br>USER DATA<br><br><br><br>";
+        var_dump($user_data);
+        $id = $user_data->{"id"};
         $db_data = $db_con->getUser($id);
         if (!($db_data)) {
             // If db_con error occured
@@ -63,35 +65,57 @@ class User {
         $db_con->insertLogin("user", $this->id);
     }
 
-    function getUserData($access_token) {
-        // Use guzzle only for this function
-        require '../vendor/autoload.php';
+    function getRequest($url) {
+        // Require Guzzle
+        require_once 'vendor/autoload.php';
         require "constants.php";
-    
-        // Check if an access token exists
-        if (!(isset($access_token))) {
-            return false;
-        }
-    
-        // Create a new client and do a GET request to API
+
         $client = new GuzzleHttp\Client();
+
+        // Do a GET request
         try {
             $response = $client->request(
                 "GET",
-                $api_endpoint . "me",
+                $api_endpoint . $url,
                 [
                     "headers" => [
-                        "Authorization" => "Bearer " . $access_token
+                        "Authorization" => "Bearer " . $this->access_token
                     ]
                 ]
             );
         } catch (Exception $e) {
             // If an error occured in the request
-            return var_dump($e);
+            echo "<br><br>GUZZLE ERROR<br><br><br><br>";
+            var_dump($e);
+            $_SESSION["latest_error"] = $e;
+            errorToHome("guzzle_getRequest_caughtException");
         }
-    
+
+        return $response;
+    }
+
+    function getUserData() { 
+        //  "functions.php";
+
+        $response = $this->getRequest("me");
+
         // Return an object of the JSON response
         return json_decode($response->getBody()->getContents());
+    }
+
+    public function getRecentTracks($limit) {
+        require_once "track.php";
+
+        // Store an array of Track objects to be returned
+        $tracks = array();
+        
+        $response = json_decode($this->getRequest("me/player/recently-played?limit=" . $limit)->getBody()->getContents());
+
+        foreach ($response->{"items"} as $track) {
+            array_push($tracks, new Track($track, $this->access_token));
+        }
+
+        return $tracks;
     }
 }
 

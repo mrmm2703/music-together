@@ -15,5 +15,137 @@ body {
 .sub-header {
     @include subHeader;
     width: 100%;
-    margin-left: 0.5em;
+}
+
+.upper-container {
+    width: 100%;
+    height: 27em;
+    margin-top: 2em;
+}
+
+.song-container {
+    display: flex;
+    flex-direction: column;
+    width: 20em;
+    height: 100%;
+    margin-left: 3em;
+    &:first-child {
+        margin-left: 0 !important;
+    }
+    .song-cover {
+        width: 100%;
+        height: 20em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+            height: 100%;
+            border-radius: $largeBorderRadius;
+            @include shadow;
+        }
+    }
+}
+
+.songs-container {
+    display: flex;
+    overflow: visible;
+}
+
+.song-details-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    font-size: 1.2em;
+    text-align: center;
+    .song-name {
+        font-weight: 700;
+    }
+}
+
+.upper-container {
+    display: flex;
+    overflow: visible;
+}
+
+.settings-container {
+    flex-grow: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.settings-inner-container {
+    width: 25em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.settings-image {
+    display: flex;
+    justify-content: right;
+}
+
+.settings-image img {
+    width: 8em;
+    height: 8em;
+    border-radius: 4em;
+    @include shadow;
+}
+
+.settings-text-container {
+    width: 19em;
+    padding: 0 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    .settings-name, .settings-btn {
+        text-align: right;
+    }
+    .settings-name {
+        font-size: 2.5em;
+    }
+    .settings-btn {
+        font-size: 1.2em;
+        width: fit-content;
+    }
+}
+
+.group-id-container {
+    display: flex;
+    justify-content: center;
+    .group-id-inner-container {
+        width: 30em;
+        input {
+            @include textInput;
+            padding: 12px 85px 12px 20px;
+            width: 100%;
+            position: relative;
+            display: block;
+            &:focus {
+                outline: none;
+                border-bottom: 2px solid $green;
+            }
+        }
+        a {
+            float: right;
+            font-size: 20px;
+            z-index: 15;
+            position: relative;
+            display: block;
+            top: -50%;
+            right: 20px;
+        }
+    }
+}
+
+.create-group-btn-container {
+    display: flex;
+    justify-content: center;
+    a {
+        text-align: center;
+        font-size: 20px;
+    }
 }

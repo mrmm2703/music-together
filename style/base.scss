@@ -1,5 +1,18 @@
 @import "constants";
 
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: $white;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: $white;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: $white;
+}
+
 @font-face {
     font-family: "Crete Round";
     src: url("fonts/CreteRound.ttf");
@@ -34,9 +47,13 @@ html, body {
 }
 
 @mixin shadow {
-    -webkit-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.5);
-    -moz-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.5);
-    box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.3);
+    box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.3);
+}
+
+@mixin textShadow {
+    text-shadow: 0px 4px 10px rgba(0,0,0,0.3);
 }
 
 @mixin noSelect {
@@ -50,6 +67,7 @@ html, body {
     font-family: $raleway;
     font-size: $subHeaderSize;
     font-weight: 700;
+    @include textShadow();
 }
 
 @mixin greenBtn {
@@ -67,7 +85,39 @@ html, body {
     margin-left: auto;
     margin-right: auto;
     cursor: pointer;
-    
+}
+
+@mixin textInput {
+    &:focus {
+        outline: none;
+    }
+    border: none;
+    border-bottom: 2px solid $white;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    font-family: $raleway;
+    font-size: 24px;
+    background: none;
+    color: $white;
+}
+
+@mixin inputPlaceholder {
+    ::placeholder {
+        color: $white;
+        opacity: 1;
+    }
+    &:-ms-input-placeholder {
+        color: $white;
+    }
+    ::-ms-input-placeholder {
+        color: $white;
+    }
+}
+
+.yellow-btn {
+    color: $yellow;
+    font-weight: 700;
+    @extend .hvr-underline-from-center;
 }
 
 .footer {
@@ -80,4 +130,50 @@ html, body {
     text-align: center;
     right: 0;
     left: 0;
+}
+
+.hvr-underline-from-center {
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    position: relative;
+    overflow: hidden;
+}
+.hvr-underline-from-center:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 51%;
+    right: 51%;
+    bottom: 0;
+    background: $green;
+    height: 2px;
+    -webkit-transition-property: left, right;
+    transition-property: left, right;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+}
+.hvr-underline-from-center:hover:before, .hvr-underline-from-center:focus:before, .hvr-underline-from-center:active:before {
+    left: 0;
+    right: 0;
+}
+
+.hvr-grow {
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+}
+.hvr-grow:hover, .hvr-grow:focus, .hvr-grow:active {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
 }

@@ -2,7 +2,7 @@
 
 // Function to redirect user if no session exists
 function checkSessionExists() {
-    require "constants.php";
+     "constants.php";
     if (session_status() != PHP_SESSION_ACTIVE) {
         header("Location: {$homepage}");
         exit();

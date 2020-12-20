@@ -1,6 +1,6 @@
 <?php
 
-require "../constants.php";
+require_once "../constants.php";
 
 // Initialise PHP session
 session_start();

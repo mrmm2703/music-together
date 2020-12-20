@@ -1,7 +1,7 @@
 <?php
-require '../vendor/autoload.php';
-require "../functions.php";
-require "../constants.php";
+ require_once '../vendor/autoload.php';
+ require_once "../functions.php";
+ require_once "../constants.php";
 
 session_start();
 
