@@ -1,15 +1,69 @@
 <?php
-
+Namespace MusicTogether;
+/**
+ * This class holds information on a user object.
+ * 
+ * This class initialises a User object with all of their details.
+ * It connects to the Spotify API and MySQL database to properly
+ * setup a user to use Music Together!
+ */
 class User {
+    /**
+     * The user's Spotify ID.
+     * @var string $id
+     */
     public $id;
+    /**
+     * The user's original name as set inside of Spotify.
+     * @var string $name
+     */
     public $name;
+    /**
+     * The user's nickname set inside of Music Together!
+     * Defaults to NULL when the user is first created.
+     * @var string|null $nickname
+     */
     public $nickname;
+    /** 
+     * The user's email address from Spotify.
+     * @var string $email
+     */
     public $email;
+    /**
+     * A URL to the user's profile picture. Set to "defaultProfPic.png"
+     * if none exists from Spotify.
+     * @var string $prof_pic
+     */
     public $prof_pic;
+    /**
+     * Whether the user is banned or not.
+     * @var boolean $banned
+     */
     public $banned;
+    /**
+     * Whether the user has a Spotify Premium subscription or not.
+     * @var boolean $premium
+     */
     public $premium;
+    /**
+     * An access token to make requests to the Spotify API with. Used by
+     * methods part of this class.
+     * @var string $access_token
+     */
     protected $access_token;
-    
+
+
+    /**
+     * Constructor method for User class.
+     * 
+     * @param string $access_token An access token to access the
+     *                             Spotify API with.
+     * @param MusicTogether\DatabaseConnection $db_con A DatabaseConnection object
+     *                                             with a valid connection to
+     *                                             connect to the database with.
+     * 
+     * @return User A User object containing information about a User.
+     */
     public function __construct($access_token, $db_con) {
         // Get the user's data from Spotify
         $this->access_token = $access_token;
@@ -67,10 +121,27 @@ class User {
         }
     }
 
+    /**
+     * Logs a login on the databse.
+     * 
+     * This function connects to the database and logs a login of the current
+     * User using {@see DatabaseConnection::insertLogin()}.
+     * 
+     * @param DatabaseConnection $db_con
+     * @return void
+     */
     public function logLogin($db_con) {
         $db_con->insertLogin("user", $this->id);
     }
 
+    /**
+     * Performa a GET request using Guzzle using the provided endpoint.
+     * 
+     * @param string $url The endpoint to request. Only include the URL
+     *                    after "v1/", for example "me".
+     * 
+     * @return \Psr\Http\Message\ResponseInterface The response from {@see GuzzleHttp\Client::request()}.
+     */
     function getRequest($url) {
         // Require Guzzle
         require_once 'vendor/autoload.php';
@@ -100,6 +171,12 @@ class User {
         return $response;
     }
 
+    /**
+     * Get the user's data from the Spotify API
+     * 
+     * @see User::getRequest() Do a GET request using Guzzle.
+     * @return mixed|null A JSON object representing the response from Spotify.
+     */
     function getUserData() { 
         //  "functions.php";
 
@@ -109,6 +186,13 @@ class User {
         return json_decode($response->getBody()->getContents());
     }
 
+    /**
+     * Get the user's recently played tracks
+     * 
+     * @param int $limit The number of tracks to receive.
+     * @return Track[] An array of Track objects of the length specified in paramter.
+     * @see User::getRequest() Method to handle GET request.
+     */
     public function getRecentTracks($limit) {
         require_once "track.php";
 

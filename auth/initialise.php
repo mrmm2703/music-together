@@ -1,15 +1,32 @@
 <?php
-
+Namespace MusicTogether;
 require_once "../constants.php";
 
 // Initialise PHP session
 session_start();
 $_SESSION["state"] = hash("sha256", session_id());
 
+/**
+ * Generate a code verifier for authorisation flow.
+ * 
+ * Generate a code verifier of the length specified. Generate random bytes in hexadecimal.
+ * @param int $length The length of the code verifier to generate.
+ * @return string A code verifier.
+ */
 function generate_code_verifier($length) {
     return bin2hex(random_bytes($length / 2));
 }
 
+/**
+ * Generate a code challenge for authorisation flow.
+ * 
+ * Generate a code challenge using the code verifier supplied. The function hashes the code
+ * verifier using SHA256 and then bas64url encodes it.
+ * 
+ * @param string A code verifier.
+ * @return string The code challenge for the code verifier supplied.
+ * @see generate_code_verifier() To generate a code verifier.
+ */
 function generate_code_challenge($code_verifier) {
     $chl = hash('sha256', $code_verifier, true);
     $chl = base64_encode($chl);

@@ -1,3 +1,6 @@
+<?php
+Namespace MusicTogether;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +12,12 @@
 </head>
 <body>
     <?php
-
+    /**
+     * Show a JavaScript alert
+     * 
+     * @param string $msg The message to show to the user
+     * @return void
+     */
     function showErrorAlert($msg) {
         echo '<script type="text/javascript">alert("' . $msg . '")</script>';
     }
