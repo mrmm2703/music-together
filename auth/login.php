@@ -16,6 +16,9 @@ session_start();
 $db_con = new DatabaseConnection();
 if ($db_con->connect()) {
     $_SESSION["current_user"] = new User($_SESSION["access_token"], $db_con);
+    if ($_SESSION["current_user"]->premium == False) {
+        errorToHome("no_premium");
+    }
     $_SESSION["current_user"]->logLogin($db_con);
     header("Location: {$homepage}/dashboard.php");
     exit();

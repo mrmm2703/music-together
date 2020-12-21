@@ -7,6 +7,7 @@ class User {
     public $email;
     public $prof_pic;
     public $banned;
+    public $premium;
     protected $access_token;
     
     public function __construct($access_token, $db_con) {
@@ -16,49 +17,54 @@ class User {
         echo "<br><br>USER DATA<br><br><br><br>";
         var_dump($user_data);
         $id = $user_data->{"id"};
-        $db_data = $db_con->getUser($id);
-        if (!($db_data)) {
-            // If db_con error occured
-            errorToHome("db_data_is_false");
-        } else if ($db_data == "not_found") {
-            // If the user is not found
-            // Attempt to insert user
-            if (!($db_con->insertUser($user_data))) {
-                errorToHome("db_con_insert_user_1");
-            }
-            $this->banned = false;
-        } else {
-            // If user exists in the database
-            // Get the database entry for if the user is banned
-            $this->banned = $db_data["banned"];
-            if ($this->banned == "1") {
-                // If the user is banned
-                $this->banned = true;
-                errorToHome("banned");
-            } else {
+        if ($user_data->{"product"} == "premium") {
+            $this->premium = True;
+            $db_data = $db_con->getUser($id);
+            if (!($db_data)) {
+                // If db_con error occured
+                errorToHome("db_data_is_false");
+            } else if ($db_data == "not_found") {
+                // If the user is not found
+                // Attempt to insert user
+                if (!($db_con->insertUser($user_data))) {
+                    errorToHome("db_con_insert_user_1");
+                }
                 $this->banned = false;
+            } else {
+                // If user exists in the database
+                // Get the database entry for if the user is banned
+                $this->banned = $db_data["banned"];
+                if ($this->banned == "1") {
+                    // If the user is banned
+                    $this->banned = true;
+                    errorToHome("banned");
+                } else {
+                    $this->banned = false;
+                }
             }
-        }
-        // Set session variables to setup the dashboard
-        $this->id = $id;
-        $this->name = $user_data->{"display_name"};
+            // Set session variables to setup the dashboard
+            $this->id = $id;
+            $this->name = $user_data->{"display_name"};
 
-        // Set the nickname session variable depending on whether new user or not
-        if ($db_data == "not_found") {
-            $this->nickname = NULL;
+            // Set the nickname session variable depending on whether new user or not
+            if ($db_data == "not_found") {
+                $this->nickname = NULL;
+            } else {
+                $this->nickname = $db_data["nickname"];
+            }
+
+            $this->email = $user_data->{"email"};
+
+            // Set the profile picture
+            if (count($user_data->{"images"}) == 0) {
+                $userProfPic = "defaultProfilePicture.png";
+            } else {
+                $userProfPic = $user_data->{"images"}[0]->{"url"};
+            }
+            $this->prof_pic = $userProfPic;
         } else {
-            $this->nickname = $db_data["nickname"];
+            $this->premium = False;
         }
-
-        $this->email = $user_data->{"email"};
-
-        // Set the profile picture
-        if (count($user_data->{"images"}) == 0) {
-            $userProfPic = "defaultProfilePicture.png";
-        } else {
-            $userProfPic = $user_data->{"images"}[0]->{"url"};
-        }
-        $this->prof_pic = $userProfPic;
     }
 
     public function logLogin($db_con) {

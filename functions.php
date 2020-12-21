@@ -10,7 +10,7 @@ function checkSessionExists() {
 }
 
 function errorToHome($error) {
-    // header("Location: " . $homepage . "/musictogether/index.php?error=" . $error);
+    header("Location: " . $homepage . "/musictogether/index.php?error=" . $error);
     exit();
 }
 ?>
