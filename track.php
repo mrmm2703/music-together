@@ -1,5 +1,6 @@
 <?php
 Namespace MusicTogether;
+use GuzzleHttp;
 /**
  * Holds information about a Spotify track
  */

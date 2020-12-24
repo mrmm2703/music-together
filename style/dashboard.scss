@@ -149,3 +149,13 @@ body {
         font-size: 20px;
     }
 }
+
+#mute-btn {
+    position: fixed;
+    bottom: 2em;
+    left: 2em;
+    height: 3em;
+    width: 3em;
+    background-size: contain;
+    background-repeat: no-repeat;
+}

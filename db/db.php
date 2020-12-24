@@ -54,7 +54,7 @@ class DatabaseConnection {
      */
     public function connect() {
         // Initiate a MySQL connection
-        $this->mysqli = new mysqli(
+        $this->mysqli = new \mysqli(
             $this->db_host,
             $this->db_username,
             $this->db_password,
@@ -150,7 +150,8 @@ class DatabaseConnection {
                 "online" => $result["userOnline"],
                 "groupID" => $result["userGroupID"],
                 "dateCreatd" => $result["userDateCreated"],
-                "banned" => $result["userBanned"]
+                "banned" => $result["userBanned"],
+                "dashboardMuted" => $result["dashboardMuted"]
             );
             return $obj;
         }
@@ -204,7 +205,7 @@ class DatabaseConnection {
     }
 
     /**
-     * Insert a login log into the database
+     * Insert a login log into the database.
      * 
      * Insert a login log into the loginLogs table. Works for both admins
      * and normal users.
@@ -224,6 +225,82 @@ class DatabaseConnection {
             return false;
         }
         return $this->runSqlInsert($sql);
+    }
+
+    /**
+     * Check if access token is valid.
+     * 
+     * Used to check if an access token provided by a request from
+     * external applications is authenticated to happen. Also used to
+     * figure out which user record to affect with requests.
+     * 
+     * @param string $access_token The user's access token from Spotify.
+     * @return boolean Whether the access token is valid or not.
+     */
+    public function checkAccessToken($access_token) {
+        // Use SQL prepared statements to prevent SQL injection
+        $statement = $this->mysqli->prepare("SELECT userSpotifyID FROM users WHERE userAccessToken=?");
+        $statement->bind_param("s", $access_token);
+        $statement->execute();
+        $result = $statement->get_result();
+        if ($result->num_rows == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Run a SQL UPDATE statement.
+     * 
+     * @param string $sql The SQL UPDATE statement to run.
+     * @return boolean Whether the query was successful or not.
+     */
+    public function runSqlUpdate($sql) {
+        if (!(isset($this->mysqli))) {
+            echo "mysqli not set";
+            $_SESSION["latest_error"] = "DBCon_RunSqlUpdate_MysqliNotInitialised";
+            return false;
+        }
+        if ($this->mysqli->query($sql) == TRUE) {
+            return true;
+        } else {
+            $_SESSION["latest_error"] = "DBCon_RunSqlUpdate_InsertFailed";
+            return false;
+        }
+    }
+
+    /**
+     * Update dashboardMuted inside of users table.
+     * 
+     * Update the dashboardMuted field for any user inside of the
+     * users table in the database.
+     * 
+     * @param string $access_token The user's Spotify access token.
+     * @param boolean $state Whether the user prefers the dashboard muted or not.
+     * @return boolean Whether the operation was successful or not.
+     * @see DashboardConnection::runSqlUpdate()
+     */
+    public function updateDashboardMuted($access_token, $state) {
+        return $this->runSqlUpdate("UPDATE users SET dashboardMuted=" .
+        $state . " WHERE userAccessToken='" . $access_token . "'");
+    }
+
+    /**
+     * Update a user's access token in the database.
+     * 
+     * Update the userAccessToken inside of the users table in the
+     * MySQL database. This access token is used for calls to the
+     * endpoints inside of MusicTogether!
+     * 
+     * @param string $access_token The user's access token from Spotify.
+     * @param string $spotify_id The user's Spotify ID.
+     * @return boolean Whether the operation was successful or not.
+     * @see DashboardConnection::runSqlUpdate()
+     */
+    public function updateUserAccessToken($access_token, $spotify_id) {
+        return $this->runSqlUpdate("UPDATE users SET userAccessToken='" .
+        $access_token . "' WHERE userSpotifyID='" . $spotify_id . "'");
     }
 }
 ?>

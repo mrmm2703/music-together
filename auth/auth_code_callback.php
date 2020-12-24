@@ -3,10 +3,12 @@ Namespace MusicTogether;
 require_once '../vendor/autoload.php';
 require_once "../functions.php";
 require_once "../constants.php";
-Namespace MusicTogether;
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 session_start();
 
-use GuzzleHttp\Client;
+use GuzzleHttp;
 
 // Check if user session exists
 checkSessionExists();

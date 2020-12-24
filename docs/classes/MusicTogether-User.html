@@ -104,7 +104,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">10</span>
+    <span class="phpdocumentor-element-found-in__line">11</span>
 </aside>
 
             <p class="phpdocumentor-summary">This class holds information on a user object.</p>
@@ -128,11 +128,26 @@ setup a user to use Music Together!</p>
 
 <dl class="phpdocumentor-table-of-contents">
                 <dt class="phpdocumentor-table-of-contents__entry -property -public">
+    <a href="classes/MusicTogether-User.html#property_access_token">$access_token</a>
+    <span>
+                &nbsp;: string            </span>
+</dt>
+<dd>An access token to make requests to the Spotify API with. Used by
+methods part of this class.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -public">
     <a href="classes/MusicTogether-User.html#property_banned">$banned</a>
     <span>
                 &nbsp;: bool            </span>
 </dt>
 <dd>Whether the user is banned or not.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -public">
+    <a href="classes/MusicTogether-User.html#property_dashboard_muted">$dashboard_muted</a>
+    <span>
+                &nbsp;: bool            </span>
+</dt>
+<dd>Whether the user prefers to mute the dashboard preview sound or not.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -public">
     <a href="classes/MusicTogether-User.html#property_email">$email</a>
@@ -178,14 +193,6 @@ Defaults to NULL when the user is first created.</dd>
 <dd>A URL to the user&#039;s profile picture. Set to &quot;defaultProfPic.png&quot;
 if none exists from Spotify.</dd>
 
-            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a href="classes/MusicTogether-User.html#property_access_token">$access_token</a>
-    <span>
-                &nbsp;: string            </span>
-</dt>
-<dd>An access token to make requests to the Spotify API with. Used by
-methods part of this class.</dd>
-
                 <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a href="classes/MusicTogether-User.html#method___construct">__construct()</a>
     <span>
@@ -221,6 +228,13 @@ methods part of this class.</dd>
 </dt>
 <dd>Logs a login on the databse.</dd>
 
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/MusicTogether-User.html#method_pushAccessTokenToDB">pushAccessTokenToDB()</a>
+    <span>
+                        &nbsp;: bool    </span>
+</dt>
+<dd>Update the access token inside the database for current User.</dd>
+
         </dl>
 
 
@@ -240,6 +254,39 @@ methods part of this class.</dd>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_access_token">
+        $access_token
+        <a href="classes/MusicTogether-User.html#property_access_token" class="headerlink"><i class="fas fa-link"></i></a>
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">59</span>
+</aside>
+
+        <p class="phpdocumentor-summary">An access token to make requests to the Spotify API with. Used by
+methods part of this class.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$access_token</span>
+    </code>
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_banned">
         $banned
         <a href="classes/MusicTogether-User.html#property_banned" class="headerlink"><i class="fas fa-link"></i></a>
@@ -249,7 +296,7 @@ methods part of this class.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">42</span>
+    <span class="phpdocumentor-element-found-in__line">43</span>
 </aside>
 
         <p class="phpdocumentor-summary">Whether the user is banned or not.</p>
@@ -258,6 +305,38 @@ methods part of this class.</dd>
     <span class="phpdocumentor-signature__visibility">public</span>
         <span class="phpdocumentor-signature__type">bool</span>
     <span class="phpdocumentor-signature__name">$banned</span>
+    </code>
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_dashboard_muted">
+        $dashboard_muted
+        <a href="classes/MusicTogether-User.html#property_dashboard_muted" class="headerlink"><i class="fas fa-link"></i></a>
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">53</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Whether the user prefers to mute the dashboard preview sound or not.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__name">$dashboard_muted</span>
     </code>
 
         <section class="phpdocumentor-description"></section>
@@ -281,7 +360,7 @@ methods part of this class.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">31</span>
+    <span class="phpdocumentor-element-found-in__line">32</span>
 </aside>
 
         <p class="phpdocumentor-summary">The user&#039;s email address from Spotify.</p>
@@ -313,7 +392,7 @@ methods part of this class.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">15</span>
+    <span class="phpdocumentor-element-found-in__line">16</span>
 </aside>
 
         <p class="phpdocumentor-summary">The user&#039;s Spotify ID.</p>
@@ -345,7 +424,7 @@ methods part of this class.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">20</span>
+    <span class="phpdocumentor-element-found-in__line">21</span>
 </aside>
 
         <p class="phpdocumentor-summary">The user&#039;s original name as set inside of Spotify.</p>
@@ -377,7 +456,7 @@ methods part of this class.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">26</span>
+    <span class="phpdocumentor-element-found-in__line">27</span>
 </aside>
 
         <p class="phpdocumentor-summary">The user&#039;s nickname set inside of Music Together!
@@ -410,7 +489,7 @@ Defaults to NULL when the user is first created.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">47</span>
+    <span class="phpdocumentor-element-found-in__line">48</span>
 </aside>
 
         <p class="phpdocumentor-summary">Whether the user has a Spotify Premium subscription or not.</p>
@@ -442,7 +521,7 @@ Defaults to NULL when the user is first created.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">37</span>
+    <span class="phpdocumentor-element-found-in__line">38</span>
 </aside>
 
         <p class="phpdocumentor-summary">A URL to the user&#039;s profile picture. Set to &quot;defaultProfPic.png&quot;
@@ -452,39 +531,6 @@ if none exists from Spotify.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
         <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">$prof_pic</span>
-    </code>
-
-        <section class="phpdocumentor-description"></section>
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -protected
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="property_access_token">
-        $access_token
-        <a href="classes/MusicTogether-User.html#property_access_token" class="headerlink"><i class="fas fa-link"></i></a>
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">53</span>
-</aside>
-
-        <p class="phpdocumentor-summary">An access token to make requests to the Spotify API with. Used by
-methods part of this class.</p>
-
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">protected</span>
-        <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$access_token</span>
     </code>
 
         <section class="phpdocumentor-description"></section>
@@ -512,7 +558,7 @@ methods part of this class.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">67</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 </aside>
 
         <p class="phpdocumentor-summary">Constructor method for User class.</p>
@@ -571,7 +617,7 @@ connect to the database with.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">196</span>
+    <span class="phpdocumentor-element-found-in__line">205</span>
 </aside>
 
         <p class="phpdocumentor-summary">Get the user&#039;s recently played tracks</p>
@@ -634,7 +680,7 @@ connect to the database with.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">145</span>
+    <span class="phpdocumentor-element-found-in__line">154</span>
 </aside>
 
         <p class="phpdocumentor-summary">Performa a GET request using Guzzle using the provided endpoint.</p>
@@ -664,7 +710,7 @@ after &quot;v1/&quot;, for example &quot;me&quot;.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
     <span class="phpdocumentor-signature__response_type"><a href="classes/Psr-Http-Message-ResponseInterface.html"><abbr title="\Psr\Http\Message\ResponseInterface">ResponseInterface</abbr></a></span>
             &mdash;
-            <section class="phpdocumentor-description"><p>The response from <abbr title="\MusicTogether\GuzzleHttp\Client::request()">Client::request()</abbr>.</p>
+            <section class="phpdocumentor-description"><p>The response from <a href="classes/GuzzleHttp-Client.html#method_request"><abbr title="\GuzzleHttp\Client::request()">Client::request()</abbr></a>.</p>
 </section>
 
     
@@ -682,7 +728,7 @@ after &quot;v1/&quot;, for example &quot;me&quot;.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">180</span>
+    <span class="phpdocumentor-element-found-in__line">189</span>
 </aside>
 
         <p class="phpdocumentor-summary">Get the user&#039;s data from the Spotify API</p>
@@ -733,7 +779,7 @@ after &quot;v1/&quot;, for example &quot;me&quot;.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">133</span>
+    <span class="phpdocumentor-element-found-in__line">142</span>
 </aside>
 
         <p class="phpdocumentor-summary">Logs a login on the databse.</p>
@@ -764,6 +810,70 @@ User using <a href="classes/MusicTogether-DatabaseConnection.html#method_insertL
     <span class="phpdocumentor-signature__response_type">void</span>
             &mdash;
             <section class="phpdocumentor-description"></section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_pushAccessTokenToDB">
+        pushAccessTokenToDB()
+        <a href="classes/MusicTogether-User.html#method_pushAccessTokenToDB" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="user.php"><a href="files/user.html"><abbr title="user.php">user.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">230</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Update the access token inside the database for current User.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">pushAccessTokenToDB</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/MusicTogether-DatabaseConnection.html"><abbr title="\MusicTogether\DatabaseConnection">DatabaseConnection</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$db_con</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+        <section class="phpdocumentor-description"><p>Push the access token of the current user to the the users table
+inside of the datbabase.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$db_con</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/MusicTogether-DatabaseConnection.html"><abbr title="\MusicTogether\DatabaseConnection">DatabaseConnection</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The database connection to use.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">see</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                    <span class="phpdocumentor-tag-link"><a href="classes/MusicTogether-DatabaseConnection.html#method_updateUserAccessToken"><abbr title="\MusicTogether\DatabaseConnection::updateUserAccessToken()">DatabaseConnection::updateUserAccessToken()</abbr></a></span>
+                                        
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">bool</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Whether the operation was successful or not.</p>
+</section>
 
     
 </article>

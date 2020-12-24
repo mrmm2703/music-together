@@ -53,8 +53,28 @@ Search.appendIndex(
         },                {
             "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AinsertLogin\u0028\u0029",
             "name": "insertLogin",
-            "summary": "Insert\u0020a\u0020login\u0020log\u0020into\u0020the\u0020database",
+            "summary": "Insert\u0020a\u0020login\u0020log\u0020into\u0020the\u0020database.",
             "url": "classes/MusicTogether-DatabaseConnection.html#method_insertLogin"
+        },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AcheckAccessToken\u0028\u0029",
+            "name": "checkAccessToken",
+            "summary": "Check\u0020if\u0020access\u0020token\u0020is\u0020valid.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_checkAccessToken"
+        },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003ArunSqlUpdate\u0028\u0029",
+            "name": "runSqlUpdate",
+            "summary": "Run\u0020a\u0020SQL\u0020UPDATE\u0020statement.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_runSqlUpdate"
+        },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AupdateDashboardMuted\u0028\u0029",
+            "name": "updateDashboardMuted",
+            "summary": "Update\u0020dashboardMuted\u0020inside\u0020of\u0020users\u0020table.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_updateDashboardMuted"
+        },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AupdateUserAccessToken\u0028\u0029",
+            "name": "updateUserAccessToken",
+            "summary": "Update\u0020a\u0020user\u0027s\u0020access\u0020token\u0020in\u0020the\u0020database.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_updateUserAccessToken"
         },                {
             "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003A\u0024db_name",
             "name": "db_name",
@@ -176,6 +196,11 @@ Search.appendIndex(
             "summary": "Get\u0020the\u0020user\u0027s\u0020recently\u0020played\u0020tracks",
             "url": "classes/MusicTogether-User.html#method_getRecentTracks"
         },                {
+            "fqsen": "\\MusicTogether\\User\u003A\u003ApushAccessTokenToDB\u0028\u0029",
+            "name": "pushAccessTokenToDB",
+            "summary": "Update\u0020the\u0020access\u0020token\u0020inside\u0020the\u0020database\u0020for\u0020current\u0020User.",
+            "url": "classes/MusicTogether-User.html#method_pushAccessTokenToDB"
+        },                {
             "fqsen": "\\MusicTogether\\User\u003A\u003A\u0024id",
             "name": "id",
             "summary": "The\u0020user\u0027s\u0020Spotify\u0020ID.",
@@ -210,6 +235,11 @@ Search.appendIndex(
             "name": "premium",
             "summary": "Whether\u0020the\u0020user\u0020has\u0020a\u0020Spotify\u0020Premium\u0020subscription\u0020or\u0020not.",
             "url": "classes/MusicTogether-User.html#property_premium"
+        },                {
+            "fqsen": "\\MusicTogether\\User\u003A\u003A\u0024dashboard_muted",
+            "name": "dashboard_muted",
+            "summary": "Whether\u0020the\u0020user\u0020prefers\u0020to\u0020mute\u0020the\u0020dashboard\u0020preview\u0020sound\u0020or\u0020not.",
+            "url": "classes/MusicTogether-User.html#property_dashboard_muted"
         },                {
             "fqsen": "\\MusicTogether\\User\u003A\u003A\u0024access_token",
             "name": "access_token",

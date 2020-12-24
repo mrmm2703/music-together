@@ -1,5 +1,6 @@
 <?php
 Namespace MusicTogether;
+use GuzzleHttp;
 /**
  * This class holds information on a user object.
  * 
@@ -46,11 +47,16 @@ class User {
      */
     public $premium;
     /**
+     * Whether the user prefers to mute the dashboard preview sound or not.
+     * @var boolean $dashboard_muted
+     */
+    public $dashboard_muted;
+    /**
      * An access token to make requests to the Spotify API with. Used by
      * methods part of this class.
      * @var string $access_token
      */
-    protected $access_token;
+    public $access_token;
 
 
     /**
@@ -96,15 +102,18 @@ class User {
                     $this->banned = false;
                 }
             }
-            // Set session variables to setup the dashboard
+            // Set properties to setup the dashboard
             $this->id = $id;
             $this->name = $user_data->{"display_name"};
 
-            // Set the nickname session variable depending on whether new user or not
+            // Set the nickname and muted property depending on whether new user or not
             if ($db_data == "not_found") {
                 $this->nickname = NULL;
+                $this->dashboard_muted = False;
             } else {
                 $this->nickname = $db_data["nickname"];
+                echo $db_data["dashboardMuted"];
+                $this->dashboard_muted = $db_data["dashboardMuted"];
             }
 
             $this->email = $user_data->{"email"};
@@ -206,6 +215,20 @@ class User {
         }
 
         return $tracks;
+    }
+
+    /**
+     * Update the access token inside the database for current User.
+     * 
+     * Push the access token of the current user to the the users table
+     * inside of the datbabase.
+     * 
+     * @param DatabaseConnection $db_con The database connection to use.
+     * @return boolean Whether the operation was successful or not.
+     * @see DatabaseConnection::updateUserAccessToken()
+     */
+    public function pushAccessTokenToDB($db_con) {
+        return $db_con->updateUserAccessToken($this->access_token, $this->id);
     }
 }
 
