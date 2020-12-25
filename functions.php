@@ -10,8 +10,13 @@ Namespace MusicTogether;
  */
 function checkSessionExists() {
     require_once "constants.php";
-    if (session_status() != PHP_SESSION_ACTIVE) {
-        header("Location: {$homepage}");
+    if (isset($_SESSION["current_user"]->premium)) {
+        if ($_SESSION["current_user"]->premium == false) {
+            header("Location: " . $homepage . "/musictogether");
+            exit();
+        }
+    } else {
+        header("Location: " . $homepage . "/musictogether");
         exit();
     }
 }

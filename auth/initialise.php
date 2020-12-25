@@ -1,9 +1,11 @@
 <?php
 Namespace MusicTogether;
 require_once "../constants.php";
+require_once "../functions.php";
 
 // Initialise PHP session
 session_start();
+
 $_SESSION["state"] = hash("sha256", session_id());
 
 /**

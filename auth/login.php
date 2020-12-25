@@ -11,8 +11,6 @@ require_once "../functions.php";
 require_once "../user.php";
 
 session_start();
-// Get the logged in user's data
-// $user_data = getUserData($_SESSION["access_token"]);
 
 $db_con = new DatabaseConnection();
 if ($db_con->connect()) {

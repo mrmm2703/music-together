@@ -25,18 +25,16 @@ if (!isset($_GET["access_token"])) {
             header("HTTP/1.1 403 Forbidden");
             exit();
         } else {
-            // Check if muted value is valid
-            if ($_GET["muted"] == "true" || $_GET["muted"] == "false") {
-                if (!$db_con->updateDashboardMuted($_GET["access_token"], $_GET["muted"])) {
-                    header("HTTP/1.1 500 Internal Server Error");
-                    exit();
-                } else {
-                    header("HTTP/1.1 200 OK");
-                    exit();
-                }
-            } else {
+            // Check if group ID is valid format
+            if (!is_numeric($_GET["group_id"])) {
                 header("HTTP/1.1 400 Bad Request");
                 exit();
+            } else {
+                if ($db_con->checkGroupExists($_GET["group_id"])) {
+                    echo "EXISTS";
+                } else {
+                    echo "DOES NOT EXIST";
+                }
             }
         }
     }

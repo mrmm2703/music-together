@@ -43,6 +43,7 @@ html, body {
 .yellow-btn {
   color: #FFD166;
   font-weight: 700;
+  text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .footer {

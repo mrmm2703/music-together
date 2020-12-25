@@ -302,5 +302,18 @@ class DatabaseConnection {
         return $this->runSqlUpdate("UPDATE users SET userAccessToken='" .
         $access_token . "' WHERE userSpotifyID='" . $spotify_id . "'");
     }
+
+    public function checkGroupExists($group_id) {
+        // Use SQL prepared statements to prevent SQL injection
+        $statement = $this->mysqli->prepare("SELECT userSpotifyID FROM users WHERE userGroupID=?");
+        $statement->bind_param("s", $group_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        if ($result->num_rows == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
 ?>

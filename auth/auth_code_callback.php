@@ -10,9 +10,6 @@ session_start();
 
 use GuzzleHttp;
 
-// Check if user session exists
-checkSessionExists();
-
 // Check if query parameters exist
 if (isset($_GET["state"])) {
     // Check state to prevent CSRF attacks

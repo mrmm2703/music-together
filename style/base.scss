@@ -56,8 +56,14 @@ html, body {
     text-shadow: 0px 4px 10px rgba(0,0,0,0.3);
 }
 
+@mixin imgShadow {
+    filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.3));
+    -webkit-filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.3));
+    -moz-filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.3));
+}
+
 @mixin noSelect {
-    -webkit-user-select: none; /* Safari */        
+    -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
@@ -118,6 +124,7 @@ html, body {
     color: $yellow;
     font-weight: 700;
     @extend .hvr-underline-from-center;
+    @include textShadow;
 }
 
 .footer {

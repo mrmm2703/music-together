@@ -1,5 +1,5 @@
 <?php
-
+Namespace MusicTogether;
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
@@ -7,8 +7,10 @@ error_reporting(E_ALL);
 require_once "user.php";
 require_once "track.php";
 require_once "constants.php";
+require_once "functions.php";
 
 session_start();
+checkSessionExists();
 
 $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
 ?>
@@ -148,7 +150,7 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
             let audioPlayer = document.getElementById(this.id + "-audio")
             audioPlayer.play()
             $("#" + this.id + "-audio").stop(true, false)
-            $("#" + this.id + "-audio").animate({volume: 0.5}, 500)
+            $("#" + this.id + "-audio").animate({volume: 0.25}, 500)
         }
     }, function() {
         if (!dashboardMuted) {
