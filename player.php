@@ -1,11 +1,50 @@
+<?php
+Namespace MusicTogether;
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+require_once "constants.php";
+require_once "functions.php";
+require_once "user.php";
+
+session_start();
+
+if (!isset($_GET["group_id"])) {
+    header("Location: " . $homepage . "/dashboard.php");
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <?php
+        // Store the user's data in JavaScript
+        echo '<script>
+        var group_id = "';
+        echo $_GET["group_id"];
+        echo '"</script>';
+        echo '<script>
+        var user_name = "';
+        echo $_SESSION["current_user"]->name;
+        echo '"</script>';
+        echo '<script>
+        var user_prof_pic = "';
+        echo $_SESSION["current_user"]->prof_pic;
+        echo '"</script>';
+        echo '<script>
+        var user_id = "';
+        echo $_SESSION["current_user"]->id;
+        echo '"</script>';
+
+    ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Together!</title>
     <link rel="stylesheet" href="style/dist/player.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/dist/socket.io.prod.js"></script>
 </head>
 <body>
     <div class="grid-container">
@@ -15,54 +54,28 @@
                 My group
             </div>
             <div class="group-id">
-                Group ID: 5259
+                Group ID: <?php echo $_GET["group_id"] ?>
             </div>
             <div class="yellow-btn group-invite-btn">
                 Invite users
             </div>
 
             <div class="group-users-container">
+<!-- 
                 <div class="group-user-container">
                     <div class="group-user-image">
-                        <img src="defaultProfilePicture.png">
+                        <img src="PROF_PIC">
                     </div>
                     <div class="group-user-text-container">
                         <div class="group-user-text-name">
-                            Brent Ross
+                            NAME HERE
                         </div>
                         <div class="group-user-text-typing">
                             typing...
                         </div>
                     </div>
                 </div>
-    
-                <div class="group-user-container">
-                    <div class="group-user-image">
-                        <img src="defaultProfilePicture.png">
-                    </div>
-                    <div class="group-user-text-container">
-                        <div class="group-user-text-name">
-                            Brent Ross
-                        </div>
-                        <div class="group-user-text-typing">
-                            typing...
-                        </div>
-                    </div>
-                </div>
-    
-                <div class="group-user-container">
-                    <div class="group-user-image">
-                        <img src="defaultProfilePicture.png">
-                    </div>
-                    <div class="group-user-text-container">
-                        <div class="group-user-text-name">
-                            Brent Ross
-                        </div>
-                        <div class="group-user-text-typing">
-                            typing...
-                        </div>
-                    </div>
-                </div>
+-->
 
             </div>
 
@@ -74,7 +87,7 @@
             </div>
             <div class="messages-container">
 
-                <div class="message other">
+                <!-- <div class="message other">
                     <div class="message-name">
                         Carol Anne
                     </div>
@@ -96,11 +109,11 @@
                     <div class="message-time">
                         15:09
                     </div>
-                </div>
+                </div> -->
 
             </div>
             <div class="messages-input-container">
-                <input type="text" placeholder="Message">
+                <input id="messages-input" type="text" placeholder="Message">
                 <a class="messages-input-btn yellow-btn" href="#">
                     Send
                 </a>
@@ -177,14 +190,14 @@
                 <div class="settings-inner-container">
                     <div class="settings-text-container">
                         <div class="settings-name">
-                            Brent Ross
+                            <?php echo $_SESSION["current_user"]->name; ?>
                         </div>
                         <a class="settings-btn yellow-btn" href="#">
                             Settings
                         </a>
                     </div>
                     <div class="settings-image">
-                        <img id="prof-pic" src="defaultProfilePicture.png" />
+                    <img id="prof-pic" src="<?php echo $_SESSION["current_user"]->prof_pic; ?>" />
                     </div>
                 </div>
             </div>
@@ -212,3 +225,6 @@
         </div>
     </div>
 </body>
+<script src="js/player.js"></script>
+<script src="js/player-ui.js"></script>
+</html>

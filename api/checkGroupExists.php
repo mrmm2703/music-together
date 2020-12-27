@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 if (!isset($_GET["access_token"])) {
     header("HTTP/1.1 403 Forbidden");
     exit();
-} elseif (!isset($_GET["muted"])) { // Check if muted is given
+} elseif (!isset($_GET["group_id"])) { // Check if group_id exists
     header("HTTP/1.1 400 Bad Request");
     exit();
 } else {

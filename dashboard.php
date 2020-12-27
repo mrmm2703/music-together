@@ -96,70 +96,17 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
 
     <div class="group-id-container">
         <div class="group-id-inner-container">
-            <input type="text" placeholder="Group ID"/>
-            <a href="#" class="yellow-btn">Join</a>
+            <input id="group-id-entry" type="text" placeholder="Group ID"/>
+            <a href="#" class="yellow-btn" onclick="joinBtn()">Join</a>
         </div>
     </div>
     <div class="create-group-btn-container">
-        <a class="create-group-btn yellow-btn" href="#">
+        <a class="create-group-btn yellow-btn" onclick="createBtn()" href="#">
             Create new group
         </a>
     </div>
 
     <div id="mute-btn"></div>
 </body>
-<script>
-    var muteBtn = $("#mute-btn");
-    $(document).ready(function() {
-        // Initialise volume of preview-sound to 0.0
-        let audioPlayers = document.getElementsByClassName("preview-sound")
-        let i
-        for (i=0; i<audioPlayers.length; i++) {
-            audioPlayers[i].volume = 0.0
-        }
-
-        // Initialise the mute button
-        if (dashboardMuted) {
-            muteBtn.css("background-image", 'url("https://morahman.me/musictogether/img/muted.png')
-        } else {
-            muteBtn.css("background-image", 'url("https://morahman.me/musictogether/img/unmuted.png')
-        }
-    })
-
-    // Event handler for mute-btn
-    muteBtn.click(function() {
-        if (dashboardMuted) {
-            muteBtn.css("background-image", 'url("https://morahman.me/musictogether/img/unmuted.png')
-        } else {
-            muteBtn.css("background-image", 'url("https://morahman.me/musictogether/img/muted.png')
-        }
-        dashboardMuted = !dashboardMuted
-        // Send a request to update the database
-        $.get(
-            "api/updateDashboardMuted.php",
-            {
-                access_token: accessToken,
-                muted: dashboardMuted
-            }
-        )
-    })
-
-    // Event handler for on hover
-    $(".song-cover").hover(function() {
-        if (!dashboardMuted) {
-            let audioPlayer = document.getElementById(this.id + "-audio")
-            audioPlayer.play()
-            $("#" + this.id + "-audio").stop(true, false)
-            $("#" + this.id + "-audio").animate({volume: 0.25}, 500)
-        }
-    }, function() {
-        if (!dashboardMuted) {
-            let audioPlayer = document.getElementById(this.id + "-audio")
-            $("#" + this.id + "-audio").stop(true, false);
-            $("#" + this.id + "-audio").animate({volume: 0}, 500, function() {
-                audioPlayer.pause();
-            })
-        }
-    })
-</script>
+<script src="js/dashboard.js"></script>
 </html>

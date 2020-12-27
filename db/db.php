@@ -1,8 +1,8 @@
 <?php
 Namespace MusicTogether;
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
 /**
  * Connect to and query a database.
  * 
@@ -303,6 +303,15 @@ class DatabaseConnection {
         $access_token . "' WHERE userSpotifyID='" . $spotify_id . "'");
     }
 
+    /**
+     * Check if a group exists.
+     * 
+     * Check if a user is already inside a group identified by the group
+     * ID given.
+     * 
+     * @param string $group_id The group ID to check.
+     * @return boolean Whether the group exists or not.
+     */
     public function checkGroupExists($group_id) {
         // Use SQL prepared statements to prevent SQL injection
         $statement = $this->mysqli->prepare("SELECT userSpotifyID FROM users WHERE userGroupID=?");
@@ -313,6 +322,24 @@ class DatabaseConnection {
             return false;
         } else {
             return true;
+        }
+    }
+
+    public function getActiveGroups() {
+        $result = $this->runSqlSelect(
+            "SELECT DISTINCT userGroupID from users"
+        );
+        if ($result === FALSE) {
+            $_SESSION["latest_error"] = "DBCon_GetActiveGroups_ResultIsFalse";
+            return false;
+        } else if ($result == 0) {
+            return array();
+        } else {
+            $activeGroups = array();
+            while ($row = $result->fetch_assoc()) {
+                array_push($activeGroups, $row["userGroupID"]);
+            }
+            return $activeGroups;
         }
     }
 }
