@@ -15,7 +15,7 @@
     }
     & > div {
         padding-top: 2vw;
-        height: 100%;
+        height: calc(100vh - 2vw);
     }
     .grid-recent > .grid-title {
         margin-right: 0;
@@ -75,6 +75,7 @@
         }
         & > .group-user-text-typing {
             font-size: 16px;
+            opacity: 0;
         }
     }
 
@@ -83,7 +84,7 @@
 .grid-messages {
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: min-content auto auto;
+    grid-template-rows: min-content auto min-content;
     gap: 0px 0px;
     grid-template-areas:
         "."
@@ -379,5 +380,189 @@
     .settings-btn {
         font-size: 1.2em;
         width: fit-content;
+    }
+}
+
+.screen-block {
+    opacity: 1;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    filter: blur(3px);
+    backdrop-filter: blur(3px);
+    background-color: rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+.search-overlay {
+    position: fixed;
+    left: 4vw;
+    right: 4vw;
+    top: 3vh;
+    bottom: 3vh;
+    z-index: 150;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 70px 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+      "."
+      ".";
+    background-color: $messageOtherBackground;
+    border-radius: $largeBorderRadius;
+    @include shadow;
+    padding: 1.5vw 3vw 1.5vw 0;
+}
+
+.player-search-container {
+    .search-input-container {
+        margin-left: 0 !important;
+    }
+}
+
+.search-input-container {
+    position: relative;
+    display: block;
+    margin-left: 3vw;
+    input {
+        width: 15em;
+        @include textInput;
+        padding: 12px 20px 12px calc(2em + 12px);
+        &:focus {
+            outline: none;
+            border-bottom: 2px solid $green;
+        }
+        position: relative;
+        display: block;
+    }
+    & > img {
+        position: relative;
+        display: block;
+        float: left;
+        z-index: 15;
+        font-size: 20px;
+        width: 2em;
+        height: 2em;
+        top: -47px;
+        margin-left: 12px;
+    }
+}
+
+.search-results-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    .search-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+        margin-left: 3vw;
+        @include textShadow;
+    }
+    .no-results {
+        font-size: 20px;
+        margin-bottom: 1em;
+    }
+}
+
+.search-item-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 1em;
+    width: 23em;
+    .search-item-image-container {
+        width: 5em;
+        height: 5em;
+        line-height: 0;
+        & > img {
+            width: 5em;
+            height: 5em;
+            border-radius: $smallBorderRadius;
+            z-index: 200;
+            position: relative;
+            @include shadow;
+            cursor: pointer;
+        }
+    }
+    .search-item-text-container {
+        margin-left: 1.6vw;
+        .search-item-name {
+            font-size: 20px;
+            font-weight: 600;
+            @include textShadow;
+        }
+        .search-item-artist {
+            font-size: 20px;
+            @include textShadow;
+        }
+    }
+}
+
+.search-type-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 0.75em;
+    padding-left: 3vw;
+}
+
+.screen-block, .search-overlay {
+    display: none;
+    opacity: 0;
+}
+
+.player-search-container {
+    display: flex;
+    justify-content: center;
+    .search-input-container {
+        width: 18vw;
+        input {
+            width: 100%;
+        }
+    }
+}
+
+.search-item-fan {
+    box-sizing: border-box;
+    background-color: $green;
+    @include shadow;
+    height: 4em;
+    width: 18em;
+    position: relative;
+    border-radius: $smallBorderRadius;
+    top: -4.5em;
+    z-index: 150;
+    padding-left: 4em;
+    padding-right: 1em;
+    margin-left: 2em;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+        ". . .";
+    & > div {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        @include imgShadow;
+        cursor: pointer;
+    }
+    .search-item-play {
+        background-image: url("../../img/play-white.svg");
+        height: 90%;
+        margin-top: 0.2em;
+    }
+    .search-item-queue {
+        background-image: url("../../img/queue.svg");
+        height: 55%;
+        margin-top: 0.9em;
+    }
+    .search-item-share {
+        background-image: url("../../img/share.svg");
+        height: 50%;
+        margin-top: 1em;
     }
 }

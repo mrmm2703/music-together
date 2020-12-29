@@ -37,6 +37,10 @@ if (!isset($_GET["group_id"])) {
         var user_id = "';
         echo $_SESSION["current_user"]->id;
         echo '"</script>';
+        echo '<script>
+        var accessToken = "';
+        echo $_SESSION["current_user"]->access_token;
+        echo '"</script>';
 
     ?>
     <meta charset="UTF-8">
@@ -47,6 +51,157 @@ if (!isset($_GET["group_id"])) {
     <script src="js/dist/socket.io.prod.js"></script>
 </head>
 <body>
+    <div class="screen-block"></div>
+    <div class="search-overlay">
+        <div class="search-input-container">
+            <input id="search-input-input" type="text" placeholder="Search">
+            <img src="img/search.svg">
+        </div>
+        <div class="search-results-container">
+
+            <div class="search-title" id="search-songs-title">
+                Songs
+            </div>
+            <div class="search-type-container" id="search-songs-container">
+                
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                        <div class="search-item-fan">
+                            <div class="search-item-play"></div>
+                            <div class="search-item-queue"></div>
+                            <div class="search-item-share"></div>
+                        </div>
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-title" id="search-artists-title">
+                Artists
+            </div>
+            <div class="search-type-container" id="search-artists-container">
+                
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-title" id="search-albums-title">
+                Albums
+            </div>
+            <div class="search-type-container" id="search-albums-container">
+                
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-title" id="search-playlists-title">
+                Playlists
+            </div>
+            <div class="search-type-container" id="search-playlists-container">
+                
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-item-container">
+                    <div class="search-item-image-container">
+                        <img class="search-item-image" src="defaultProfilePicture.png">
+                    </div>
+                    <div class="search-item-text-container">
+                        <div class="search-item-name">
+                            The Sound
+                        </div>
+                        <div class="search-item-artist">
+                            The 1975
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <div class="grid-container">
 
         <div class="grid-group">
@@ -113,7 +268,7 @@ if (!isset($_GET["group_id"])) {
 
             </div>
             <div class="messages-input-container">
-                <input id="messages-input" type="text" placeholder="Message">
+                <input id="messages-input" type="text" spellcheck="true" placeholder="Message">
                 <a class="messages-input-btn yellow-btn" href="#">
                     Send
                 </a>
@@ -203,6 +358,12 @@ if (!isset($_GET["group_id"])) {
             </div>
 
             <div class="player-container">
+                <div class="player-search-container">
+                    <div class="search-input-container">
+                        <input type="text" placeholder="Search" id="dummy-search">
+                        <img src="img/search.svg">
+                    </div>
+                </div>
                 <div class="player-image-container">
                     <img src="defaultProfilePicture.png" class="player-image">
                 </div>
