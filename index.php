@@ -10,6 +10,14 @@ session_destroy();
     <link rel="stylesheet" href="style/dist/index.min.css">
     <link rel="stylesheet" href="style/hover-min.css">
     <title>Music Together!</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            if (window.matchMedia("(max-width: 767px)").matches) {
+                alert("This website may not work properly on mobile.")
+            }
+        })
+    </script>
 </head>
 <body>
     <?php
