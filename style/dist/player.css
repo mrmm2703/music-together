@@ -632,11 +632,6 @@ html, body {
   padding-left: 3vw;
 }
 
-.screen-block, .search-overlay {
-  display: none;
-  opacity: 0;
-}
-
 .player-search-container {
   display: flex;
   justify-content: center;

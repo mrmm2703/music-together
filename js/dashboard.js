@@ -102,7 +102,7 @@ $(".song-cover").hover(function() {
 function joinBtn() {
     try {
         if (checkGroupExists(groupIdInput.value) == true) {
-            window.location.href = "https://morahman.me/player.php?group_id=" + groupIdInput.value
+            window.location.href = "https://morahman.me/musictogether/player.php?group_id=" + groupIdInput.value
         } else {
             alert("Group does not exist.")
         }

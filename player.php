@@ -41,6 +41,10 @@ if (!isset($_GET["group_id"])) {
         var accessToken = "';
         echo $_SESSION["current_user"]->access_token;
         echo '"</script>';
+        echo '<script>
+        var refreshToken = "';
+        echo $_SESSION["refresh_token"];
+        echo '"</script>';
 
     ?>
     <meta charset="UTF-8">
@@ -51,6 +55,11 @@ if (!isset($_GET["group_id"])) {
     <script src="js/dist/socket.io.prod.js"></script>
 </head>
 <body>
+    <!-- SPOTIFY WEB PLAYER -->
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script src="js/dist/spotify-player.prod.js"></script>
+
+    <!-- SEARCH OVERLAY -->
     <div class="screen-block"></div>
     <div class="search-overlay">
         <div class="search-input-container">
@@ -62,146 +71,27 @@ if (!isset($_GET["group_id"])) {
             <div class="search-title" id="search-songs-title">
                 Songs
             </div>
-            <div class="search-type-container" id="search-songs-container">
-                
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                        <div class="search-item-fan">
-                            <div class="search-item-play"></div>
-                            <div class="search-item-queue"></div>
-                            <div class="search-item-share"></div>
-                        </div>
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="search-type-container" id="search-songs-container"></div>
 
             <div class="search-title" id="search-artists-title">
                 Artists
             </div>
-            <div class="search-type-container" id="search-artists-container">
-                
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="search-type-container" id="search-artists-container"></div>
 
             <div class="search-title" id="search-albums-title">
                 Albums
             </div>
-            <div class="search-type-container" id="search-albums-container">
-                
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="search-type-container" id="search-albums-container"></div>
 
             <div class="search-title" id="search-playlists-title">
                 Playlists
             </div>
-            <div class="search-type-container" id="search-playlists-container">
-                
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-item-container">
-                    <div class="search-item-image-container">
-                        <img class="search-item-image" src="defaultProfilePicture.png">
-                    </div>
-                    <div class="search-item-text-container">
-                        <div class="search-item-name">
-                            The Sound
-                        </div>
-                        <div class="search-item-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="search-type-container" id="search-playlists-container"></div>
 
         </div>
     </div>
+
+    <!-- MAIN PLAYER CONTENT -->
     <div class="grid-container">
 
         <div class="grid-group">
@@ -365,11 +255,11 @@ if (!isset($_GET["group_id"])) {
                     </div>
                 </div>
                 <div class="player-image-container">
-                    <img src="defaultProfilePicture.png" class="player-image">
+                    <img src="defaultProfilePicture.png" class="player-image" id="player-image">
                 </div>
                 <div class="player-text-container">
-                    <div class="player-text-name">Martin & Gina</div>
-                    <div class="player-text-artist">Polo G</div>
+                    <div class="player-text-name" id="player-name">Martin & Gina</div>
+                    <div class="player-text-artist" id="player-artist">Polo G</div>
                 </div>
                 <div class="player-controls-container">
                     <div class="player-control" id="player-control-back"></div>

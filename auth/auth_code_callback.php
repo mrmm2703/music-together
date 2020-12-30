@@ -49,6 +49,7 @@ if (isset($_GET["state"])) {
             $body = json_decode($response->getBody()->getContents());
             
             $_SESSION["access_token"] = $body->{"access_token"};
+            $_SESSION["refresh_token"] = $body->{"refresh_token"};
 
             header("Location: {$homepage}/auth/login.php");
             exit();

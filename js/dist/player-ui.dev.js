@@ -66,7 +66,7 @@ function addSongsResults(response) {
         img = track["album"]["images"][0]["url"];
       }
 
-      var element = makeSearchItem(track["name"], track["artists"][0]["name"], img, "song", track["id"]);
+      var element = makeSearchItem(track["name"], track["artists"][0]["name"], img, "song", track["id"], track["album"]["id"]);
       songs_container.append(element);
     });
   } else {
@@ -139,6 +139,7 @@ function addPlaylistsResults(response) {
 
 
 function makeSearchItem(heading, subheading, imageUrl, type, id) {
-  var item = "" + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-container">' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' + '<img data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' + '</div>' + '</div>' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-name">' + heading + '</div>' + '<div data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' + subheading + '</div>' + '</div>' + '</div>';
+  var extra = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : "";
+  var item = "" + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' + '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' + '</div>' + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-name">' + heading + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' + subheading + '</div>' + '</div>' + '</div>';
   return item;
 }

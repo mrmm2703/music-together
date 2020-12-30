@@ -104,7 +104,8 @@ function addSongsResults(response) {
                 track["artists"][0]["name"],
                 img,
                 "song",
-                track["id"]
+                track["id"],
+                track["album"]["id"]
             )
             songs_container.append(element)
         })
@@ -186,22 +187,22 @@ function addPlaylistsResults(response) {
 }
 
 // Make a search query item
-function makeSearchItem(heading, subheading, imageUrl, type, id) {
+function makeSearchItem(heading, subheading, imageUrl, type, id, extra="") {
     let item = "" +
-    '<div data-type="' + type + '" data-id="' + id + '" class="search-item-container">' +
-        '<div data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' +
-            '<img data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' +
-            '<div data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' +
-                '<div data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' +
-                '<div data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' +
-                '<div data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' +
+    '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' +
+        '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' +
+            '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' +
+            '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' +
+                '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' +
+                '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' +
+                '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' +
             '</div>' +
         '</div>' +
-        '<div data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' +
-            '<div data-type="' + type + '" data-id="' + id + '" class="search-item-name">' +
+        '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' +
+            '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-name">' +
                 heading +
             '</div>' +
-            '<div data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' +
+            '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' +
                 subheading +
             '</div>' +
         '</div>' +

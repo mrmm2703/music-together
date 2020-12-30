@@ -53,6 +53,19 @@ socket.on("typing", (data) => {
     userTyping(data)
 })
 
+// When a user changes the song
+socket.on("changeSong", (data) => {
+    spotifyPlay(data.uri, data.context)
+})
+
+socket.on("pause", () => {
+    playbackPause()
+})
+
+socket.on("resume", () => {
+    playbackResume()
+})
+
 // CLIENT EVENT LISTENERS
 
 // When a user presses a key in the message input
@@ -183,7 +196,198 @@ function searchSpotifyResponse(result) {
                 }, 150)
         }
     )
+    $(".search-item-play").click(function() {
+        socket.emit("makeMeHost")
+        if ($(this).data("type") == "song") {
+            spotifyPlay("spotify:track:"+$(this).data("id"), "spotify:album:"+$(this).data("extra"))
+        } else if ($(this).data("type") == "playlist") {
+            spotifyPlayPlaylistAlbum("spotify:playlist:"+$(this).data("id"))
+        } else if ($(this).data("type") == "artist") {
+            spotifyPlayArtist("spotify:artist:"+$(this).data("id"))
+        } else if ($(this).data("type") == "album") {
+            spotifyPlayPlaylistAlbum("spotify:album:"+$(this).data("id"))
+        }
+        setTimeout(() => {
+            changedSong()
+            updatePlayer()
+        }, 500);
+    })
     $(".search-item-fan").css("width", "0")
     $(".search-item-fan").css("padding-left", "0")
     $(".search-item-fan").css("padding-right", "0")
+}
+
+// UTILITY FUNCTIONS
+
+// Convert milliseconds into seconds
+function msToMinutesSeconds(ms) {
+    let seconds = ms / 1000
+    let min = Math.floor(ms / 60)
+    let sec = Math.floor(seconds - min)
+    return min.toString() + ":" + sec.toString().padStart(2, "0")
+}
+
+// Play a track
+function spotifyPlay(track, context=null) {
+    if (context != null) {
+        $.ajax({
+            url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
+            data: JSON.stringify({
+                "context_uri": context,
+                "offset": {"uri": track}
+            }),
+            type: "PUT",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            },
+            success: function(result) {
+                console.log("PLAY REQUEST SUCCESSFUL")
+            },
+            error: function(error) {
+                console.error("PLAY RESULT FAILED:")
+                console.error(error)
+            }
+        })
+    } else {
+        $.ajax({
+            url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
+            data: JSON.stringify({
+                "uris": [track]
+            }),
+            type: "PUT",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            },
+            success: function(result) {
+                console.log("PLAY REQUEST SUCCESSFUL")
+            },
+            error: function(error) {
+                console.error("PLAY RESULT FAILED:")
+                console.error(error)
+            }
+        })
+    }
+}
+
+function spotifyPlayArtist(artist) {
+    $.ajax({
+        url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
+        data: JSON.stringify({
+            "context_uri": artist
+        }),
+        type: "PUT",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        },
+        success: function(result) {
+            console.log("PLAY REQUEST SUCCESSFUL")
+        },
+        error: function(error) {
+            console.error("PLAY RESULT FAILED:")
+            console.error(error)
+        }
+    })
+}
+
+function spotifyPlayPlaylistAlbum(x) {
+    $.ajax({
+        url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
+        data: JSON.stringify({
+            "context_uri": x,
+            "offset": {"position": 0}
+        }),
+        type: "PUT",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        },
+        success: function(result) {
+            console.log("PLAY REQUEST SUCCESSFUL")
+        },
+        error: function(error) {
+            console.error("PLAY RESULT FAILED:")
+            console.error(error)
+        }
+    })
+}
+
+// PLAYER CONTROL LISTENERS
+
+var paused = false
+
+// Play/Pause button
+$("#player-control-pause").click(function() {
+    paused = !paused
+    if (paused) {
+        playbackPause()
+        socket.emit("pause")
+    } else {
+        playbackResume()
+        socket.emit("resume")
+    }
+})
+
+// When the song changes
+function changedSong(paused=false) {
+    $("#player-control-pause").css("background-image", "url('img/control-pause.svg')")
+    spotifyPlayer.getCurrentState().then(state => {
+        if (!state) {
+            console.error("No music playing.")
+            return
+        }
+        currentTrack = state.track_window.current_track.uri
+        socket.emit("changeSong", {
+            uri: state.track_window.current_track.uri,
+            context: state.context.uri
+        })
+    })
+}
+
+// Back button
+$("#player-control-back").click(function() {
+    socket.emit("makeMeHost")
+    spotifyPlayer.previousTrack()
+    setTimeout(() => {
+        changedSong()
+        updatePlayer()
+    }, 250);
+})
+
+// Forward button
+$("#player-control-forward").click(function() {
+    socket.emit("makeMeHost")
+    spotifyPlayer.nextTrack()
+    setTimeout(() => {
+        changedSong()
+        updatePlayer()
+    }, 250);
+})
+
+const playerImg = $("#player-image")
+const playerName = $("#player-name")
+const playerArtist = $("#player-artist")
+
+// Update the player
+function updatePlayer() {
+    spotifyPlayer.getCurrentState().then(state => {
+        if (!state) {
+            console.error("No music playing.")
+            return
+        }
+        playerImg.attr("src", state.track_window.current_track.album.images[0].url)
+        playerName.html(state.track_window.current_track.name)
+        playerArtist.html(state.track_window.current_track.artists[0].name)
+
+    })
+}
+
+function playbackPause() {
+    spotifyPlayer.pause()
+    $("#player-control-pause").css("background-image", "url('img/control-play.svg')")
+    paused = true;
+}
+
+function playbackResume() {
+    spotifyPlayer.resume()
+    $("#player-control-pause").css("background-image", "url('img/control-pause.svg')")
+    paused = false;
 }
