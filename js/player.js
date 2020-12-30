@@ -1,70 +1,92 @@
 // Some HTML elements
 const message_input = document.getElementById("messages-input")
 
-// Connect to Node.js server
-var socket = io.connect("https://morahman.me:3000")
-
 // Send a joinedGroup message to the Node.js server
 $(document).ready(function() {
-    socket.emit("joinedGroup",
-    {
-        group: group_id,
-        name: user_name,
-        prof_pic: user_prof_pic,
-        id: user_id
-    })
 })
 
 // SERVER EVENT LISTENERS
 
-// Event handler when received usersInGroup message
-socket.on("usersInGroup", (data) => {
-    console.log("usersInGroup:")
-    for (const user in data["users"]) {
-        console.log(user)
-        addUser(user, data["users"][user]["name"], data["users"][user]["prof_pic"])
-    }
-})
+function initSocketListeners() {
+    // Event handler when received usersInGroup message
+    socket.on("usersInGroup", (data) => {
+        console.log("usersInGroup:")
+        for (const user in data["users"]) {
+            console.log(user)
+            addUser(user, data["users"][user]["name"], data["users"][user]["prof_pic"])
+        }
+    })
 
-// When a new user joins
-socket.on("newUser", (data) => {
-    console.log("newUser: " + data)
-    addUser(data.id, data.name, data.prof_pic)
-})
+    // When a new user joins
+    socket.on("newUser", (data) => {
+        console.log("newUser: " + data)
+        addUser(data.id, data.name, data.prof_pic)
+    })
 
-// When a user leaves
-socket.on("userLeft", (data) => {
-    console.log("userLeft: " + data)
-    removeUser(data)
-})
+    // When a user leaves
+    socket.on("userLeft", (data) => {
+        console.log("userLeft: " + data)
+        removeUser(data)
+    })
 
-// When client sends a banned word
-socket.on("messageBanned", (word) => {
-    alert(`The message you sent is banned for containing the word "${word}"`)
-})
+    // When client sends a banned word
+    socket.on("messageBanned", (word) => {
+        alert(`The message you sent is banned for containing the word "${word}"`)
+    })
 
-// When a new message is received
-socket.on("newMessage", (data) => {
-    addMessage(data.id, data.message, false)
-})
+    // When a new message is received
+    socket.on("newMessage", (data) => {
+        addMessage(data.id, data.message, false)
+    })
 
-// When a user is typing
-socket.on("typing", (data) => {
-    userTyping(data)
-})
+    // When a user is typing
+    socket.on("typing", (data) => {
+        userTyping(data)
+    })
 
-// When a user changes the song
-socket.on("changeSong", (data) => {
-    spotifyPlay(data.uri, data.context)
-})
+    // When a user changes the song
+    socket.on("changeSong", (data) => {
+        spotifyPlay(data.uri, data.context)
+        if (data.paused) {
+            playbackPause()
+        } else {
+            playbackResume()
+        }
+    })
 
-socket.on("pause", () => {
-    playbackPause()
-})
+    socket.on("pause", () => {
+        playbackPause()
+    })
 
-socket.on("resume", () => {
-    playbackResume()
-})
+    socket.on("resume", () => {
+        playbackResume()
+    })
+
+    socket.on("whereAreWe", (socketId) => {
+        spotifyPlayer.getCurrentState().then(state => {
+            if (!state) {
+                console.error("No music playing.")
+                return
+            }
+            currentTrack = state.track_window.current_track.uri
+            socket.emit("weAreHere", {
+                uri: state.track_window.current_track.uri,
+                context: state.context.uri,
+                position: state.position,
+                socketId: socketId
+            })
+        })
+    })
+
+    socket.on("weAreHere", (data) => {
+        // So the state event listener does not trigger an emit
+        currentTrack = data.uri
+        spotifyPlay(data.uri, data.context, data.position)
+        setTimeout(() => {
+            updatePlayer()
+        }, 250);
+    })
+}
 
 // CLIENT EVENT LISTENERS
 
@@ -228,14 +250,24 @@ function msToMinutesSeconds(ms) {
 }
 
 // Play a track
-function spotifyPlay(track, context=null) {
+function spotifyPlay(track, context=null, position=null) {
     if (context != null) {
-        $.ajax({
-            url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
-            data: JSON.stringify({
+        let bodyData
+        if (position != null) {
+            bodyData = JSON.stringify({
+                "context_uri": context,
+                "offset": {"uri": track},
+                "position_ms": position
+            })
+        } else {
+            bodyData = JSON.stringify({
                 "context_uri": context,
                 "offset": {"uri": track}
-            }),
+            })
+        }
+        $.ajax({
+            url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
+            data: bodyData,
             type: "PUT",
             headers: {
                 "Authorization": "Bearer " + accessToken
@@ -249,11 +281,20 @@ function spotifyPlay(track, context=null) {
             }
         })
     } else {
+        let bodyData
+        if (position != null) {
+            JSON.stringify({
+                "uris": [track],
+                "position_ms": position
+            })
+        } else {
+            JSON.stringify({
+                "uris": [track]
+            })
+        }
         $.ajax({
             url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
-            data: JSON.stringify({
-                "uris": [track]
-            }),
+            data: bodyData,
             type: "PUT",
             headers: {
                 "Authorization": "Bearer " + accessToken
@@ -327,7 +368,7 @@ $("#player-control-pause").click(function() {
 })
 
 // When the song changes
-function changedSong(paused=false) {
+function changedSong() {
     $("#player-control-pause").css("background-image", "url('img/control-pause.svg')")
     spotifyPlayer.getCurrentState().then(state => {
         if (!state) {
@@ -337,7 +378,8 @@ function changedSong(paused=false) {
         currentTrack = state.track_window.current_track.uri
         socket.emit("changeSong", {
             uri: state.track_window.current_track.uri,
-            context: state.context.uri
+            context: state.context.uri,
+            paused: state.paused
         })
     })
 }

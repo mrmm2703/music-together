@@ -2,7 +2,10 @@
 
 var deviceId;
 var spotifyPlayer;
-var currentTrack;
+var currentTrack; // Connect to Node.js server
+
+var socket = io.connect("https://morahman.me:3000");
+var urlParams = new URLSearchParams(window.location.search);
 
 window.onSpotifyWebPlaybackSDKReady = function () {
   spotifyPlayer = new Spotify.Player({
@@ -32,7 +35,7 @@ window.onSpotifyWebPlaybackSDKReady = function () {
   spotifyPlayer.addListener("player_state_changed", function (state) {
     // Check only check for song changes
     if (state.track_window.current_track.uri != currentTrack) {
-      changedSong(state.paused);
+      changedSong();
       updatePlayer();
     }
   });
@@ -40,6 +43,17 @@ window.onSpotifyWebPlaybackSDKReady = function () {
     var device_id = _ref5.device_id;
     deviceId = device_id;
     console.log("READY! DEVICE ID: " + device_id);
+    initSocketListeners();
+    socket.emit("joinedGroup", {
+      group: group_id,
+      name: user_name,
+      prof_pic: user_prof_pic,
+      id: user_id
+    });
+
+    if (urlParams.get("action") == "join") {
+      socket.emit("whereAreWe");
+    }
   });
   spotifyPlayer.addListener("not_ready", function (_ref6) {
     var device_id = _ref6.device_id;

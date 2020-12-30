@@ -1,61 +1,85 @@
 "use strict";
 
 // Some HTML elements
-var message_input = document.getElementById("messages-input"); // Connect to Node.js server
+var message_input = document.getElementById("messages-input"); // Send a joinedGroup message to the Node.js server
 
-var socket = io.connect("https://morahman.me:3000"); // Send a joinedGroup message to the Node.js server
+$(document).ready(function () {}); // SERVER EVENT LISTENERS
 
-$(document).ready(function () {
-  socket.emit("joinedGroup", {
-    group: group_id,
-    name: user_name,
-    prof_pic: user_prof_pic,
-    id: user_id
+function initSocketListeners() {
+  // Event handler when received usersInGroup message
+  socket.on("usersInGroup", function (data) {
+    console.log("usersInGroup:");
+
+    for (var user in data["users"]) {
+      console.log(user);
+      addUser(user, data["users"][user]["name"], data["users"][user]["prof_pic"]);
+    }
+  }); // When a new user joins
+
+  socket.on("newUser", function (data) {
+    console.log("newUser: " + data);
+    addUser(data.id, data.name, data.prof_pic);
+  }); // When a user leaves
+
+  socket.on("userLeft", function (data) {
+    console.log("userLeft: " + data);
+    removeUser(data);
+  }); // When client sends a banned word
+
+  socket.on("messageBanned", function (word) {
+    alert("The message you sent is banned for containing the word \"".concat(word, "\""));
+  }); // When a new message is received
+
+  socket.on("newMessage", function (data) {
+    addMessage(data.id, data.message, false);
+  }); // When a user is typing
+
+  socket.on("typing", function (data) {
+    userTyping(data);
+  }); // When a user changes the song
+
+  socket.on("changeSong", function (data) {
+    spotifyPlay(data.uri, data.context);
+
+    if (data.paused) {
+      playbackPause();
+    } else {
+      playbackResume();
+    }
   });
-}); // SERVER EVENT LISTENERS
-// Event handler when received usersInGroup message
+  socket.on("pause", function () {
+    playbackPause();
+  });
+  socket.on("resume", function () {
+    playbackResume();
+  });
+  socket.on("whereAreWe", function (socketId) {
+    spotifyPlayer.getCurrentState().then(function (state) {
+      if (!state) {
+        console.error("No music playing.");
+        return;
+      }
 
-socket.on("usersInGroup", function (data) {
-  console.log("usersInGroup:");
-
-  for (var user in data["users"]) {
-    console.log(user);
-    addUser(user, data["users"][user]["name"], data["users"][user]["prof_pic"]);
-  }
-}); // When a new user joins
-
-socket.on("newUser", function (data) {
-  console.log("newUser: " + data);
-  addUser(data.id, data.name, data.prof_pic);
-}); // When a user leaves
-
-socket.on("userLeft", function (data) {
-  console.log("userLeft: " + data);
-  removeUser(data);
-}); // When client sends a banned word
-
-socket.on("messageBanned", function (word) {
-  alert("The message you sent is banned for containing the word \"".concat(word, "\""));
-}); // When a new message is received
-
-socket.on("newMessage", function (data) {
-  addMessage(data.id, data.message, false);
-}); // When a user is typing
-
-socket.on("typing", function (data) {
-  userTyping(data);
-}); // When a user changes the song
-
-socket.on("changeSong", function (data) {
-  spotifyPlay(data.uri, data.context);
-});
-socket.on("pause", function () {
-  playbackPause();
-});
-socket.on("resume", function () {
-  playbackResume();
-}); // CLIENT EVENT LISTENERS
+      currentTrack = state.track_window.current_track.uri;
+      socket.emit("weAreHere", {
+        uri: state.track_window.current_track.uri,
+        context: state.context.uri,
+        position: state.position,
+        socketId: socketId
+      });
+    });
+  });
+  socket.on("weAreHere", function (data) {
+    // So the state event listener does not trigger an emit
+    currentTrack = data.uri;
+    spotifyPlay(data.uri, data.context, data.position);
+    setTimeout(function () {
+      updatePlayer();
+    }, 250);
+  });
+} // CLIENT EVENT LISTENERS
 // When a user presses a key in the message input
+
 
 document.getElementById("messages-input").addEventListener("keyup", function (e) {
   // When enter key is pressed
@@ -213,16 +237,31 @@ function msToMinutesSeconds(ms) {
 
 function spotifyPlay(track) {
   var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  var position = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
   if (context != null) {
-    $.ajax({
-      url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceId,
-      data: JSON.stringify({
+    var bodyData;
+
+    if (position != null) {
+      bodyData = JSON.stringify({
+        "context_uri": context,
+        "offset": {
+          "uri": track
+        },
+        "position_ms": position
+      });
+    } else {
+      bodyData = JSON.stringify({
         "context_uri": context,
         "offset": {
           "uri": track
         }
-      }),
+      });
+    }
+
+    $.ajax({
+      url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceId,
+      data: bodyData,
       type: "PUT",
       headers: {
         "Authorization": "Bearer " + accessToken
@@ -236,11 +275,22 @@ function spotifyPlay(track) {
       }
     });
   } else {
+    var _bodyData;
+
+    if (position != null) {
+      JSON.stringify({
+        "uris": [track],
+        "position_ms": position
+      });
+    } else {
+      JSON.stringify({
+        "uris": [track]
+      });
+    }
+
     $.ajax({
       url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceId,
-      data: JSON.stringify({
-        "uris": [track]
-      }),
+      data: _bodyData,
       type: "PUT",
       headers: {
         "Authorization": "Bearer " + accessToken
@@ -315,7 +365,6 @@ $("#player-control-pause").click(function () {
 }); // When the song changes
 
 function changedSong() {
-  var paused = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
   $("#player-control-pause").css("background-image", "url('img/control-pause.svg')");
   spotifyPlayer.getCurrentState().then(function (state) {
     if (!state) {
@@ -326,7 +375,8 @@ function changedSong() {
     currentTrack = state.track_window.current_track.uri;
     socket.emit("changeSong", {
       uri: state.track_window.current_track.uri,
-      context: state.context.uri
+      context: state.context.uri,
+      paused: state.paused
     });
   });
 } // Back button

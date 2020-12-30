@@ -57,7 +57,7 @@ if (!isset($_GET["group_id"])) {
 <body>
     <!-- SPOTIFY WEB PLAYER -->
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    <script src="js/dist/spotify-player.prod.js"></script>
+    <script src="js/spotify-player.js"></script>
 
     <!-- SEARCH OVERLAY -->
     <div class="screen-block"></div>

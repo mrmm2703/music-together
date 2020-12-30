@@ -107,7 +107,7 @@ $(".song-cover").hover(function () {
 function joinBtn() {
   try {
     if (checkGroupExists(groupIdInput.value) == true) {
-      window.location.href = "https://morahman.me/musictogether/player.php?group_id=" + groupIdInput.value;
+      window.location.href = "https://morahman.me/musictogether/player.php?action=join&group_id=" + groupIdInput.value;
     } else {
       alert("Group does not exist.");
     }
@@ -132,7 +132,7 @@ function createBtn() {
     type: "get",
     dataType: "html",
     success: function success(data) {
-      window.location.href = "player.php?group_id=" + data;
+      window.location.href = "player.php?action=create&group_id=" + data;
     }
   });
 }
