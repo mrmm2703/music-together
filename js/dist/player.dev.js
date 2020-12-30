@@ -19,10 +19,12 @@ function initSocketListeners() {
   socket.on("newUser", function (data) {
     console.log("newUser: " + data);
     addUser(data.id, data.name, data.prof_pic);
+    addMessage(data.id, "Joined the group", true);
   }); // When a user leaves
 
   socket.on("userLeft", function (data) {
     console.log("userLeft: " + data);
+    addMessage(data, "Left the group", true);
     removeUser(data);
   }); // When client sends a banned word
 
@@ -40,18 +42,23 @@ function initSocketListeners() {
 
   socket.on("changeSong", function (data) {
     spotifyPlay(data.uri, data.context);
+    setTimeout(function () {
+      if (data.paused) {
+        playbackPause();
+      } else {
+        playbackResume();
+      }
 
-    if (data.paused) {
-      playbackPause();
-    } else {
-      playbackResume();
-    }
+      addSongChangeMessage(data.id);
+    }, 500);
   });
-  socket.on("pause", function () {
+  socket.on("pause", function (id) {
     playbackPause();
+    addMessage(id, "Paused playback", true);
   });
-  socket.on("resume", function () {
+  socket.on("resume", function (id) {
     playbackResume();
+    addMessage(id, "Resumed playback", true);
   });
   socket.on("whereAreWe", function (socketId) {
     spotifyPlayer.getCurrentState().then(function (state) {
@@ -65,6 +72,7 @@ function initSocketListeners() {
         uri: state.track_window.current_track.uri,
         context: state.context.uri,
         position: state.position,
+        paused: state.paused,
         socketId: socketId
       });
     });
@@ -75,7 +83,11 @@ function initSocketListeners() {
     spotifyPlay(data.uri, data.context, data.position);
     setTimeout(function () {
       updatePlayer();
-    }, 250);
+
+      if (data.paused) {
+        playbackPause();
+      } else playbackResume();
+    }, 1500);
   });
 } // CLIENT EVENT LISTENERS
 // When a user presses a key in the message input
@@ -218,6 +230,7 @@ function searchSpotifyResponse(result) {
     setTimeout(function () {
       changedSong();
       updatePlayer();
+      addSongChangeMessage(user_id);
     }, 500);
   });
   $(".search-item-fan").css("width", "0");
@@ -238,9 +251,18 @@ function msToMinutesSeconds(ms) {
 function spotifyPlay(track) {
   var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   var position = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  console.log("SPOTIFY PLAY:");
+  console.log("TRACK: " + track);
+  console.log("CONTEXT: " + context);
 
   if (context != null) {
     var bodyData;
+
+    if (context.substring(8, 14) == "artist") {
+      bodyData = JSON.stringify({
+        "context_uri": context
+      });
+    }
 
     if (position != null) {
       bodyData = JSON.stringify({
@@ -358,13 +380,16 @@ $("#player-control-pause").click(function () {
   if (paused) {
     playbackPause();
     socket.emit("pause");
+    addMessage(user_id, "Paused playback", true);
   } else {
     playbackResume();
     socket.emit("resume");
+    addMessage(user_id, "Resumed playback", true);
   }
 }); // When the song changes
 
 function changedSong() {
+  var addMsg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
   $("#player-control-pause").css("background-image", "url('img/control-pause.svg')");
   spotifyPlayer.getCurrentState().then(function (state) {
     if (!state) {
@@ -372,13 +397,23 @@ function changedSong() {
       return;
     }
 
+    console.log("CONTEXT: " + state.context.uri);
+    console.log("URI: " + state.track_window.current_track.uri);
     currentTrack = state.track_window.current_track.uri;
     socket.emit("changeSong", {
       uri: state.track_window.current_track.uri,
       context: state.context.uri,
+      name: state.track_window.current_track.name,
       paused: state.paused
     });
+
+    if (state.paused) {
+      playbackPause();
+    } else {
+      playbackResume();
+    }
   });
+  console.log("CHANGED SONG CALLED");
 } // Back button
 
 
@@ -386,8 +421,9 @@ $("#player-control-back").click(function () {
   socket.emit("makeMeHost");
   spotifyPlayer.previousTrack();
   setTimeout(function () {
-    changedSong();
+    changedSong(true);
     updatePlayer();
+    addSongChangeMessage(user_id);
   }, 250);
 }); // Forward button
 
@@ -395,8 +431,9 @@ $("#player-control-forward").click(function () {
   socket.emit("makeMeHost");
   spotifyPlayer.nextTrack();
   setTimeout(function () {
-    changedSong();
+    changedSong(true);
     updatePlayer();
+    addSongChangeMessage(user_id);
   }, 250);
 });
 var playerImg = $("#player-image");
@@ -426,4 +463,16 @@ function playbackResume() {
   spotifyPlayer.resume();
   $("#player-control-pause").css("background-image", "url('img/control-pause.svg')");
   paused = false;
+}
+
+function addSongChangeMessage(personId) {
+  console.log("ADD SONG CHANGE MESSAGE");
+  spotifyPlayer.getCurrentState().then(function (state) {
+    if (!state) {
+      console.error("No music playing.");
+      return;
+    }
+
+    addMessage(personId, "Now playing " + state.track_window.current_track.name, true);
+  });
 }

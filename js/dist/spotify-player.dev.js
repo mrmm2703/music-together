@@ -34,6 +34,8 @@ window.onSpotifyWebPlaybackSDKReady = function () {
 
   spotifyPlayer.addListener("player_state_changed", function (state) {
     // Check only check for song changes
+    updatePlayer();
+
     if (state.track_window.current_track.uri != currentTrack) {
       changedSong();
       updatePlayer();

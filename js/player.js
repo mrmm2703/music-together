@@ -21,11 +21,13 @@ function initSocketListeners() {
     socket.on("newUser", (data) => {
         console.log("newUser: " + data)
         addUser(data.id, data.name, data.prof_pic)
+        addMessage(data.id, "Joined the group", true)
     })
 
     // When a user leaves
     socket.on("userLeft", (data) => {
         console.log("userLeft: " + data)
+        addMessage(data, "Left the group", true)
         removeUser(data)
     })
 
@@ -47,19 +49,24 @@ function initSocketListeners() {
     // When a user changes the song
     socket.on("changeSong", (data) => {
         spotifyPlay(data.uri, data.context)
-        if (data.paused) {
-            playbackPause()
-        } else {
-            playbackResume()
-        }
+        setTimeout(() => {
+            if (data.paused) {
+                playbackPause()
+            } else {
+                playbackResume()
+            }
+            addSongChangeMessage(data.id)
+        }, 500);
     })
 
-    socket.on("pause", () => {
+    socket.on("pause", (id) => {
         playbackPause()
+        addMessage(id, "Paused playback", true)
     })
 
-    socket.on("resume", () => {
+    socket.on("resume", (id) => {
         playbackResume()
+        addMessage(id, "Resumed playback", true)
     })
 
     socket.on("whereAreWe", (socketId) => {
@@ -73,6 +80,7 @@ function initSocketListeners() {
                 uri: state.track_window.current_track.uri,
                 context: state.context.uri,
                 position: state.position,
+                paused: state.paused,
                 socketId: socketId
             })
         })
@@ -82,9 +90,15 @@ function initSocketListeners() {
         // So the state event listener does not trigger an emit
         currentTrack = data.uri
         spotifyPlay(data.uri, data.context, data.position)
+
         setTimeout(() => {
             updatePlayer()
-        }, 250);
+            if (data.paused) {
+                playbackPause()
+            } else (
+                playbackResume()
+            )
+        }, 1500);
     })
 }
 
@@ -232,6 +246,7 @@ function searchSpotifyResponse(result) {
         setTimeout(() => {
             changedSong()
             updatePlayer()
+            addSongChangeMessage(user_id)
         }, 500);
     })
     $(".search-item-fan").css("width", "0")
@@ -251,8 +266,19 @@ function msToMinutesSeconds(ms) {
 
 // Play a track
 function spotifyPlay(track, context=null, position=null) {
+    console.log("SPOTIFY PLAY:")
+    console.log("TRACK: " + track)
+    console.log("CONTEXT: " + context)
+
+
     if (context != null) {
         let bodyData
+        if (context.substring(8,14) == "artist") {
+            bodyData = JSON.stringify({
+                "context_uri": context,
+                
+            })
+        }
         if (position != null) {
             bodyData = JSON.stringify({
                 "context_uri": context,
@@ -361,27 +387,38 @@ $("#player-control-pause").click(function() {
     if (paused) {
         playbackPause()
         socket.emit("pause")
+        addMessage(user_id, "Paused playback", true)
     } else {
         playbackResume()
         socket.emit("resume")
+        addMessage(user_id, "Resumed playback", true)
     }
 })
 
 // When the song changes
-function changedSong() {
+function changedSong(addMsg = false) {
     $("#player-control-pause").css("background-image", "url('img/control-pause.svg')")
     spotifyPlayer.getCurrentState().then(state => {
         if (!state) {
             console.error("No music playing.")
             return
         }
+        console.log("CONTEXT: " + state.context.uri)
+        console.log("URI: " + state.track_window.current_track.uri)
         currentTrack = state.track_window.current_track.uri
         socket.emit("changeSong", {
             uri: state.track_window.current_track.uri,
             context: state.context.uri,
+            name: state.track_window.current_track.name,
             paused: state.paused
         })
+        if (state.paused) {
+            playbackPause()
+        } else {
+            playbackResume()
+        }
     })
+    console.log("CHANGED SONG CALLED")
 }
 
 // Back button
@@ -389,8 +426,9 @@ $("#player-control-back").click(function() {
     socket.emit("makeMeHost")
     spotifyPlayer.previousTrack()
     setTimeout(() => {
-        changedSong()
+        changedSong(true)
         updatePlayer()
+        addSongChangeMessage(user_id)
     }, 250);
 })
 
@@ -399,8 +437,9 @@ $("#player-control-forward").click(function() {
     socket.emit("makeMeHost")
     spotifyPlayer.nextTrack()
     setTimeout(() => {
-        changedSong()
+        changedSong(true)
         updatePlayer()
+        addSongChangeMessage(user_id)
     }, 250);
 })
 
@@ -425,11 +464,22 @@ function updatePlayer() {
 function playbackPause() {
     spotifyPlayer.pause()
     $("#player-control-pause").css("background-image", "url('img/control-play.svg')")
-    paused = true;
+    paused = true
 }
 
 function playbackResume() {
     spotifyPlayer.resume()
     $("#player-control-pause").css("background-image", "url('img/control-pause.svg')")
     paused = false;
+}
+
+function addSongChangeMessage(personId) {
+    console.log("ADD SONG CHANGE MESSAGE")
+    spotifyPlayer.getCurrentState().then(state => {
+        if (!state) {
+            console.error("No music playing.")
+            return
+        }
+        addMessage(personId, "Now playing " + state.track_window.current_track.name, true)
+    })
 }
