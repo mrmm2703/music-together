@@ -193,8 +193,8 @@ function makeSearchItem(heading, subheading, imageUrl, type, id, extra="") {
         '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' +
             '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' +
             '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' +
-                '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' +
-                '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' +
+                ((type != "artist") ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' : '') +
+                ((type == "song") ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' : '') +
                 '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' +
             '</div>' +
         '</div>' +

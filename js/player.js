@@ -59,16 +59,19 @@ function initSocketListeners() {
         }, 500);
     })
 
+    // When a pause message is received from the server
     socket.on("pause", (id) => {
         playbackPause()
         addMessage(id, "Paused playback", true)
     })
 
+    // When a resume message is received from the server
     socket.on("resume", (id) => {
         playbackResume()
         addMessage(id, "Resumed playback", true)
     })
 
+    // When another user wants to know where the group is at
     socket.on("whereAreWe", (socketId) => {
         spotifyPlayer.getCurrentState().then(state => {
             if (!state) {
@@ -86,6 +89,7 @@ function initSocketListeners() {
         })
     })
 
+    // Response from whereAreWe
     socket.on("weAreHere", (data) => {
         // So the state event listener does not trigger an emit
         currentTrack = data.uri
@@ -100,9 +104,21 @@ function initSocketListeners() {
             )
         }, 1500);
     })
+
+    // When a request to add to queue is received
+    socket.on("addToQueue", (data) => {
+        addToSpotifyQueue(data.uri)
+        addMessage(data.id, "Added " + data.name + " by " + data.artist + " to the queue", true)
+    })
 }
 
 // CLIENT EVENT LISTENERS
+
+const dummySearch = document.getElementById("dummy-search")
+const actualSearch = document.getElementById("search-input-input")
+var searchQuery = ""
+const screenBlock = $(".screen-block") 
+const searchOverlay = $(".search-overlay")
 
 // When a user presses a key in the message input
 document.getElementById("messages-input").addEventListener("keyup", function(e) {
@@ -115,32 +131,6 @@ document.getElementById("messages-input").addEventListener("keyup", function(e) 
         socket.emit("typing")
     }
 })
-
-// NON-CLIENT-SERVER THINGS
-
-var searchQuery = ""
-const dummySearch = document.getElementById("dummy-search")
-const actualSearch = document.getElementById("search-input-input")
-const screenBlock = $(".screen-block") 
-const searchOverlay = $(".search-overlay")
-
-// Fade in search overlay
-function fadeInSearch() {
-    screenBlock.css("display", "block")
-    screenBlock.animate({opacity: 1}, 250)
-    searchOverlay.css("display", "grid")
-    searchOverlay.animate({opacity: 1}, 250)
-}
-
-// Fade out search overlay
-function fadeOutSearch() {
-    screenBlock.animate({opacity: 0}, 250)
-    searchOverlay.animate({opacity: 0}, 250)
-    setTimeout(() => {
-        screenBlock.css("display", "none")
-        searchOverlay.css("display", "none")
-    }, 250);
-}
 
 // Player search input event
 dummySearch.addEventListener("keyup", function(e) {
@@ -171,6 +161,50 @@ screenBlock.click(function() {
     fadeOutSearch()
 })
 
+// PLAYER UI FUNCTIONS
+
+// Fade in search overlay
+function fadeInSearch() {
+    screenBlock.css("display", "block")
+    screenBlock.animate({opacity: 1}, 250)
+    searchOverlay.css("display", "grid")
+    searchOverlay.animate({opacity: 1}, 250)
+}
+
+// Fade out search overlay
+function fadeOutSearch() {
+    screenBlock.animate({opacity: 0}, 250)
+    searchOverlay.animate({opacity: 0}, 250)
+    setTimeout(() => {
+        screenBlock.css("display", "none")
+        searchOverlay.css("display", "none")
+    }, 250);
+}
+
+// Add a message in the message panel when song changes
+function addSongChangeMessage(personId) {
+    console.log("ADD SONG CHANGE MESSAGE")
+    spotifyPlayer.getCurrentState().then(state => {
+        if (!state) {
+            console.error("No music playing.")
+            return
+        }
+        addMessage(personId, "Now playing " + state.track_window.current_track.name, true)
+    })
+}
+
+// UTILITY FUNCTIONS
+
+// Convert milliseconds into seconds
+function msToMinutesSeconds(ms) {
+    let seconds = ms / 1000
+    let min = Math.floor(ms / 60)
+    let sec = Math.floor(seconds - min)
+    return min.toString() + ":" + sec.toString().padStart(2, "0")
+}
+
+// SPOTIFY API FUNCTIONS
+
 // Search Spotify with a search query
 function searchSpotify(query) {
     $.ajax({
@@ -200,6 +234,7 @@ function searchSpotifyResponse(result) {
     addArtistResults(result["artists"])
     addAlbumsResults(result["albums"])
     addPlaylistsResults(result["playlists"])
+    // Add the event handlers everytime a new set of search results is made
     $(".search-item-image-container").hover(
         function() {
             console.log($(this).data("id"))
@@ -232,6 +267,7 @@ function searchSpotifyResponse(result) {
                 }, 150)
         }
     )
+    // Add click listeners to the play buttons in search
     $(".search-item-play").click(function() {
         socket.emit("makeMeHost")
         if ($(this).data("type") == "song") {
@@ -249,19 +285,27 @@ function searchSpotifyResponse(result) {
             addSongChangeMessage(user_id)
         }, 500);
     })
+    // Add to queue button handler
+    $(".search-item-queue").click(function() {
+        // Extract song information using HTML elements contents
+        let songUri = "spotify:track:"+$(this).data("id")
+        let songName = $(".search-item-name[data-id='"+$(this).data("id")+"']").html()
+        let songArtist = $(".search-item-artist[data-id='"+$(this).data("id")+"']").html()
+        let songImage =  $(".search-item-image[data-id='"+$(this).data("id")+"']").attr("src")
+        // Add to queue and send to other clients
+        addToSpotifyQueue(songUri)
+        socket.emit("addToQueue", {
+            uri: songUri,
+            name: songName,
+            artist: songArtist,
+            image: songImage
+        })
+        addMessage(user_id, "Added " + songName + " by " + songArtist + " to the queue.", true)
+    })
+    // Initialise the slide-out fans in the unhidden state
     $(".search-item-fan").css("width", "0")
     $(".search-item-fan").css("padding-left", "0")
     $(".search-item-fan").css("padding-right", "0")
-}
-
-// UTILITY FUNCTIONS
-
-// Convert milliseconds into seconds
-function msToMinutesSeconds(ms) {
-    let seconds = ms / 1000
-    let min = Math.floor(ms / 60)
-    let sec = Math.floor(seconds - min)
-    return min.toString() + ":" + sec.toString().padStart(2, "0")
 }
 
 // Play a track
@@ -276,7 +320,7 @@ function spotifyPlay(track, context=null, position=null) {
         if (context.substring(8,14) == "artist") {
             bodyData = JSON.stringify({
                 "context_uri": context,
-                
+
             })
         }
         if (position != null) {
@@ -336,6 +380,7 @@ function spotifyPlay(track, context=null, position=null) {
     }
 }
 
+// Play an artist
 function spotifyPlayArtist(artist) {
     $.ajax({
         url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
@@ -356,6 +401,7 @@ function spotifyPlayArtist(artist) {
     })
 }
 
+// Play an album
 function spotifyPlayPlaylistAlbum(x) {
     $.ajax({
         url: "https://api.spotify.com/v1/me/player/play?device_id="+deviceId,
@@ -377,7 +423,26 @@ function spotifyPlayPlaylistAlbum(x) {
     })
 }
 
-// PLAYER CONTROL LISTENERS
+// Add a song to the user's queue
+function addToSpotifyQueue(uri) {
+    $.ajax({
+        url: "https://api.spotify.com/v1/me/player/queue?uri=" +
+            uri + "&device_id=" + deviceId,
+        type: "POST",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        },
+        success: function(result) {
+            console.log("ADD TO QUEUE SUCCESSFUL")
+        },
+        error: function(error) {
+            console.error("ADD TO QUEUE FAILED:")
+            console.error(error)
+        }
+    })
+}
+
+// PLAYER FUNCTIONS
 
 var paused = false
 
@@ -471,15 +536,4 @@ function playbackResume() {
     spotifyPlayer.resume()
     $("#player-control-pause").css("background-image", "url('img/control-pause.svg')")
     paused = false;
-}
-
-function addSongChangeMessage(personId) {
-    console.log("ADD SONG CHANGE MESSAGE")
-    spotifyPlayer.getCurrentState().then(state => {
-        if (!state) {
-            console.error("No music playing.")
-            return
-        }
-        addMessage(personId, "Now playing " + state.track_window.current_track.name, true)
-    })
 }

@@ -26,7 +26,7 @@ $auth_redirect_uri = "https://morahman.me/musictogether/auth/auth_code_callback.
  * The required scopes during the authorisation flow, seperated by spaces.
  * @var string $auth_scopes
  */
-$auth_scopes = "streaming user-read-email user-read-private user-read-recently-played";
+$auth_scopes = "streaming user-read-email user-read-private user-read-recently-played user-modify-playback-state";
 
 // Some general constants
 

@@ -51,15 +51,18 @@ function initSocketListeners() {
 
       addSongChangeMessage(data.id);
     }, 500);
-  });
+  }); // When a pause message is received from the server
+
   socket.on("pause", function (id) {
     playbackPause();
     addMessage(id, "Paused playback", true);
-  });
+  }); // When a resume message is received from the server
+
   socket.on("resume", function (id) {
     playbackResume();
     addMessage(id, "Resumed playback", true);
-  });
+  }); // When another user wants to know where the group is at
+
   socket.on("whereAreWe", function (socketId) {
     spotifyPlayer.getCurrentState().then(function (state) {
       if (!state) {
@@ -76,7 +79,8 @@ function initSocketListeners() {
         socketId: socketId
       });
     });
-  });
+  }); // Response from whereAreWe
+
   socket.on("weAreHere", function (data) {
     // So the state event listener does not trigger an emit
     currentTrack = data.uri;
@@ -88,10 +92,20 @@ function initSocketListeners() {
         playbackPause();
       } else playbackResume();
     }, 1500);
+  }); // When a request to add to queue is received
+
+  socket.on("addToQueue", function (data) {
+    addToSpotifyQueue(data.uri);
+    addMessage(data.id, "Added " + data.name + " by " + data.artist + " to the queue", true);
   });
 } // CLIENT EVENT LISTENERS
-// When a user presses a key in the message input
 
+
+var dummySearch = document.getElementById("dummy-search");
+var actualSearch = document.getElementById("search-input-input");
+var searchQuery = "";
+var screenBlock = $(".screen-block");
+var searchOverlay = $(".search-overlay"); // When a user presses a key in the message input
 
 document.getElementById("messages-input").addEventListener("keyup", function (e) {
   // When enter key is pressed
@@ -103,39 +117,7 @@ document.getElementById("messages-input").addEventListener("keyup", function (e)
     // When any other is pressed
     socket.emit("typing");
   }
-}); // NON-CLIENT-SERVER THINGS
-
-var searchQuery = "";
-var dummySearch = document.getElementById("dummy-search");
-var actualSearch = document.getElementById("search-input-input");
-var screenBlock = $(".screen-block");
-var searchOverlay = $(".search-overlay"); // Fade in search overlay
-
-function fadeInSearch() {
-  screenBlock.css("display", "block");
-  screenBlock.animate({
-    opacity: 1
-  }, 250);
-  searchOverlay.css("display", "grid");
-  searchOverlay.animate({
-    opacity: 1
-  }, 250);
-} // Fade out search overlay
-
-
-function fadeOutSearch() {
-  screenBlock.animate({
-    opacity: 0
-  }, 250);
-  searchOverlay.animate({
-    opacity: 0
-  }, 250);
-  setTimeout(function () {
-    screenBlock.css("display", "none");
-    searchOverlay.css("display", "none");
-  }, 250);
-} // Player search input event
-
+}); // Player search input event
 
 dummySearch.addEventListener("keyup", function (e) {
   // When enter key is pressed
@@ -161,7 +143,57 @@ actualSearch.addEventListener("keyup", function (e) {
 
 screenBlock.click(function () {
   fadeOutSearch();
-}); // Search Spotify with a search query
+}); // PLAYER UI FUNCTIONS
+// Fade in search overlay
+
+function fadeInSearch() {
+  screenBlock.css("display", "block");
+  screenBlock.animate({
+    opacity: 1
+  }, 250);
+  searchOverlay.css("display", "grid");
+  searchOverlay.animate({
+    opacity: 1
+  }, 250);
+} // Fade out search overlay
+
+
+function fadeOutSearch() {
+  screenBlock.animate({
+    opacity: 0
+  }, 250);
+  searchOverlay.animate({
+    opacity: 0
+  }, 250);
+  setTimeout(function () {
+    screenBlock.css("display", "none");
+    searchOverlay.css("display", "none");
+  }, 250);
+} // Add a message in the message panel when song changes
+
+
+function addSongChangeMessage(personId) {
+  console.log("ADD SONG CHANGE MESSAGE");
+  spotifyPlayer.getCurrentState().then(function (state) {
+    if (!state) {
+      console.error("No music playing.");
+      return;
+    }
+
+    addMessage(personId, "Now playing " + state.track_window.current_track.name, true);
+  });
+} // UTILITY FUNCTIONS
+// Convert milliseconds into seconds
+
+
+function msToMinutesSeconds(ms) {
+  var seconds = ms / 1000;
+  var min = Math.floor(ms / 60);
+  var sec = Math.floor(seconds - min);
+  return min.toString() + ":" + sec.toString().padStart(2, "0");
+} // SPOTIFY API FUNCTIONS
+// Search Spotify with a search query
+
 
 function searchSpotify(query) {
   $.ajax({
@@ -187,7 +219,8 @@ function searchSpotifyResponse(result) {
   addSongsResults(result["tracks"]);
   addArtistResults(result["artists"]);
   addAlbumsResults(result["albums"]);
-  addPlaylistsResults(result["playlists"]);
+  addPlaylistsResults(result["playlists"]); // Add the event handlers everytime a new set of search results is made
+
   $(".search-item-image-container").hover(function () {
     console.log($(this).data("id"));
     $(".search-item-fan[data-id='" + $(this).data("id") + "']").stop(true, true);
@@ -213,7 +246,8 @@ function searchSpotifyResponse(result) {
       marginLeft: "1.6vw",
       opacity: 1
     }, 150);
-  });
+  }); // Add click listeners to the play buttons in search
+
   $(".search-item-play").click(function () {
     socket.emit("makeMeHost");
 
@@ -232,19 +266,28 @@ function searchSpotifyResponse(result) {
       updatePlayer();
       addSongChangeMessage(user_id);
     }, 500);
-  });
+  }); // Add to queue button handler
+
+  $(".search-item-queue").click(function () {
+    // Extract song information using HTML elements contents
+    var songUri = "spotify:track:" + $(this).data("id");
+    var songName = $(".search-item-name[data-id='" + $(this).data("id") + "']").html();
+    var songArtist = $(".search-item-artist[data-id='" + $(this).data("id") + "']").html();
+    var songImage = $(".search-item-image[data-id='" + $(this).data("id") + "']").attr("src"); // Add to queue and send to other clients
+
+    addToSpotifyQueue(songUri);
+    socket.emit("addToQueue", {
+      uri: songUri,
+      name: songName,
+      artist: songArtist,
+      image: songImage
+    });
+    addMessage(user_id, "Added " + songName + " by " + songArtist + " to the queue.", true);
+  }); // Initialise the slide-out fans in the unhidden state
+
   $(".search-item-fan").css("width", "0");
   $(".search-item-fan").css("padding-left", "0");
   $(".search-item-fan").css("padding-right", "0");
-} // UTILITY FUNCTIONS
-// Convert milliseconds into seconds
-
-
-function msToMinutesSeconds(ms) {
-  var seconds = ms / 1000;
-  var min = Math.floor(ms / 60);
-  var sec = Math.floor(seconds - min);
-  return min.toString() + ":" + sec.toString().padStart(2, "0");
 } // Play a track
 
 
@@ -326,7 +369,8 @@ function spotifyPlay(track) {
       }
     });
   }
-}
+} // Play an artist
+
 
 function spotifyPlayArtist(artist) {
   $.ajax({
@@ -346,7 +390,8 @@ function spotifyPlayArtist(artist) {
       console.error(_error4);
     }
   });
-}
+} // Play an album
+
 
 function spotifyPlayPlaylistAlbum(x) {
   $.ajax({
@@ -369,7 +414,25 @@ function spotifyPlayPlaylistAlbum(x) {
       console.error(_error5);
     }
   });
-} // PLAYER CONTROL LISTENERS
+} // Add a song to the user's queue
+
+
+function addToSpotifyQueue(uri) {
+  $.ajax({
+    url: "https://api.spotify.com/v1/me/player/queue?uri=" + uri + "&device_id=" + deviceId,
+    type: "POST",
+    headers: {
+      "Authorization": "Bearer " + accessToken
+    },
+    success: function success(result) {
+      console.log("ADD TO QUEUE SUCCESSFUL");
+    },
+    error: function error(_error6) {
+      console.error("ADD TO QUEUE FAILED:");
+      console.error(_error6);
+    }
+  });
+} // PLAYER FUNCTIONS
 
 
 var paused = false; // Play/Pause button
@@ -463,16 +526,4 @@ function playbackResume() {
   spotifyPlayer.resume();
   $("#player-control-pause").css("background-image", "url('img/control-pause.svg')");
   paused = false;
-}
-
-function addSongChangeMessage(personId) {
-  console.log("ADD SONG CHANGE MESSAGE");
-  spotifyPlayer.getCurrentState().then(function (state) {
-    if (!state) {
-      console.error("No music playing.");
-      return;
-    }
-
-    addMessage(personId, "Now playing " + state.track_window.current_track.name, true);
-  });
 }
