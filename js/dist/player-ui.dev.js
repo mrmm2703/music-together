@@ -36,7 +36,10 @@ function addMessage(id, message) {
   if (!emphasise) {
     messages_container.append("" + '<div class="message ' + person + ' message-' + id + '">' + '<div class="message-name">' + name + '</div>' + '<div class="message-text">' + message + '</div>' + '<div class="message-time">' + time + '</div>' + '</div>');
   } else {
-    messages_container.append("" + '<div class="message ' + person + ' message-' + id + '">' + '<div class="message-name">' + name + '</div>' + '<div class="message-text">' + "<em>" + message + "</em>" + '</div>' + '<div class="message-time">' + time + '</div>' + '</div>');
+    // Check if emp message already sent
+    if (!($(".message-text em").last().text() == message && $(".message-name").last().text() == name)) {
+      messages_container.append("" + '<div class="message ' + person + ' message-' + id + '">' + '<div class="message-name">' + name + '</div>' + '<div class="message-text">' + "<em>" + message + "</em>" + '</div>' + '<div class="message-time">' + time + '</div>' + '</div>');
+    }
   }
 
   messages_container.scrollTop(messages_container[0].scrollHeight);

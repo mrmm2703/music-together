@@ -618,10 +618,12 @@ html, body {
   font-size: 20px;
   font-weight: 600;
   text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  max-lines: 2;
 }
 .search-item-container .search-item-text-container .search-item-artist {
   font-size: 20px;
   text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  max-lines: 1;
 }
 
 .search-type-container {
