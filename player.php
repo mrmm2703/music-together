@@ -59,6 +59,11 @@ if (!isset($_GET["group_id"])) {
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="js/spotify-player.js"></script>
 
+    <!-- <div class="popup-container">
+        <img src="img/check-mark.png">
+        <div>Some sort of message</div>
+    </div> -->
+
     <!-- SEARCH OVERLAY -->
     <div class="screen-block"></div>
     <div class="search-overlay">
@@ -90,6 +95,9 @@ if (!isset($_GET["group_id"])) {
 
         </div>
     </div>
+
+    <audio style="display: none" id="dummyAudio" src="https://raw.githubusercontent.com/anars/blank-audio/master/15-seconds-of-silence.mp3">
+    </audio>
 
     <!-- MAIN PLAYER CONTENT -->
     <div class="grid-container">

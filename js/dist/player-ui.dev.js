@@ -142,4 +142,30 @@ function makeSearchItem(heading, subheading, imageUrl, type, id) {
   var extra = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : "";
   var item = "" + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' + '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' + (type != "artist" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' : '') + (type == "song" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' : '') + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' + '</div>' + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-name">' + heading + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' + subheading + '</div>' + '</div>' + '</div>';
   return item;
+} // Function to make slide in popups
+
+
+var popupIndex = 0;
+
+function makePopup(message) {
+  var error = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var id = popupIndex;
+  popupIndex++;
+  var src = "img/check-mark.png";
+
+  if (error) {
+    src = "img/error.png";
+  }
+
+  var item = "" + '<div style="z-index: ' + (250 + id) + '" id="popup-' + id + '" class="popup-container">' + '<img src="' + src + '">' + '<div>' + message + '</div>' + '</div>';
+  $("body").append(item);
+  $("#popup-" + id).animate({
+    top: "30px"
+  }, 250).delay(3000).animate({
+    top: "50px",
+    opacity: 0
+  }, 150);
+  setTimeout(function () {
+    $("#popup-" + id).remove();
+  }, 3500);
 }

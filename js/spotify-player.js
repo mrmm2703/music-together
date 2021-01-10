@@ -34,11 +34,26 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
     // Event listeners
     spotifyPlayer.addListener("player_state_changed", state => {
-        // Check only check for song changes
+        updateMediaSession()
         updatePlayer()
+        // Check only check for song changes
         if (state.track_window.current_track.uri != currentTrack) {
             changedSong()
             updatePlayer()
+            addSongChangeMessage(user_id)
+        }
+        if (state.paused != paused)  {
+            if (state.paused) {
+                playbackPause()
+                socket.emit("pause")
+                addMessage(user_id, "Paused playback", true)
+            } else {
+                playbackResume()
+                socket.emit("resume")
+                addMessage(user_id, "Resumed playback", true)
+            }
+            paused = !paused
+
         }
 
     })
@@ -55,6 +70,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         })
         if (urlParams.get("action") == "join") {
             socket.emit("whereAreWe")
+        } else {
+            if (urlParams.has("startSong")) {
+                spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"))
+            }
         }
     })
 

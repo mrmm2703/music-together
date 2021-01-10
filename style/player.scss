@@ -561,3 +561,30 @@
         margin-top: 1em;
     }
 }
+
+.popup-container {
+    position: fixed;
+    align-items: center;
+    top: -90px;
+    height: 30px;
+    align-self: center;
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+        ". .";
+    padding: 20px;
+    & > img {
+        width: 25px;
+        height: 25px;
+        margin-right: 10px
+    }
+    & > div {
+        font-weight: 600;
+    }
+    background-color: $messageMeBackground;
+    border-radius: 15px;
+    @include shadow;
+    z-index: 250;
+}

@@ -59,7 +59,7 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
                 echo '
                 <div class="song-container" id="' . $track->id . '-cont">
                     <audio class="preview-sound" id="' . $track->id . '-audio" preload="auto" loop src="' . $track->preview_sound . '"></audio>
-                    <a class="song-cover" href="#" id="' . $track->id . '">
+                    <a class="song-cover" href="#" id="' . $track->id . '" data-context="' . $track->context . '">
                         <img src="' . $track->cover_image .'" class="hvr-grow"/>
                     </a>
                     <div class="song-details-container">

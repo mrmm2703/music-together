@@ -209,3 +209,24 @@ function makeSearchItem(heading, subheading, imageUrl, type, id, extra="") {
     '</div>'
     return item
 }
+
+// Function to make slide in popups
+let popupIndex = 0
+function makePopup(message, error=false) {
+    let id = popupIndex
+    popupIndex ++
+    let src = "img/check-mark.png"
+    if (error) {
+        src = "img/error.png"
+    }
+    let item = "" +
+    '<div style="z-index: ' + (250+id) + '" id="popup-' + id + '" class="popup-container">' +
+        '<img src="' + src + '">' +
+        '<div>' + message + '</div>' +
+    '</div>'
+    $("body").append(item)
+    $("#popup-" + id).animate({top: "30px"}, 250).delay(3000).animate({top: "50px", opacity: 0}, 150)
+    setTimeout(() => {
+        $("#popup-" + id).remove()
+    }, 3500);
+}

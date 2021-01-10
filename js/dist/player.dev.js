@@ -1,7 +1,8 @@
 "use strict";
 
 // Some HTML elements
-var message_input = document.getElementById("messages-input"); // Send a joinedGroup message to the Node.js server
+var message_input = document.getElementById("messages-input");
+var dummyAudio = document.getElementById("dummyAudio"); // Send a joinedGroup message to the Node.js server
 
 $(document).ready(function () {}); // SERVER EVENT LISTENERS
 
@@ -41,7 +42,7 @@ function initSocketListeners() {
   }); // When a user changes the song
 
   socket.on("changeSong", function (data) {
-    spotifyPlay(data.uri, data.context);
+    spotifyPlay(data.uri, data.context, null, null);
     setTimeout(function () {
       if (data.paused) {
         playbackPause();
@@ -54,13 +55,17 @@ function initSocketListeners() {
   }); // When a pause message is received from the server
 
   socket.on("pause", function (id) {
-    playbackPause();
-    addMessage(id, "Paused playback", true);
+    if (!paused) {
+      playbackPause();
+      addMessage(id, "Paused playback", true);
+    }
   }); // When a resume message is received from the server
 
   socket.on("resume", function (id) {
-    playbackResume();
-    addMessage(id, "Resumed playback", true);
+    if (paused) {
+      playbackResume();
+      addMessage(id, "Resumed playback", true);
+    }
   }); // When another user wants to know where the group is at
 
   socket.on("whereAreWe", function (socketId) {
@@ -84,7 +89,7 @@ function initSocketListeners() {
   socket.on("weAreHere", function (data) {
     // So the state event listener does not trigger an emit
     currentTrack = data.uri;
-    spotifyPlay(data.uri, data.context, data.position);
+    spotifyPlay(data.uri, data.context, data.position, null);
     setTimeout(function () {
       updatePlayer();
 
@@ -92,6 +97,11 @@ function initSocketListeners() {
         playbackPause();
       } else playbackResume();
     }, 1500);
+    setTimeout(function () {
+      data.queue.forEach(function (uri) {
+        addToSpotifyQueue(uri);
+      });
+    }, 5000);
   }); // When a request to add to queue is received
 
   socket.on("addToQueue", function (data) {
@@ -222,7 +232,6 @@ function searchSpotifyResponse(result) {
   addPlaylistsResults(result["playlists"]); // Add the event handlers everytime a new set of search results is made
 
   $(".search-item-image-container").hover(function () {
-    console.log($(this).data("id"));
     $(".search-item-fan[data-id='" + $(this).data("id") + "']").stop(true, true);
     $(".search-item-fan[data-id='" + $(this).data("id") + "']").animate({
       width: "18em",
@@ -252,13 +261,13 @@ function searchSpotifyResponse(result) {
     socket.emit("makeMeHost");
 
     if ($(this).data("type") == "song") {
-      spotifyPlay("spotify:track:" + $(this).data("id"), "spotify:album:" + $(this).data("extra"));
+      spotifyPlay("spotify:track:" + $(this).data("id"), "spotify:album:" + $(this).data("extra"), null, true);
     } else if ($(this).data("type") == "playlist") {
-      spotifyPlayPlaylistAlbum("spotify:playlist:" + $(this).data("id"));
+      spotifyPlayPlaylistAlbum("spotify:playlist:" + $(this).data("id"), true);
     } else if ($(this).data("type") == "artist") {
       spotifyPlayArtist("spotify:artist:" + $(this).data("id"));
     } else if ($(this).data("type") == "album") {
-      spotifyPlayPlaylistAlbum("spotify:album:" + $(this).data("id"));
+      spotifyPlayPlaylistAlbum("spotify:album:" + $(this).data("id"), true);
     }
 
     setTimeout(function () {
@@ -266,6 +275,7 @@ function searchSpotifyResponse(result) {
       updatePlayer();
       addSongChangeMessage(user_id);
     }, 500);
+    dummyAudio.play();
   }); // Add to queue button handler
 
   $(".search-item-queue").click(function () {
@@ -275,7 +285,7 @@ function searchSpotifyResponse(result) {
     var songArtist = $(".search-item-artist[data-id='" + $(this).data("id") + "']").html();
     var songImage = $(".search-item-image[data-id='" + $(this).data("id") + "']").attr("src"); // Add to queue and send to other clients
 
-    addToSpotifyQueue(songUri);
+    addToSpotifyQueue(songUri, true);
     socket.emit("addToQueue", {
       uri: songUri,
       name: songName,
@@ -294,6 +304,7 @@ function searchSpotifyResponse(result) {
 function spotifyPlay(track) {
   var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   var position = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  var showPopup = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   console.log("SPOTIFY PLAY:");
   console.log("TRACK: " + track);
   console.log("CONTEXT: " + context);
@@ -333,10 +344,18 @@ function spotifyPlay(track) {
       },
       success: function success(result) {
         console.log("PLAY REQUEST SUCCESSFUL");
+
+        if (showPopup) {
+          makePopup("Playing song");
+        }
       },
       error: function error(_error2) {
         console.error("PLAY RESULT FAILED:");
         console.error(_error2);
+
+        if (showPopup) {
+          makePopup("Could not play song", true);
+        }
       }
     });
   } else {
@@ -362,38 +381,26 @@ function spotifyPlay(track) {
       },
       success: function success(result) {
         console.log("PLAY REQUEST SUCCESSFUL");
+
+        if (showPopup) {
+          makePopup("Playing song");
+        }
       },
       error: function error(_error3) {
         console.error("PLAY RESULT FAILED:");
         console.error(_error3);
+
+        if (showPopup) {
+          makePopup("Could not play song", true);
+        }
       }
     });
   }
-} // Play an artist
-
-
-function spotifyPlayArtist(artist) {
-  $.ajax({
-    url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceId,
-    data: JSON.stringify({
-      "context_uri": artist
-    }),
-    type: "PUT",
-    headers: {
-      "Authorization": "Bearer " + accessToken
-    },
-    success: function success(result) {
-      console.log("PLAY REQUEST SUCCESSFUL");
-    },
-    error: function error(_error4) {
-      console.error("PLAY RESULT FAILED:");
-      console.error(_error4);
-    }
-  });
 } // Play an album
 
 
 function spotifyPlayPlaylistAlbum(x) {
+  var showPopup = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   $.ajax({
     url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceId,
     data: JSON.stringify({
@@ -408,16 +415,27 @@ function spotifyPlayPlaylistAlbum(x) {
     },
     success: function success(result) {
       console.log("PLAY REQUEST SUCCESSFUL");
+
+      if (showPopup) {
+        makePopup("Playing successfully");
+      }
     },
-    error: function error(_error5) {
+    error: function error(_error4) {
       console.error("PLAY RESULT FAILED:");
-      console.error(_error5);
+      console.error(_error4);
+      makePopup("Couldn't play", true);
     }
   });
 } // Add a song to the user's queue
 
 
 function addToSpotifyQueue(uri) {
+  var showMessage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var ret = false;
+  console.log(uri);
+  console.log("addToSpotifyQueue");
+  console.log("https://api.spotify.com/v1/me/player/queue?uri=" + uri + "&device_id=" + deviceId);
+  console.log("Bearer " + accessToken);
   $.ajax({
     url: "https://api.spotify.com/v1/me/player/queue?uri=" + uri + "&device_id=" + deviceId,
     type: "POST",
@@ -426,10 +444,19 @@ function addToSpotifyQueue(uri) {
     },
     success: function success(result) {
       console.log("ADD TO QUEUE SUCCESSFUL");
+      console.log(result);
+
+      if (showMessage) {
+        makePopup("Added to queue");
+      }
     },
-    error: function error(_error6) {
+    error: function error(_error5) {
       console.error("ADD TO QUEUE FAILED:");
-      console.error(_error6);
+      console.error(_error5);
+
+      if (showMessage) {
+        makePopup("Could not add to queue", true);
+      }
     }
   });
 } // PLAYER FUNCTIONS
@@ -518,12 +545,79 @@ function updatePlayer() {
 
 function playbackPause() {
   spotifyPlayer.pause();
+  dummyAudio.pause();
   $("#player-control-pause").css("background-image", "url('img/control-play.svg')");
   paused = true;
 }
 
 function playbackResume() {
   spotifyPlayer.resume();
+  dummyAudio.play();
   $("#player-control-pause").css("background-image", "url('img/control-pause.svg')");
   paused = false;
+} // MEDIA SESSION API
+// Set event handlers for media buttons
+
+
+if ("mediaSession" in navigator) {
+  console.log("ADDING MEDIA HADNLERS"); // When media pause button is clicked
+
+  navigator.mediaSession.setActionHandler("pause", function () {
+    playbackPause();
+    socket.emit("pause");
+    addMessage(user_id, "Paused playback", true); // navigator.mediaSession.playbackState = "paused"
+
+    dummyAudio.pause();
+  }); // When media play button is clicked
+
+  navigator.mediaSession.setActionHandler("play", function () {
+    playbackResume();
+    socket.emit("resume");
+    addMessage(user_id, "Resumed playback", true); // navigator.mediaSession.playbackState = "playing"
+
+    dummyAudio.play();
+  }); // When media next is clicked
+
+  navigator.mediaSession.setActionHandler("nexttrack", function () {
+    socket.emit("makeMeHost");
+    spotifyPlayer.nextTrack();
+    setTimeout(function () {
+      changedSong(true);
+      updatePlayer();
+      addSongChangeMessage(user_id);
+    }, 250);
+  }); // When media previous is clicked
+
+  navigator.mediaSession.setActionHandler("previoustrack", function () {
+    socket.emit("makeMeHost");
+    spotifyPlayer.previousTrack();
+    setTimeout(function () {
+      changedSong(true);
+      updatePlayer();
+      addSongChangeMessage(user_id);
+    }, 250);
+  });
+} // Update the media session
+
+
+function updateMediaSession() {
+  if ("mediaSession" in navigator) {
+    spotifyPlayer.getCurrentState().then(function (state) {
+      var images = []; // Add each image into the list for MediaMetadata
+
+      state.track_window.current_track.album.images.forEach(function (img) {
+        images.push({
+          src: img.url,
+          sizes: img.width + "x" + img.height,
+          type: "image/jpeg"
+        });
+      });
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: state.track_window.current_track.name,
+        artist: state.track_window.current_track.artists[0].name,
+        album: state.track_window.current_track.album.name,
+        artwork: images
+      });
+    });
+  }
 }

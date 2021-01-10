@@ -103,11 +103,14 @@ $(".song-cover").hover(function () {
     });
   }
 });
+$(".song-cover").click(function () {
+  createBtn($(this).attr("id"), $(this).data("context"));
+});
 
 function joinBtn() {
   try {
     if (checkGroupExists(groupIdInput.value) == true) {
-      window.location.href = "https://morahman.me/musictogether/player.php?action=join&group_id=" + groupIdInput.value;
+      window.location.href = "player.php?action=join&group_id=" + groupIdInput.value;
     } else {
       alert("Group does not exist.");
     }
@@ -125,14 +128,19 @@ function joinBtn() {
 }
 
 function createBtn() {
+  var startSong = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var startContext = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   // GET request to the API
-  var result = null;
   $.ajax({
     url: "api/createGroupID.php?access_token=" + accessToken,
     type: "get",
     dataType: "html",
     success: function success(data) {
-      window.location.href = "player.php?action=create&group_id=" + data;
+      if (startSong == null) {
+        window.location.href = "player.php?action=create&group_id=" + data;
+      } else {
+        window.location.href = "player.php?action=create&group_id=" + data + "&startSong=spotify:track:" + startSong + "&startContext=" + startContext;
+      }
     }
   });
 }
