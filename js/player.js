@@ -1,11 +1,12 @@
 // Some HTML elements
 const message_input = document.getElementById("messages-input")
 const dummyAudio = document.getElementById("dummyAudio")
+const screenBlock = $(".screen-block") 
+const searchOverlay = $(".search-overlay")
 
-// Send a joinedGroup message to the Node.js server
-$(document).ready(function() {
-})
-
+if (urlParams.get("action") == "join") {
+    fadeOutSearch()
+}
 // SERVER EVENT LISTENERS
 
 function initSocketListeners() {
@@ -113,6 +114,8 @@ function initSocketListeners() {
                 addToSpotifyQueue(uri)
             })
         }, 5000);
+
+        makePopup("All caught up!")
     })
 
     // When a request to add to queue is received
@@ -127,8 +130,6 @@ function initSocketListeners() {
 const dummySearch = document.getElementById("dummy-search")
 const actualSearch = document.getElementById("search-input-input")
 var searchQuery = ""
-const screenBlock = $(".screen-block") 
-const searchOverlay = $(".search-overlay")
 
 // When a user presses a key in the message input
 document.getElementById("messages-input").addEventListener("keyup", function(e) {

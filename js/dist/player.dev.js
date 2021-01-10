@@ -2,9 +2,14 @@
 
 // Some HTML elements
 var message_input = document.getElementById("messages-input");
-var dummyAudio = document.getElementById("dummyAudio"); // Send a joinedGroup message to the Node.js server
+var dummyAudio = document.getElementById("dummyAudio");
+var screenBlock = $(".screen-block");
+var searchOverlay = $(".search-overlay");
 
-$(document).ready(function () {}); // SERVER EVENT LISTENERS
+if (urlParams.get("action") == "join") {
+  fadeOutSearch();
+} // SERVER EVENT LISTENERS
+
 
 function initSocketListeners() {
   // Event handler when received usersInGroup message
@@ -102,6 +107,7 @@ function initSocketListeners() {
         addToSpotifyQueue(uri);
       });
     }, 5000);
+    makePopup("All caught up!");
   }); // When a request to add to queue is received
 
   socket.on("addToQueue", function (data) {
@@ -113,9 +119,7 @@ function initSocketListeners() {
 
 var dummySearch = document.getElementById("dummy-search");
 var actualSearch = document.getElementById("search-input-input");
-var searchQuery = "";
-var screenBlock = $(".screen-block");
-var searchOverlay = $(".search-overlay"); // When a user presses a key in the message input
+var searchQuery = ""; // When a user presses a key in the message input
 
 document.getElementById("messages-input").addEventListener("keyup", function (e) {
   // When enter key is pressed

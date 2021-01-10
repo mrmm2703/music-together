@@ -30,6 +30,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
     spotifyPlayer.addListener("playback_error", ({error}) => {
         console.error(error)
+        makePopup("Playback error", true)
     })
 
     // Event listeners
@@ -73,6 +74,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         } else {
             if (urlParams.has("startSong")) {
                 spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"))
+                makePopup("Web player ready")
+                fadeOutSearch()
+            } else {
+                makePopup("Player ready! Play a song to get the party started!")
             }
         }
     })

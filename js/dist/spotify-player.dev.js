@@ -30,6 +30,7 @@ window.onSpotifyWebPlaybackSDKReady = function () {
   spotifyPlayer.addListener("playback_error", function (_ref4) {
     var error = _ref4.error;
     console.error(error);
+    makePopup("Playback error", true);
   }); // Event listeners
 
   spotifyPlayer.addListener("player_state_changed", function (state) {
@@ -73,6 +74,10 @@ window.onSpotifyWebPlaybackSDKReady = function () {
     } else {
       if (urlParams.has("startSong")) {
         spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"));
+        makePopup("Web player ready");
+        fadeOutSearch();
+      } else {
+        makePopup("Player ready! Play a song to get the party started!");
       }
     }
   });
