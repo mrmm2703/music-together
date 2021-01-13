@@ -1,0 +1,26 @@
+@import "../../style/base";
+
+#header {
+    @include bigHeader;
+    width: 100%;
+    padding-top: 15vh;
+}
+
+#btn-continue {
+    @include greenBtn;
+    margin-top: 5vh;
+}
+
+form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 5vh;
+    & > input {
+        @include textInput;
+        width: 370px;
+    }
+    & > input:nth-child(2) {
+        margin-top: 20px;
+    }
+}
