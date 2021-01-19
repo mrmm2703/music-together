@@ -105,6 +105,42 @@ html, body {
   transform: scale(1.1);
 }
 
+.popup-container {
+  position: fixed;
+  align-items: center;
+  top: -90px;
+  height: 30px;
+  align-self: center;
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
+  grid-template-areas: ". .";
+  padding: 20px;
+  background-color: #2599BF;
+  border-radius: 15px;
+  -webkit-box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
+  z-index: 250;
+}
+.popup-container > img {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+}
+.popup-container > div {
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Crete Round";
+  src: url("../../../style/fonts/CreteRound.ttf");
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("../../../style/fonts/Raleway.ttf");
+}
 #header {
   font-family: "Crete Round", sans-serif;
   font-size: 8vw;
@@ -138,13 +174,13 @@ html, body {
   margin-top: 5vh;
 }
 
-form {
+#form {
   display: flex;
   align-items: center;
   flex-direction: column;
   margin-top: 5vh;
 }
-form > input {
+#form > input {
   border: none;
   border-bottom: 2px solid #FFFFFF;
   padding: 12px 20px;
@@ -155,9 +191,9 @@ form > input {
   color: #FFFFFF;
   width: 370px;
 }
-form > input:focus {
+#form > input:focus {
   outline: none;
 }
-form > input:nth-child(2) {
+#form > input:nth-child(2) {
   margin-top: 20px;
 }

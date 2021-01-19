@@ -1,5 +1,15 @@
 @import "../../style/base";
 
+@font-face {
+    font-family: "Crete Round";
+    src: url("../../../style/fonts/CreteRound.ttf");
+}
+
+@font-face {
+    font-family: "Raleway";
+    src: url("../../../style/fonts/Raleway.ttf");
+}
+
 #header {
     @include bigHeader;
     width: 100%;
@@ -11,7 +21,7 @@
     margin-top: 5vh;
 }
 
-form {
+#form {
     display: flex;
     align-items: center;
     flex-direction: column;

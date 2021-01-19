@@ -325,6 +325,13 @@ class DatabaseConnection {
         }
     }
 
+    /**
+     * Get list of active groups.
+     * 
+     * Get a list of all the groups in progress from the database.
+     * 
+     * @return array An array of all groups in progress.
+     */
     public function getActiveGroups() {
         $result = $this->runSqlSelect(
             "SELECT DISTINCT userGroupID from users"
