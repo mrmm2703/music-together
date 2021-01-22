@@ -76,6 +76,16 @@ Search.appendIndex(
             "summary": "Update\u0020a\u0020user\u0027s\u0020access\u0020token\u0020in\u0020the\u0020database.",
             "url": "classes/MusicTogether-DatabaseConnection.html#method_updateUserAccessToken"
         },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AcheckGroupExists\u0028\u0029",
+            "name": "checkGroupExists",
+            "summary": "Check\u0020if\u0020a\u0020group\u0020exists.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_checkGroupExists"
+        },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AgetActiveGroups\u0028\u0029",
+            "name": "getActiveGroups",
+            "summary": "Get\u0020list\u0020of\u0020active\u0020groups.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_getActiveGroups"
+        },                {
             "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003A\u0024db_name",
             "name": "db_name",
             "summary": "The\u0020database\u0020name.",
@@ -168,7 +178,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\MusicTogether\\User",
             "name": "User",
-            "summary": "This\u0020class\u0020holds\u0020information\u0020on\u0020a\u0020user\u0020object.",
+            "summary": "",
             "url": "classes/MusicTogether-User.html"
         },                {
             "fqsen": "\\MusicTogether\\User\u003A\u003A__construct\u0028\u0029",
@@ -5585,6 +5595,36 @@ Search.appendIndex(
             "name": "getallheaders",
             "summary": "Get\u0020all\u0020HTTP\u0020header\u0020key\/values\u0020as\u0020an\u0020associative\u0020array\u0020for\u0020the\u0020current\u0020request.",
             "url": "namespaces/default.html#function_getallheaders"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection",
+            "name": "AdminDatabaseConnection",
+            "summary": "Admin\u0020operations\u0020on\u0020a\u0020database",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Constructor\u0020method\u0020to\u0020setup\u0020database\u0020connection",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method___construct"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AcheckPassword\u0028\u0029",
+            "name": "checkPassword",
+            "summary": "Get\u0020a\u0020user\u0027s\u0020password",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_checkPassword"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AcreateHashSalt\u0028\u0029",
+            "name": "createHashSalt",
+            "summary": "Create\u0020a\u0020hash\u0020salt\u0020for\u0020a\u0020user",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_createHashSalt"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetUsers\u0028\u0029",
+            "name": "getUsers",
+            "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020\u0028online\u0029\u0020users.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getUsers"
+        },                {
+            "fqsen": "\\MusicTogether\\goPage\u0028\u0029",
+            "name": "goPage",
+            "summary": "",
+            "url": "namespaces/musictogether.html#function_goPage"
         },                {
             "fqsen": "\\",
             "name": "\\",

@@ -123,8 +123,11 @@ html, body {
 .yellow-btn {
     color: $yellow;
     font-weight: 700;
-    @extend .hvr-underline-from-center;
     @include textShadow;
+}
+
+.yellow-btn:not(.no-anim) {
+    @extend .hvr-underline-from-center;
 }
 
 .footer {
@@ -139,7 +142,7 @@ html, body {
     left: 0;
 }
 
-.hvr-underline-from-center {
+.hvr-underline-from-center:not(.no-anim) {
     display: inline-block;
     vertical-align: middle;
     -webkit-transform: perspective(1px) translateZ(0);
@@ -148,7 +151,7 @@ html, body {
     position: relative;
     overflow: hidden;
 }
-.hvr-underline-from-center:before {
+.hvr-underline-from-center:not(.no-anim):before {
     content: "";
     position: absolute;
     z-index: -1;
@@ -164,7 +167,7 @@ html, body {
     -webkit-transition-timing-function: ease-out;
     transition-timing-function: ease-out;
 }
-.hvr-underline-from-center:hover:before, .hvr-underline-from-center:focus:before, .hvr-underline-from-center:active:before {
+.hvr-underline-from-center:not(.no-anim):hover:before, .hvr-underline-from-center:not(.no-anim):focus:before, .hvr-underline-from-center:not(.no-anim):active:before {
     left: 0;
     right: 0;
 }

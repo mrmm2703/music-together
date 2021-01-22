@@ -38,8 +38,6 @@ class AdminDatabaseConnection extends DatabaseConnection {
         $statement->bind_param("s", $username);
         $statement->execute();
         $result = $statement->get_result();
-        echo "<br><br>";
-        // var_dump($result->fetch_assoc());
         
         if ($result->num_rows == 0) {
             return "no user";
@@ -49,10 +47,6 @@ class AdminDatabaseConnection extends DatabaseConnection {
             $pass_attempt = password_hash($password, PASSWORD_DEFAULT, [
                 "salt" => $this->createHashSalt($user["adminDateCreated"], $user["adminEmail"], $username)
             ]);
-            echo "<br>ATTEMPT:<br>";
-            echo $pass_attempt;
-            echo "<br>ACTUAL:<br>";
-            echo $user["adminPassword"];
             if ($pass_attempt == $user["adminPassword"]) {
                 // User login was successful
                 $userData = array($user["adminID"], $user["adminLevel"]);
@@ -63,6 +57,14 @@ class AdminDatabaseConnection extends DatabaseConnection {
         }
     }
 
+    /**
+     * Create a hash salt for a user
+     * 
+     * @param string $date_created The date created value from the database
+     * @param string $email The user's email from the database
+     * @param string $username The user's login username
+     * @return string A string represetning the salt for the user
+     */
     public function createHashSalt($date_created, $email, $username) {
         // Extract components of DATETIME returned from DB
         $year = substr($date_created, 0, 4);
@@ -77,8 +79,50 @@ class AdminDatabaseConnection extends DatabaseConnection {
             . $username . substr($username, -3);
         return $salt;
     }
-}
+    /**
+     * Get a list of all (online) users.
+     * 
+     * Get all the currently online users (users with non-null group IDs) or get all
+     * the users regardless of online status.
+     * Gets following details about users: name, group ID, email, banned status and ID.
+     * 
+     * @param bool $online Whether to get only online users or not. Defaults to false.
+     * @return array|int An array of an associative array consisting of all the
+     * parameters listed above about each user. Can return 0 if there are no users found.
+     */
+    public function getUsers($online = false) {
+        if ($online) {
+            $sql = "SELECT userName, userNickname, userGroupID, "
+            . "userEmail, userBanned, userSpotifyID FROM users WHERE userGroupID IS NOT NULL";
+        } else {
+            $sql = "SELECT userName, userNickname, userGroupID, "
+            . "userEmail, userBanned, userSpotifyID FROM users";
+        }
+        $res = $this->mysqli->query($sql);
+        if ($res->num_rows == 0) {
+            return 0;
+        } else {
+            $users = array();
+            while ($row = $res->fetch_assoc()) {
+                $curName = "poo";
+                if ($row["userNickname"] == null) {
+                    $curName = $row["userName"];
+                } else {
+                    $curName = $row["userNickname"];
+                }
+                $curUser = array(
+                    "name" => $curName,
+                    "groupID" => $row["userGroupID"],
+                    "banned" => (bool)$row["userBanned"],
+                    "id" => $row["userSpotifyID"],
+                    "email" => $row["userEmail"]
+                );
+                array_push($users, $curUser);
+            }
+            return $users;
+        }
 
-$db = new AdminDatabaseConnection();
+    }
+}
 
 ?>
