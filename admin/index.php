@@ -19,28 +19,7 @@ session_destroy();
             }
         })
     </script>
-    <script>
-        // Function to make slide in popups
-        let popupIndex = 0
-        function makePopup(message, error=false) {
-            let id = popupIndex
-            popupIndex ++
-            let src = "../img/check-mark.png"
-            if (error) {
-                src = "../img/error.png"
-            }
-            let item = "" +
-            '<div style="z-index: ' + (250+id) + '" id="popup-' + id + '" class="popup-container">' +
-                '<img src="' + src + '">' +
-                '<div>' + message + '</div>' +
-            '</div>'
-            $("body").append(item)
-            $("#popup-" + id).animate({top: "30px"}, 250).delay(3000).animate({top: "50px", opacity: 0}, 150)
-            setTimeout(() => {
-                $("#popup-" + id).remove()
-            }, 3500);
-        }
-    </script>
+    <script src="js/dist/ui.prod.js"></script>
     <script>
     $(document).ready(function() {
         <?php
@@ -51,9 +30,15 @@ session_destroy();
                     echo "makePopup('Incorrect username', true)";
                 } else if ($_GET["error"] == "unknown") {
                     echo "makePopup('An error occured', true)";
+                } else if ($_GET["error"] == "db") {
+                    echo "makePopup('A database error occured', true)";
+                } else if ($_GET["error"] == "session") {
+                    echo "makePopup('Session expired', true)";
                 } else {
                     echo "makePopup('Something went wrong', true)";
                 }
+            } else if (isset($_GET["logout"])) {
+                echo "makePopup('Successfully logged out')";
             }
         ?>
     })

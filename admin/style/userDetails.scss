@@ -1,0 +1,58 @@
+@import "index";
+@import "admin-base";
+
+main {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+       ". .";
+}
+
+.details-container {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    img {
+        width: 7em;
+        height: 7em;
+        border-radius: 50%;
+        @include shadow;
+    }
+    .name {
+        font-size: 30px;
+        font-weight: 600;
+        height: min-content;
+        margin-left: 1.5em;
+        @include textShadow;
+    }
+}
+
+.details-text {
+    font-size: 1.4em;
+    margin-top: 1.5em;
+}
+
+#btn-continue {
+    margin-left: 0;
+}
+
+.right-pane {
+    margin-top: 50px;
+    height: calc(100vh - 250px);
+    overflow-y: auto;
+    padding-left: 3em;
+}
+
+.table-container {
+    height: auto;
+}
+
+.title {
+    margin-top: 50px;
+}
+
+.title:first-child {
+    margin-top: 0 !important;
+}

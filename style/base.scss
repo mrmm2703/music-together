@@ -13,6 +13,25 @@
     color: $white;
 }
 
+*::-webkit-scrollbar-track
+{
+  border-radius: 6px;
+//   background-color: #F5F5F5;
+}
+
+*::-webkit-scrollbar
+{
+  width: 6px;
+//   background-color: #F5F5F5;
+}
+
+*::-webkit-scrollbar-thumb
+{
+  border-radius: 6px;
+  width: 6px;
+  background-color: white;
+}
+
 @font-face {
     font-family: "Crete Round";
     src: url("fonts/CreteRound.ttf");

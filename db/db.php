@@ -147,7 +147,7 @@ class DatabaseConnection {
                 "nickname" => $result["userNickname"],
                 "email" => $result["userEmail"],
                 "profilePicture" => $result["userProfilePicture"],
-                "online" => $result["userOnline"],
+                "online" => null,
                 "groupID" => $result["userGroupID"],
                 "dateCreatd" => $result["userDateCreated"],
                 "banned" => $result["userBanned"],
@@ -217,7 +217,7 @@ class DatabaseConnection {
         if ($user_type == "user") {
             $sql = "INSERT INTO loginLogs (llogSpotifyID) VALUES ('";
             $sql .= $id . "')";
-        } elseif ($user_Type == "admin") {
+        } elseif ($user_type == "admin") {
             $sql = "INSERT INTO loginLogs (llogAdminID) VALUES (";
             $sql .= $id . ")";
         } else {

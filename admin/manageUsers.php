@@ -2,10 +2,15 @@
 Namespace MusicTogether;
 require "adminDb.php";
 
+session_start();
+if (!(isset($_SESSION["admin_id"]))) {
+    header("Location: index.php?error=session");
+    exit();
+}
+
 $db = new AdminDatabaseConnection();
 $db->connect();
 $onlineUsers = $db->getUsers();
-session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +20,9 @@ session_start();
     <title>Music Together!</title>
     <link rel="stylesheet" href="style/dist/dashboard.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var access_token = "<?php echo $_SESSION["admin_token"] ?>";
+    </script>
 </head>
 <body>
     <div id="settings-container" class="anim">
@@ -22,9 +30,9 @@ session_start();
     </div>
     <ul id="settings-dropdown">
         <a href="dashboard.php"><li>Online users</li></a>
-        <a href="manageAdmins.php"><li>Manage admins</li></a>
+        <?php echo ($_SESSION["admin_level"] == 0 ? '<a href="manageAdmins.php"><li>Manage admins</li></a>' : "") ?>
         <a href="bannedWords.php"><li>Banned words</li></a>
-        <a href="messageLog.php"><li>Message log</li></a>
+        <a href="messageLog.php?limit=50&page=1"><li>Message log</li></a>
         <a href="logout.php"><li>Logout</li></a>
     </ul>
     <div id="header">
@@ -72,8 +80,8 @@ session_start();
                     <td>' . $user["name"] . '</td>
                     <td>' . $user["groupID"] . '</td>
                     <td>' . $user["email"] . '</td>
-                    <td class="yellow-btn no-anim">' . $ban .'</td>
-                    <td class="yellow-btn no-anim">Details</td>
+                    <td data-id="' . $user["id"] . '"data-banned="' . ($user["banned"] == true ? "1" : "0") . '" class="yellow-btn no-anim ban-btn">' . $ban .'</td>
+                    <td data-id="' . $user["id"] . '" class="yellow-btn no-anim details-btn">Details</td>
                 </tr>
                 <tr class="line"><td colspan=5><div></div></td></tr>
                 ';

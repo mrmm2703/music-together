@@ -15,6 +15,20 @@
   color: #FFFFFF;
 }
 
+*::-webkit-scrollbar-track {
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  width: 6px;
+  background-color: white;
+}
+
 @font-face {
   font-family: "Crete Round";
   src: url("fonts/CreteRound.ttf");
@@ -56,7 +70,7 @@ html, body {
   left: 0;
 }
 
-.hvr-underline-from-center, .yellow-btn {
+.hvr-underline-from-center:not(.no-anim), .yellow-btn:not(.no-anim) {
   display: inline-block;
   vertical-align: middle;
   -webkit-transform: perspective(1px) translateZ(0);
@@ -66,7 +80,7 @@ html, body {
   overflow: hidden;
 }
 
-.hvr-underline-from-center:before, .yellow-btn:before {
+.hvr-underline-from-center:not(.no-anim):before, .yellow-btn:not(.no-anim):before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -83,7 +97,7 @@ html, body {
   transition-timing-function: ease-out;
 }
 
-.hvr-underline-from-center:hover:before, .yellow-btn:hover:before, .hvr-underline-from-center:focus:before, .yellow-btn:focus:before, .hvr-underline-from-center:active:before, .yellow-btn:active:before {
+.hvr-underline-from-center:not(.no-anim):hover:before, .yellow-btn:not(.no-anim):hover:before, .hvr-underline-from-center:not(.no-anim):focus:before, .yellow-btn:not(.no-anim):focus:before, .hvr-underline-from-center:not(.no-anim):active:before, .yellow-btn:not(.no-anim):active:before {
   left: 0;
   right: 0;
 }

@@ -18,7 +18,11 @@ if ($db->connect() != true) {
 } else {
     $res = $db->checkPassword($_POST["username"], $_POST["password"]);
     if (is_array($res) == 1) {
-        // If the login was successful
+        // If the login was successful insert a log
+        if ($db->insertLogin("admin", $res[0]) == false) {
+            goPage("index.php?error=db");
+        }
+        // Store user details in session and redirect
         $_SESSION["admin_id"] = $res[0];
         $_SESSION["admin_level"] = $res[1];
         if ($res[1] == 0) {
@@ -29,6 +33,7 @@ if ($db->connect() != true) {
             $_SESSION["admin_level_desc"] = "viewer";
         }
         $_SESSION["admin_username"] = $_POST["username"];
+        $_SESSION["admin_token"] = hash("sha256", $res[2]);
         goPage("dashboard.php");
     } else if ($res == "incorrect password") {
         goPage("index.php?error=password");
