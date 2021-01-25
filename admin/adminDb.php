@@ -323,6 +323,15 @@ class AdminDatabaseConnection extends DatabaseConnection {
         }
     }
 
+    /**
+     * Toggle the ban status for a user.
+     * 
+     * Change the userBanned field for a given user. If the user is banned,
+     * they will be unbanned and vice versa. Used by API.
+     * 
+     * @param string $id The user's Spotify ID
+     * @return bool Whether the operation was successful or not.
+     */
     public function toggleBan($id) {
         $stmt = $this->mysqli->prepare('UPDATE users SET userBanned =NOT userBanned WHERE userSpotifyID=?');
         $stmt->bind_param("s", $id);
@@ -330,6 +339,174 @@ class AdminDatabaseConnection extends DatabaseConnection {
         if (!($stmt->affected_rows)) {
             // No user was found with that ID
             return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Get all admin users.
+     * 
+     * Get the ID, level, descriptive level and username of every
+     * admin user in the database.
+     * 
+     * @return array|int 0 if no records were found. Otherwise, returns
+     * an array of associative arrays containing admin details.
+     */
+    public function getAdminUsers() {
+        $sql = "SELECT adminID AS 'id', adminUsername AS 
+        'username', adminEmail AS 'email', adminLevel AS 'level' FROM adminUsers";
+        $res = $this->mysqli->query($sql);
+        if ($res->num_rows == 0) {
+            return 0;
+        } else {
+            $users = array();
+            while ($row = $res->fetch_assoc()) {
+                if ($row["level"] == 0) {
+                    $curLvl = "Superuser";
+                } else if ($row["level"] == 1) {
+                    $curLvl = "Administrator";
+                } else {
+                    $curLvl = "Viewer";
+                }
+                $curUser = array(
+                    "username" => $row["username"],
+                    "id" => $row["id"],
+                    "level" => $row["level"],
+                    "level_desc" => $curLvl,
+                    "email" => $row["email"]
+                );
+                array_push($users, $curUser);
+            }
+            return $users;
+        }
+    }
+
+    /**
+     * Insert a new admin user.
+     * 
+     * Insert a new admin user into the adminUsers table
+     * of the database.
+     * 
+     * @param string $username The admin's username.
+     * @param string $password THe SHA-256 hashed value of the password.
+     * @param string $email The admin's email.
+     * @param int $level The admin level (0=superuser, 1=administrator, 2=viewer).
+     * @return bool Whether the operation was successful or not.
+     */
+    public function insertAdminUser($username, $password, $email, $level) {
+        // Insert admin username, email and level
+        $stmt = $this->mysqli->prepare("INSERT INTO adminUsers (adminUsername, 
+        adminEmail, adminLevel) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $username, $email, $level);
+        $stmt->execute();
+        // Get the admin inserted
+        $id = $this->mysqli->insert_id;
+        $sql = "SELECT adminDateCreated FROM adminUsers WHERE adminID='" . $id . "'";
+        $res = $this->mysqli->query($sql);
+        if ($res->num_rows == 0) {
+            return false;
+        }
+        $user = $res->fetch_assoc();
+        // Create a hashed password and access token
+        $password_hash = password_hash($password, PASSWORD_DEFAULT, [
+            "salt" => $this->createHashSalt($user["adminDateCreated"], $email, $username)
+        ]);
+        $access_token = hash("sha256", $password_hash);
+        // Update password hash and access token in database
+        $sql = "UPDATE adminUsers SET adminPassword='" . $password_hash . "', adminToken='"
+         . $access_token . "' WHERE adminID=" . $id;
+        $this->mysqli->query($sql);
+        if ($this->mysqli->affected_rows == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Check if admin details exist.
+     * 
+     * Check if the username or password supplied exists.
+     * 
+     * @param string $username The username to check.
+     * @param string $email The email to exist.
+     * @return bool|string False if no admin users found. Otherwise a 
+     * string of "username_exists" or "email_exists" is returned.
+     */
+    public function checkAdminExists($username, $email) {
+        $stmt = $this->mysqli->prepare("SELECT adminUsername, 
+        adminEmail FROM adminUsers WHERE adminUsername=? OR adminEmail=?");
+        $stmt->bind_param("ss", $username, $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        // Check if no admin users found
+        if ($res->num_rows == 0) {
+            return false;
+        } else {
+            // Check if username or email exists
+            $user = $res->fetch_assoc();
+            if ($username == $user["adminUsername"]) {
+                return "username_exists";
+            } else {
+                return "email_exists";
+            }
+        }
+    }
+
+    /**
+     * Remove an admin user.
+     * 
+     * Remove an admin user from the adminUsers database table
+     * by using their ID.
+     * 
+     * @param int $id The admin user's ID.
+     * @return bool Whether the operation was successful or not.
+     */
+    public function removeAdminUser($id) {
+        $stmt = $this->mysqli->prepare("DELETE FROM adminUsers WHERE adminID=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        var_dump($stmt);
+        if ($this->mysqli->affected_rows == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Change an admin's password.
+     * 
+     * @param int $id The admin's user ID.
+     * @param string $password The SHA-256 hashed value of the password.
+     * @return bool Whether the operation was successful or not.
+     */
+    public function changeAdminPassword($id, $password) {
+        // Check if admin exists
+        $stmt = $this->mysqli->prepare("SELECT adminEmail, adminDateCreated, " .
+        "adminLevel, adminUsername FROM adminUsers WHERE adminID=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        var_dump($stmt);
+        $res = $stmt->get_result();
+        if ($res->num_rows == 0) {
+            return "no_user";
+        }
+        // Generate hashed password and access token
+        $user = $res->fetch_assoc();
+        $password_hash = password_hash($password, PASSWORD_DEFAULT, [
+            "salt" => $this->createHashSalt($user["adminDateCreated"],
+            $user["adminEmail"], $user["adminUsername"])
+        ]);
+        $access_token = hash("sha256", $password_hash);
+        // Update database values
+        $stmt = $this->mysqli->prepare("UPDATE adminUsers SET 
+        adminPassword=?, adminToken=? WHERE adminID=?");
+        $stmt->bind_param("ssi", $password_hash, $access_token, $id);
+        $stmt->execute();
+        if ($this->mysqli->affected_rows == 0) {
+            return "db_error";
         } else {
             return true;
         }

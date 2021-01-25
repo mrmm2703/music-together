@@ -91,3 +91,13 @@ $onlineUsers = $db->getUsers(true);
 </body>
 </html>
 <script src="js/ui.js"></script>
+<?php
+
+if (isset($_GET["error"])) {
+    if ($_GET["error"] == "forbidden") {
+        echo '<script>makePopup("Insufficient privileges", true)</script>';
+    }
+}
+
+
+?>

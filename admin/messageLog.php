@@ -43,9 +43,9 @@ $msgs = $db->getMessageLog($_GET["limit"], (($_GET["page"]-1) * $_GET["limit"]))
     </div>
     <ul id="settings-dropdown">
         <a href="dashboard.php"><li>Online users</li></a>
+        <a href="manageUsers.php"><li>Manage users</li></a>
         <?php echo ($_SESSION["admin_level"] == 0 ? '<a href="manageAdmins.php"><li>Manage admins</li></a>' : "") ?>
         <a href="bannedWords.php"><li>Banned words</li></a>
-        <a href="messageLog.php?limit=50&page=1"><li>Message log</li></a>
         <a href="logout.php"><li>Logout</li></a>
     </ul>
     <div id="header">

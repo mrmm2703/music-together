@@ -1,0 +1,30 @@
+@import "index";
+@import "admin-base";
+
+#btn-continue {
+    margin-left: 0;
+}
+
+input:not(#btn-continue) {
+    margin-bottom: 20px;
+    @include textInput;
+    width: 300px;
+    &:focus {
+        outline: none;
+        border-bottom: 2px solid $green;
+    }
+}
+
+select {
+    margin-bottom: 20px;
+    width: 300px;
+    @include textInput;
+    option {
+        color: black;
+    }
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
