@@ -263,21 +263,46 @@ class AdminDatabaseConnection extends DatabaseConnection {
     /**
      * Get messages log from database.
      * 
-     * Get all the messages sent from the database.
+     * Get all the messages sent from the database or get messages with
+     * a specific banned word in them, or all banned words.
      * 
-     * @param int $lim The number of records to get.
-     * @param int $offset The offset to get records from.
+     * @param int $lim The number of records to get. Defaults to 50.
+     * @param int $offset The offset to get records from. Defaults to 0.
+     * @param int $bannedWordId The ID of the banned word to get all messages
+     * for. Defaults to null, where this will be ignored. Can also have a value
+     * of "all" to get all of the messages with any banned word.
      * @return array|int If no records, 0 is returned. Else an array
      * of an associative array is returned.
      */
-    public function getMessageLog($lim=50, $offset=0) {
-        // var_dump($lim);
-        // var_dump($offset);
-        $stmt = $this->mysqli->prepare('SELECT (SELECT COALESCE(userNickname, userName) 
-        FROM users WHERE users.userSpotifyID=messages.msgSenderID) AS "user", 
-        msgContent AS "message", msgGroupID AS "group", msgDateSent AS "date",
-        msgSenderID AS id FROM messages ORDER BY msgDateSent DESC LIMIT ? OFFSET ?');
-        $stmt->bind_param("ii", $lim, $offset);   
+    public function getMessageLog($lim=50, $offset=0, $bannedWordId=null) {
+        // Get the correct data depending on bannedWordId
+        if ($bannedWordId == null) {
+            $stmt = $this->mysqli->prepare('SELECT (SELECT COALESCE(userNickname, userName) 
+            FROM users WHERE users.userSpotifyID=messages.msgSenderID) AS "user", 
+            msgContent AS "message", msgGroupID AS "group", msgDateSent AS "date",
+            msgSenderID AS id FROM messages ORDER BY msgDateSent DESC LIMIT ? OFFSET ?');
+            $stmt->bind_param("ii", $lim, $offset);  
+        } else if ($bannedWordId == "all") {
+            $stmt = $this->mysqli->prepare("SELECT (SELECT (SELECT COALESCE(userNickname, 
+            userName) FROM users WHERE users.userSpotifyID=messages.msgSenderID) AS 'user' 
+            FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) AS 'user', 
+            (SELECT msgContent FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'message', (SELECT msgGroupID FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'group', (SELECT msgDateSent FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'date', (SELECT msgSenderID FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'id' FROM bannedWordsUse ORDER BY banUsgDate DESC LIMIT ? OFFSET ?");
+            $stmt->bind_param("ii", $lim, $offset);
+        } else {
+            $stmt = $this->mysqli->prepare("SELECT (SELECT (SELECT COALESCE(userNickname, 
+            userName) FROM users WHERE users.userSpotifyID=messages.msgSenderID) AS 'user' 
+            FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) AS 'user', 
+            (SELECT msgContent FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'message', (SELECT msgGroupID FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'group', (SELECT msgDateSent FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'date', (SELECT msgSenderID FROM messages WHERE messages.msgID=bannedWordsUse.banUsgMsgID) 
+            AS 'id' FROM bannedWordsUse WHERE banUsgWordID=? ORDER BY banUsgDate DESC LIMIT ? OFFSET ?");
+            $stmt->bind_param("iii", $bannedWordId, $lim, $offset);
+        }
         $stmt->execute();
         $res = $stmt->get_result();
 
@@ -507,6 +532,100 @@ class AdminDatabaseConnection extends DatabaseConnection {
         $stmt->execute();
         if ($this->mysqli->affected_rows == 0) {
             return "db_error";
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Get all banned words in the database
+     * 
+     * @return array|int 0 if no banned words. Otherwise an array of
+     * an associative array containing all the banned words and their details.
+     */
+    public function getAllBannedWords() {
+        // Get the required data
+        $sql = "SELECT wordID AS 'id', word AS 'word', wordAddedDate 
+        AS 'addedDate', (SELECT COUNT(banUsgID) FROM bannedWordsUse 
+        WHERE bannedWords.wordID=bannedWordsUse.banUsgWordID) AS 
+        'useCount', (SELECT adminUsername FROM adminUsers WHERE 
+        adminUsers.adminID=wordAddedByID) AS 'addedBy' FROM bannedWords";
+        // Check the results of the query
+        $res = $this->mysqli->query($sql);
+        if ($res->num_rows == 0) {
+            return 0;
+        } else {
+            $words = array();
+            while ($row = $res->fetch_assoc()) {
+                array_push($words, array(
+                    "id" => $row["id"],
+                    "word" => $row["word"],
+                    "addedDate" => $row["addedDate"],
+                    "useCount" => $row["useCount"],
+                    "addedBy" => $row["addedBy"]
+                ));
+            }
+            return $words;
+        }
+    }
+
+    /**
+     * Insert a new banned word.
+     * 
+     * Insert a new banned word into the database table.
+     * 
+     * @param string $word The word to insert.
+     * @param int $int The ID of the admin adding the word.
+     * @return stdClass|bool False if the request failed. Otherwise
+     * a generic object containing the word's details is returned.
+     */
+    public function insertBannedWord($word, $admin_id) {
+        // Try to insert the word
+        mysqli_report(MYSQLI_REPORT_ALL);
+        $stmt = $this->mysqli->prepare('INSERT INTO bannedWords (word, wordAddedByID) 
+        SELECT * FROM (SELECT ? AS banWord, ? AS banAddedBy) AS temp WHERE NOT EXISTS (SELECT word FROM 
+        bannedWords WHERE word=?)');
+        $stmt->bind_param("sis", $word, $admin_id, $word);
+        $stmt->execute();
+        // Check if it was successful
+        if ($this->mysqli->affected_rows == 0) {
+            return false;
+        }
+        // Get inserted record
+        $word_id = $this->mysqli->insert_id;
+        $sql = "SELECT wordID AS 'id', word AS 'word', wordAddedDate 
+        AS 'addedDate', (SELECT COUNT(banUsgID) FROM bannedWordsUse 
+        WHERE bannedWords.wordID=bannedWordsUse.banUsgWordID) AS 
+        'useCount', (SELECT adminUsername FROM adminUsers WHERE 
+        adminUsers.adminID=wordAddedByID) AS 'addedBy' FROM bannedWords
+        WHERE wordID=" . $word_id;
+        $res = $this->mysqli->query($sql);
+        if ($res->num_rows == 0) {
+            return false;
+        }
+        // Construct JSON object
+        $curWord = $res->fetch_assoc();
+        $word_obj->id = $curWord["id"];
+        $word_obj->word = $curWord["word"];
+        $word_obj->addedDate = $curWord["addedDate"];
+        $word_obj->useCount = $curWord["useCount"] ;
+        $word_obj->addedBy = $curWord["addedBy"];
+        return $word_obj;
+    }
+
+    /**
+     * Remove a banned word.
+     * 
+     * @param int $id The ID of banned word to remove.
+     * @return bool Whether the operation was successful or not.
+     */
+    public function removeBannedWord($id) {
+        $stmt = $this->mysqli->prepare("DELETE FROM bannedWords WHERE wordID=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        var_dump($stmt);
+        if ($this->mysqli->affected_rows == -1) {
+            return false;
         } else {
             return true;
         }

@@ -1,2 +1,7 @@
 @import "index";
 @import "admin-base";
+
+.btn {
+    @include greenBtn;
+    margin-top: 30px;
+}

@@ -20,7 +20,15 @@ if (!(isset($_GET["limit"])) || !(isset($_GET["page"]))) {
 // Connect to database
 $db = new AdminDatabaseConnection();
 $db->connect();
-$msgs = $db->getMessageLog($_GET["limit"], (($_GET["page"]-1) * $_GET["limit"]));
+
+// Check fro banned_word in URL parameter
+$lim = $_GET["limit"];
+$offset = ($_GET["page"]-1) * ($_GET["limit"]);
+if (isset($_GET["banned_word"])) {
+    $msgs = $db->getMessageLog($lim, $offset, $_GET["banned_word"]);
+} else {
+    $msgs = $db->getMessageLog($lim, $offset);
+}
 
 ?>
 <!DOCTYPE html>
@@ -115,3 +123,15 @@ $(".page-btn.enabled").click(function() {
     window.location.replace("messageLog.php?limit=" + limit + "&page=" + page)
 })
 </script>
+<?php
+
+if (isset($_GET["banned_word_desc"])) {
+    if ($_GET["banned_word_desc"] == "all") {
+        echo "<script>makePopup('Showing messages containing any banned word')</script>";
+    } else {
+        echo "<script>makePopup('Showing messages containing \""
+         . $_GET["banned_word_desc"] . "\"')</script>";
+    }
+}
+
+?>
