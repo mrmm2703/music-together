@@ -27,6 +27,7 @@ $words = $db->getAllBannedWords();
         var access_token = "<?php echo $_SESSION["admin_token"] ?>";
         var admin_id = "<?php echo $_SESSION["admin_id"] ?>";
     </script>
+    <script src="../js/dist/socket.io.prod.js"></script>
 </head>
 <body>
     <div id="settings-container" class="anim">
@@ -94,10 +95,11 @@ $words = $db->getAllBannedWords();
 <script src="js/ui.js"></script>
 <script>
 // When uses button is clicked show all uses in message log
-$(".uses-btn").click(function() {
+function usesClick() {
     window.location.href = "messageLog.php?limit=50&page=1&banned_word="
     + $(this).data("id") + "&banned_word_desc=" + $(this).data("word")
-})
+}
+$(".uses-btn").click(usesClick)
 
 // Add a new row to the table
 function addToTable(word, addedBy, date, uses, id) {
@@ -108,6 +110,8 @@ function addToTable(word, addedBy, date, uses, id) {
         + id + '" class="yellow-btn no-anim remove-btn">Remove</td></tr>'
         + '<tr class="line"><td colspan=5><div></div></td></tr>'
     )
+    $(".uses-btn").click(usesClick)
+    $(".remove-btn").click(removeClick)
 }
 
 // When new banned word is clicked
@@ -125,6 +129,7 @@ $("#btn-new").click(function() {
                 console.log(data)
                 addToTable(data.word, data.addedBy, data.addedDate, data.useCount, data.id)
                 makePopup("Added new banned word")
+                serverRefresh()
             })
             .fail(function(jqXHR) {
                 // Check for error codes
@@ -140,6 +145,41 @@ $("#btn-new").click(function() {
             })
     }
 })
+
+// Refresh the server's banned words
+var socket = io.connect("https://morahman.me:3000")
+function serverRefresh() {
+    socket.emit("refreshBannedWords")
+}
+
+// WHen a user clicks the remove button
+function removeClick() {
+    let id = $(this).data("id")
+    let dialog = confirm("Are you sure you want to remove this banned word?")
+    if (dialog == true) {
+        $.ajax("removeBannedWord.php?access_token=" + access_token + "&id=" + id)
+        .done(function() {
+            // Remove the user from the UI
+            $("tr[data-id='" + id + "']").next().remove()
+            $("tr[data-id='" + id + "']").remove()
+            makePopup("Word removed successfully")
+            serverRefresh()
+        })
+        .fail(function(jqXHR) {
+            // Check for error codes
+            if (jqXHR.status == 403) {
+                makePopup("Insufficient privilges", true)
+            } else if (jqXHR.status == 500) {
+                makePopup("Internal server error", true)
+            } else if (jqXHR.status == 400) {
+                makePopup("Word not found", true)
+            } else {
+                makePopup("Unknown error occured", true)
+            }
+        })
+    }
+}
+$(".remove-btn").click(removeClick)
 
 // When show all button is clicked
 $("#btn-show-all").click(function() {
