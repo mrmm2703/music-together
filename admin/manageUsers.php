@@ -20,6 +20,7 @@ $onlineUsers = $db->getUsers();
     <title>Music Together!</title>
     <link rel="stylesheet" href="style/dist/dashboard.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../js/dist/socket.io.prod.js"></script>
     <script>
         var access_token = "<?php echo $_SESSION["admin_token"] ?>";
     </script>

@@ -259,6 +259,7 @@
             border-radius: $largeBorderRadius;
             width: 18vw;
             height: 18vw;
+            transition: 0.3s;
         }
     }
 
@@ -266,6 +267,9 @@
         width: 100%;
         font-size: 20px;
         text-align: center;
+        div {
+            transition: 0.3s;
+        }
         .player-text-name {
             font-weight: 600;
             margin-bottom: 0.2em;
@@ -286,6 +290,12 @@
             background-repeat: no-repeat;
             background-position: center;
             @include imgShadow;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .player-control:hover {
+            opacity: 0.7;
         }
 
         #player-control-back {
@@ -320,6 +330,11 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    & > div:hover {
+        opacity: 0.7;
     }
     .player-share-playlist {
         background-image: url("../../img/share-playlist.svg");
@@ -389,8 +404,8 @@
     position: fixed;
     width: 100%;
     height: 100%;
-    filter: blur(3px);
-    backdrop-filter: blur(3px);
+    // filter: blur(3px);
+    // backdrop-filter: blur(3px);
     background-color: rgba(0,0,0,0.3);
     cursor: pointer;
 }
@@ -562,4 +577,73 @@
         height: 50%;
         margin-top: 1em;
     }
+}
+
+.screen-block-share {
+    z-index: 200;
+    display: none;
+    opacity: 0;
+    @extend .screen-block;
+}
+
+
+#share-container {
+    position: fixed;
+    padding: 30px 40px;
+    background-color: $messageOtherBackground;
+    border-radius: $largeBorderRadius;
+    z-index: 250;
+    display: none;
+    opacity: 0;
+    @include shadow;
+    align-self: center;
+    flex-direction: column;
+    .grid-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
+
+    .share-btn-container {
+        display: flex;
+        justify-content: center;
+        img {
+            width: 55px;
+            height: 55px;
+            cursor: pointer;
+            @include imgShadow;
+            transition: 0.3s;
+            opacity: 1;
+        }
+        a {
+            margin-left: 25px;
+        }
+        a:first-child {
+            margin-left: 0;
+        }
+        img:hover {
+            opacity: 0.8;
+        }
+    }
+
+    .link-container {
+        margin-top: 35px;
+        span {
+            border-radius: $largeBorderRadius;
+            border: none;
+            outline: none;
+            user-select: all;
+            color: white;
+            background-color: #1B7795;
+            font-size: 18px;
+            padding: 10px 20px;
+            font-family: $raleway;
+            cursor: pointer;
+        }
+
+    }
+}
+
+.yellow-btn {
+    cursor: pointer;
 }

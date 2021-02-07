@@ -40,6 +40,7 @@ if ($user["banned"] == true) {
     <link rel="stylesheet" href="../style/hover-min.css">
     <link rel="stylesheet" href="style/dist/userDetails.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../js/dist/socket.io.prod.js"></script>
     <script>
         var access_token = "<?php echo $_SESSION["admin_token"] ?>";
     </script>

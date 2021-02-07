@@ -38,6 +38,7 @@ $(".details-btn").click(function() {
 // Click listener for all ban buttons
 $(".ban-btn").click(function() {
     let id = $(this).data("id")
+    let group = $(this).data("group")
     let thisBtn = $(".ban-btn[data-id='" + id + "']")
     // Send request to API
     $.ajax("toggleBan.php?access_token=" + access_token + "&user_id=" + id)
@@ -51,6 +52,7 @@ $(".ban-btn").click(function() {
                 makePopup("User banned successfully")
                 thisBtn.attr("data-banned", "1")
                 thisBtn.html("Unban")
+                sendBan(id)
             }
         })
         .fail(function(jqXHR) {
@@ -66,3 +68,15 @@ $(".ban-btn").click(function() {
             }
         })
 })
+
+function sendBan(user_id) {
+    let socket = io.connect("https://morahman.me:3000")
+    console.log(socket)
+    socket.on("connect", () => {
+        socket.emit("banUser", {
+            accessToken: access_token,
+            id: user_id
+        })
+        socket.close()
+    })
+}

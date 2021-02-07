@@ -51,7 +51,11 @@ class Track {
     public function __construct($spotify_response, $access_token) {
         $this->id = $spotify_response->{"track"}->{"id"};
         $this->name = $spotify_response->{"track"}->{"name"};
-        $this->context = $spotify_response->{"context"}->{"uri"};
+        if (is_object($spotify_response->{"context"})) {
+            $this->context = $spotify_response->{"context"}->{"uri"};
+        } else {
+            $this->context = "null";
+        }
         $this->preview_sound = $spotify_response->{"track"}->{"preview_url"};
         $this->href = $spotify_response->{"track"}->{"href"};
 

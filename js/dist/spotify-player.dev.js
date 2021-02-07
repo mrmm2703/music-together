@@ -35,7 +35,8 @@ window.onSpotifyWebPlaybackSDKReady = function () {
 
   spotifyPlayer.addListener("player_state_changed", function (state) {
     updateMediaSession();
-    updatePlayer(); // Check only check for song changes
+    updatePlayer();
+    updateLikedButton(); // Check only check for song changes
 
     if (state.track_window.current_track.uri != currentTrack) {
       changedSong();
@@ -73,7 +74,12 @@ window.onSpotifyWebPlaybackSDKReady = function () {
       socket.emit("whereAreWe");
     } else {
       if (urlParams.has("startSong")) {
-        spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"));
+        if (urlParams.get("startContext") == "null") {
+          spotifyPlay(urlParams.get("startSong"));
+        } else {
+          spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"));
+        }
+
         makePopup("Web player ready");
         fadeOutSearch();
       } else {

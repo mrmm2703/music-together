@@ -4,7 +4,12 @@
 var message_input = document.getElementById("messages-input");
 var dummyAudio = document.getElementById("dummyAudio");
 var screenBlock = $(".screen-block");
+var screenBlockShare = $(".screen-block-share");
 var searchOverlay = $(".search-overlay");
+var shareContainer = $("#share-container");
+var likeBtn = $(".player-share-like");
+var shareBtn = $(".player-share-share");
+var playlistBtn = $(".player-share-playlist");
 
 if (urlParams.get("action") == "join") {
   fadeOutSearch();
@@ -32,6 +37,10 @@ function initSocketListeners() {
     console.log("userLeft: " + data);
     addMessage(data, "Left the group", true);
     removeUser(data);
+  }); // When the user is banned
+
+  socket.on("userBanned", function () {
+    window.location.href = "logout.php?action=banned";
   }); // When client sends a banned word
 
   socket.on("messageBanned", function (word) {
@@ -157,6 +166,9 @@ actualSearch.addEventListener("keyup", function (e) {
 
 screenBlock.click(function () {
   fadeOutSearch();
+});
+screenBlockShare.click(function () {
+  fadeOutShare();
 }); // PLAYER UI FUNCTIONS
 // Fade in search overlay
 
@@ -182,6 +194,47 @@ function fadeOutSearch() {
   setTimeout(function () {
     screenBlock.css("display", "none");
     searchOverlay.css("display", "none");
+  }, 250);
+} // Fade in share popup
+
+
+function fadeInShare(link) {
+  var media = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  screenBlockShare.css("display", "block");
+  screenBlockShare.animate({
+    opacity: 1
+  }, 250);
+  shareContainer.css("display", "flex");
+  shareContainer.animate({
+    opacity: 1
+  }, 250);
+
+  if (media) {
+    shareContainer.find(".grid-title").html("Share " + media);
+    $("#twitter").attr("href", "https://twitter.com/intent/tweet?url=" + link + "&text=Checkout this " + media + " on Spotify:");
+    $("#email").attr("href", "mailto:?subject=Checkout%20this%20" + media + "&body=Hey!%0D%0A%0D%0ACheckout%20this%20" + media + "%20on%20Spotify!%0D%0A" + link);
+    $("#link").html(link);
+    $("#fb").attr("href", "https://www.facebook.com/sharer/sharer.php?u=" + link);
+  } else {
+    shareContainer.find(".grid-title").html("Invite users");
+    $("#twitter").attr("href", "https://twitter.com/intent/tweet?url=https://morahman.me/musictogether/join.php?group_id=" + link + "&text=Join my Music Together group:");
+    $("#email").attr("href", "mailto:?subject=Join%20my%20Music%20Together%20group!&body=Hey!Join%20my%20Music%20Together%20group%20session%20here%3Ahttps%3A%2F%2Fmorahman.me%2Fmusictogether%2Fjoin.php%3Fgroup_id%3D" + link);
+    $("#link").html("https://morahman.me/musictogether/join.php?group_id=" + link);
+    $("#fb").attr("href", "https://www.facebook.com/sharer/sharer.php?u=https://morahman.me/musictogether/join.php?group_id=" + link);
+  }
+} // Fade out search overlay
+
+
+function fadeOutShare() {
+  screenBlockShare.animate({
+    opacity: 0
+  }, 250);
+  shareContainer.animate({
+    opacity: 0
+  }, 250);
+  setTimeout(function () {
+    screenBlockShare.css("display", "none");
+    shareContainer.css("display", "none");
   }, 250);
 } // Add a message in the message panel when song changes
 
@@ -297,6 +350,9 @@ function searchSpotifyResponse(result) {
       image: songImage
     });
     addMessage(user_id, "Added " + songName + " by " + songArtist + " to the queue.", true);
+  });
+  $(".search-item-share").click(function () {
+    fadeInShare($(this).data("href"), $(this).data("type"));
   }); // Initialise the slide-out fans in the unhidden state
 
   $(".search-item-fan").css("width", "0");
@@ -366,12 +422,12 @@ function spotifyPlay(track) {
     var _bodyData;
 
     if (position != null) {
-      JSON.stringify({
+      _bodyData = JSON.stringify({
         "uris": [track],
         "position_ms": position
       });
     } else {
-      JSON.stringify({
+      _bodyData = JSON.stringify({
         "uris": [track]
       });
     }
@@ -463,6 +519,28 @@ function addToSpotifyQueue(uri) {
       }
     }
   });
+} // Check if a song is liked by the user
+
+
+function checkLiked(songId) {
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      url: "https://api.spotify.com/v1/me/tracks/contains?ids=" + songId,
+      type: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      },
+      success: function success(result) {
+        resolve(result[0]);
+      },
+      error: function error(_error6) {
+        console.error("CHECK LIKED FAILED");
+        console.error(_error6);
+        makePopup("Error while getting saved tracks", true);
+        reject();
+      }
+    });
+  });
 } // PLAYER FUNCTIONS
 
 
@@ -545,23 +623,91 @@ function updatePlayer() {
     playerName.html(state.track_window.current_track.name);
     playerArtist.html(state.track_window.current_track.artists[0].name);
   });
-}
+} // Pause the playback
+
 
 function playbackPause() {
   spotifyPlayer.pause();
   dummyAudio.pause();
   $("#player-control-pause").css("background-image", "url('img/control-play.svg')");
   paused = true;
-}
+} // Resume the playback
+
 
 function playbackResume() {
   spotifyPlayer.resume();
   dummyAudio.play();
   $("#player-control-pause").css("background-image", "url('img/control-pause.svg')");
   paused = false;
-} // MEDIA SESSION API
-// Set event handlers for media buttons
+} // Update the like button on the player
 
+
+function updateLikedButton() {
+  spotifyPlayer.getCurrentState().then(function (state) {
+    if (!state) {
+      console.error("No music playing.");
+      return;
+    }
+
+    checkLiked(state.track_window.current_track.id).then(function (liked) {
+      if (liked) {
+        console.log("LIKED");
+        likeBtn.css("background-image", "url('img/share-like.svg')");
+      } else {
+        console.log("UNLIKED");
+        likeBtn.css("background-image", "url('img/share-unlike.svg')");
+      }
+
+      likeBtn.attr("data-liked", liked);
+    });
+  });
+} // When the like button is clicked
+
+
+likeBtn.click(function () {
+  spotifyPlayer.getCurrentState().then(function (state) {
+    likeUnlikeSong(state.track_window.current_track.id);
+  });
+}); // Like or unlike a song
+
+function likeUnlikeSong(songId) {
+  like = likeBtn.attr("data-liked");
+  console.log("LIKEEEEE: " + like);
+
+  if (like == "true") {
+    req = "DELETE";
+  } else {
+    req = "PUT";
+  }
+
+  $.ajax({
+    url: "https://api.spotify.com/v1/me/tracks?ids=" + songId,
+    type: req,
+    headers: {
+      "Authorization": "Bearer " + accessToken
+    },
+    success: function success(result) {
+      updateLikedButton();
+
+      if (like == "true") {
+        makePopup("Song removed from library");
+      } else {
+        makePopup("Song added to library");
+      }
+    },
+    error: function error(_error7) {
+      makePopup("Could not add song to library", true);
+    }
+  });
+} // Share button
+
+
+shareBtn.click(function () {
+  spotifyPlayer.getCurrentState().then(function (state) {
+    fadeInShare("https://open.spotify.com/track/" + state.track_window.current_track.id, "song");
+  });
+}); // MEDIA SESSION API
+// Set event handlers for media buttons
 
 if ("mediaSession" in navigator) {
   console.log("ADDING MEDIA HADNLERS"); // When media pause button is clicked

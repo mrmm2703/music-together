@@ -33,6 +33,11 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
         echo $_SESSION["current_user"]->access_token;
         echo '"</script>';
     ?>
+    <?php
+    if (isset($_SESSION["join_group_id"])) {
+        echo("<script>var sess_val = " . $_SESSION["join_group_id"]  . "</script>");
+    }
+    ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Together! - Dashboard</title>
@@ -110,3 +115,11 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
 </body>
 <script src="js/dashboard.js"></script>
 </html>
+
+<?php
+
+if (isset($_SESSION["join_group_id"])) {
+    unset($_SESSION["join_group_id"]);
+}
+
+?>

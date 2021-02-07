@@ -69,7 +69,7 @@ function addSongsResults(response) {
         img = track["album"]["images"][0]["url"];
       }
 
-      var element = makeSearchItem(track["name"], track["artists"][0]["name"], img, "song", track["id"], track["album"]["id"]);
+      var element = makeSearchItem(track["name"], track["artists"][0]["name"], img, "song", track["id"], track["album"]["id"], track["external_urls"]["spotify"]);
       songs_container.append(element);
     });
   } else {
@@ -90,7 +90,7 @@ function addArtistResults(response) {
         img = artist["images"][0]["url"];
       }
 
-      var element = makeSearchItem(artist["name"], "", img, "artist", artist["id"]);
+      var element = makeSearchItem(artist["name"], "", img, "artist", artist["id"], "", artist["external_urls"]["spotify"]);
       artists_container.append(element);
     });
   } else {
@@ -111,7 +111,7 @@ function addAlbumsResults(response) {
         img = album["images"][0]["url"];
       }
 
-      var element = makeSearchItem(album["name"], album["artists"][0]["name"], img, "album", album["id"]);
+      var element = makeSearchItem(album["name"], album["artists"][0]["name"], img, "album", album["id"], "", album["external_urls"]["spotify"]);
       albums_container.append(element);
     });
   } else {
@@ -132,7 +132,7 @@ function addPlaylistsResults(response) {
         img = playlist["images"][0]["url"];
       }
 
-      var element = makeSearchItem(playlist["name"], playlist["owner"]["display_name"], img, "playlist", playlist["id"]);
+      var element = makeSearchItem(playlist["name"], playlist["owner"]["display_name"], img, "playlist", playlist["id"], "", playlist["external_urls"]["spotify"]);
       playlists_container.append(element);
     });
   } else {
@@ -143,7 +143,8 @@ function addPlaylistsResults(response) {
 
 function makeSearchItem(heading, subheading, imageUrl, type, id) {
   var extra = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : "";
-  var item = "" + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' + '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' + (type != "artist" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' : '') + (type == "song" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' : '') + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' + '</div>' + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-name">' + heading + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' + subheading + '</div>' + '</div>' + '</div>';
+  var href = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : "";
+  var item = "" + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' + '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' + (type != "artist" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' : '') + (type == "song" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' : '') + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" data-href="' + href + '"class="search-item-share"></div>' + '</div>' + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-name">' + heading + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' + subheading + '</div>' + '</div>' + '</div>';
   return item;
 } // Function to make slide in popups
 

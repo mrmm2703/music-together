@@ -44,6 +44,7 @@ $(".details-btn").click(function () {
 
 $(".ban-btn").click(function () {
   var id = $(this).data("id");
+  var group = $(this).data("group");
   var thisBtn = $(".ban-btn[data-id='" + id + "']"); // Send request to API
 
   $.ajax("toggleBan.php?access_token=" + access_token + "&user_id=" + id).done(function () {
@@ -56,6 +57,7 @@ $(".ban-btn").click(function () {
       makePopup("User banned successfully");
       thisBtn.attr("data-banned", "1");
       thisBtn.html("Unban");
+      sendBan(id);
     }
   }).fail(function (jqXHR) {
     // Check for error codes
@@ -70,3 +72,15 @@ $(".ban-btn").click(function () {
     }
   });
 });
+
+function sendBan(user_id) {
+  var socket = io.connect("https://morahman.me:3000");
+  console.log(socket);
+  socket.on("connect", function () {
+    socket.emit("banUser", {
+      accessToken: access_token,
+      id: user_id
+    });
+    socket.close();
+  });
+}

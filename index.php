@@ -18,6 +18,28 @@ session_destroy();
             }
         })
     </script>
+    <script>
+        // Function to make slide in popups
+        let popupIndex = 0
+        function makePopup(message, error=false) {
+            let id = popupIndex
+            popupIndex ++
+            let src = "img/check-mark.png"
+            if (error) {
+                src = "img/error.png"
+            }
+            let item = "" +
+            '<div style="z-index: ' + (250+id) + '" id="popup-' + id + '" class="popup-container">' +
+                '<img src="' + src + '">' +
+                '<div>' + message + '</div>' +
+            '</div>'
+            $("body").append(item)
+            $("#popup-" + id).animate({top: "30px"}, 250).delay(3000).animate({top: "50px", opacity: 0}, 150)
+            setTimeout(() => {
+                $("#popup-" + id).remove()
+            }, 3500);
+        }
+    </script>
 </head>
 <body>
     <?php
@@ -28,7 +50,7 @@ session_destroy();
      * @return void
      */
     function showErrorAlert($msg) {
-        echo '<script type="text/javascript">alert("' . $msg . '")</script>';
+        echo "<script>makePopup('" . $msg . "', true)</script>";
     }
 
     if (isset($_GET["error"])) {
@@ -42,6 +64,12 @@ session_destroy();
             showErrorAlert("You are banned!");
         } else {
             showErrorAlert("An unknown error occured. Error: " . $_GET["error"]);
+        }
+    }
+
+    if (isset($_GET["action"])) {
+        if ($_GET["action"] == "banned") {
+            showErrorAlert("You have been banned");
         }
     }
 

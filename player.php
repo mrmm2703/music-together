@@ -9,6 +9,7 @@ require_once "functions.php";
 require_once "user.php";
 
 session_start();
+checkSessionExists();
 
 if (!isset($_GET["group_id"])) {
     header("Location: " . $homepage . "/dashboard.php");
@@ -59,11 +60,6 @@ if (!isset($_GET["group_id"])) {
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="js/spotify-player.js"></script>
 
-    <!-- <div class="popup-container">
-        <img src="img/check-mark.png">
-        <div>Some sort of message</div>
-    </div> -->
-
     <!-- SEARCH OVERLAY -->
     <div class="screen-block"></div>
     <div class="search-overlay">
@@ -96,6 +92,22 @@ if (!isset($_GET["group_id"])) {
         </div>
     </div>
 
+    <!-- SHARE DIALOG -->
+    <div class="screen-block-share"></div>
+    <div id="share-container">
+        <div class="grid-title">
+            Invite users
+        </div>
+        <div class="share-btn-container">
+            <a href="#" target="_blank" rel="noopener noreferrer" id="fb"><img src="img/facebook.svg"></a>
+            <a href="#" target="_blank" rel="noopener noreferrer" id="twitter"><img src="img/twitter.svg"></a>
+            <a href="#" target="_blank" rel="noopener noreferrer" id="email"><img src="img/email.svg"></a>
+        </div>
+        <div class="link-container">
+            <span title="copy link" onclick="document.execCommand('copy'); makePopup('Copied to clipboard')" type="text" id="link">https://morahman.me/musictogether/join.php?group_id=4145</span>
+        </div>
+    </div>
+
     <audio style="display: none" id="dummyAudio" src="https://raw.githubusercontent.com/anars/blank-audio/master/15-seconds-of-silence.mp3">
     </audio>
 
@@ -109,7 +121,7 @@ if (!isset($_GET["group_id"])) {
             <div class="group-id">
                 Group ID: <?php echo $_GET["group_id"] ?>
             </div>
-            <div class="yellow-btn group-invite-btn">
+            <div onclick="fadeInShare('<?php echo $_GET["group_id"] ?>')" class="yellow-btn group-invite-btn">
                 Invite users
             </div>
 
@@ -167,7 +179,7 @@ if (!isset($_GET["group_id"])) {
             </div>
             <div class="messages-input-container">
                 <input id="messages-input" type="text" spellcheck="true" placeholder="Message">
-                <a class="messages-input-btn yellow-btn" href="#">
+                <a class="messages-input-btn yellow-btn">
                     Send
                 </a>
             </div>
@@ -245,7 +257,7 @@ if (!isset($_GET["group_id"])) {
                         <div class="settings-name">
                             <?php echo $_SESSION["current_user"]->name; ?>
                         </div>
-                        <a class="settings-btn yellow-btn" href="#">
+                        <a class="settings-btn yellow-btn">
                             Settings
                         </a>
                     </div>

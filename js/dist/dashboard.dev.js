@@ -124,6 +124,8 @@ function joinBtn() {
     } else {
       alert("An unknown error occured. Error: " + error);
     }
+
+    groupIdInput.value = "";
   }
 }
 
@@ -143,4 +145,9 @@ function createBtn() {
       }
     }
   });
+}
+
+if (typeof sess_val == "number") {
+  groupIdInput.value = sess_val;
+  joinBtn();
 }

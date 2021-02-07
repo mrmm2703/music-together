@@ -109,7 +109,8 @@ function addSongsResults(response) {
                 img,
                 "song",
                 track["id"],
-                track["album"]["id"]
+                track["album"]["id"],
+                track["external_urls"]["spotify"]
             )
             songs_container.append(element)
         })
@@ -133,7 +134,9 @@ function addArtistResults(response) {
                 "",
                 img,
                 "artist",
-                artist["id"]
+                artist["id"],
+                "",
+                artist["external_urls"]["spotify"]
             )
             artists_container.append(element)
         })
@@ -157,7 +160,9 @@ function addAlbumsResults(response) {
                 album["artists"][0]["name"],
                 img,
                 "album",
-                album["id"]
+                album["id"],
+                "",
+                album["external_urls"]["spotify"]
             )
             albums_container.append(element)
         })
@@ -181,7 +186,9 @@ function addPlaylistsResults(response) {
                 playlist["owner"]["display_name"],
                 img,
                 "playlist",
-                playlist["id"]
+                playlist["id"],
+                "",
+                playlist["external_urls"]["spotify"]
             )
             playlists_container.append(element)
         })
@@ -191,7 +198,7 @@ function addPlaylistsResults(response) {
 }
 
 // Make a search query item
-function makeSearchItem(heading, subheading, imageUrl, type, id, extra="") {
+function makeSearchItem(heading, subheading, imageUrl, type, id, extra="", href="") {
     let item = "" +
     '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' +
         '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' +
@@ -199,7 +206,7 @@ function makeSearchItem(heading, subheading, imageUrl, type, id, extra="") {
             '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' +
                 ((type != "artist") ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' : '') +
                 ((type == "song") ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' : '') +
-                '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-share"></div>' +
+                '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" data-href="' + href + '"class="search-item-share"></div>' +
             '</div>' +
         '</div>' +
         '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' +
@@ -234,3 +241,4 @@ function makePopup(message, error=false) {
         $("#popup-" + id).remove()
     }, 3500);
 }
+
