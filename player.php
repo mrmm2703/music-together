@@ -108,7 +108,7 @@ if (!isset($_GET["group_id"])) {
         </div>
     </div>
 
-    <audio style="display: none" id="dummyAudio" src="https://raw.githubusercontent.com/anars/blank-audio/master/15-seconds-of-silence.mp3">
+    <audio style="display: none" id="dummyAudio" src="https://raw.githubusercontent.com/anars/blank-audio/master/15-seconds-of-silence.mp3" loop>
     </audio>
 
     <!-- MAIN PLAYER CONTENT -->
@@ -296,6 +296,11 @@ if (!isset($_GET["group_id"])) {
         </div>
     </div>
 </body>
+<script src="js/player-server.js"></script>
 <script src="js/player.js"></script>
+<script src="js/client-events.js"></script>
+<script src="js/media-session.js"></script>
+<script src="js/spotify-api.js"></script>
+<script src="js/util.js"></script>
 <script src="js/player-ui.js"></script>
 </html>

@@ -54,6 +54,110 @@ function userTyping(id) {
   }, 500).animate({
     opacity: 0
   }, 500);
+} // Handle a search query result
+
+
+function searchSpotifyResponse(result) {
+  console.log(result);
+
+  if (result != null) {
+    addSongsResults(result["tracks"]);
+    addArtistResults(result["artists"]);
+    addAlbumsResults(result["albums"]);
+    addPlaylistsResults(result["playlists"]);
+    $(".search-type-container").css("display", "flex");
+    $(".search-title").css("display", "block");
+  } // Add the event handlers everytime a new set of search results is made
+
+
+  $(".search-item-image-container").hover(function () {
+    $(".search-item-fan[data-id='" + $(this).data("id") + "']").stop(true, true);
+    $(".search-item-fan[data-id='" + $(this).data("id") + "']").animate({
+      width: "18em",
+      paddingLeft: "4em",
+      paddingRight: "1em"
+    }, 150);
+    $(".search-item-text-container[data-id='" + $(this).data("id") + "']").stop(true, true);
+    $(".search-item-text-container[data-id='" + $(this).data("id") + "']").animate({
+      marginLeft: "-4em",
+      opacity: 0
+    }, 150);
+  }, function () {
+    $(".search-item-fan[data-id='" + $(this).data("id") + "']").stop(true, true);
+    $(".search-item-fan[data-id='" + $(this).data("id") + "']").animate({
+      width: "0",
+      paddingLeft: "0",
+      paddingRight: "0"
+    }, 150);
+    $(".search-item-text-container[data-id='" + $(this).data("id") + "']").stop(true, true);
+    $(".search-item-text-container[data-id='" + $(this).data("id") + "']").animate({
+      marginLeft: "1.6vw",
+      opacity: 1
+    }, 150);
+  }); // Add click listeners to the play buttons in search
+
+  $(".search-item-play").click(function () {
+    socket.emit("makeMeHost");
+
+    if ($(this).data("type") == "song") {
+      spotifyPlay("spotify:track:" + $(this).data("id"), "spotify:album:" + $(this).data("extra"), null, true);
+    } else if ($(this).data("type") == "playlist") {
+      spotifyPlayPlaylistAlbum("spotify:playlist:" + $(this).data("id"), true);
+    } else if ($(this).data("type") == "artist") {
+      spotifyPlayArtist("spotify:artist:" + $(this).data("id"));
+    } else if ($(this).data("type") == "album") {
+      spotifyPlayPlaylistAlbum("spotify:album:" + $(this).data("id"), true);
+    }
+
+    setTimeout(function () {
+      changedSong();
+      updatePlayer();
+      addSongChangeMessage(user_id);
+    }, 500);
+    dummyAudio.play();
+  }); // Add to queue button handler
+
+  $(".search-item-queue").click(function () {
+    // Extract song information using HTML elements contents
+    var songUri = "spotify:track:" + $(this).data("id");
+    var songName = $(".search-item-name[data-id='" + $(this).data("id") + "']").html();
+    var songArtist = $(".search-item-artist[data-id='" + $(this).data("id") + "']").html();
+    var songImage = $(".search-item-image[data-id='" + $(this).data("id") + "']").attr("src"); // Add to queue and send to other clients
+
+    addToSpotifyQueue(songUri, true);
+    socket.emit("addToQueue", {
+      uri: songUri,
+      name: songName,
+      artist: songArtist,
+      image: songImage
+    });
+    addMessage(user_id, "Added " + songName + " by " + songArtist + " to the queue.", true);
+  }); // Share button handler
+
+  $(".search-item-share").click(function () {
+    fadeInShare($(this).data("href"), $(this).data("type"));
+  }); // Add to playlist button handler
+
+  $(".search-item-add").click(function () {
+    var _this = this;
+
+    spotifyPlayer.getCurrentState().then(function (state) {
+      if (!state) {
+        makePopup("No song playing");
+        return;
+      }
+
+      addToPlaylist(state.track_window.current_track.id, $(_this).data("id")).then(function (result) {
+        makePopup("Added to playlist");
+      }, function (error) {
+        makePopup("Could not add to playlist");
+      });
+    });
+  }); // Initialise the slide-out fans in the unhidden state
+
+  $(".search-item-fan").css("width", "0");
+  $(".search-item-fan").css("padding-left", "0");
+  $(".search-item-fan").css("padding-right", "0");
 } // Add search results for songs
 
 
@@ -144,7 +248,7 @@ function addPlaylistsResults(response) {
 function makeSearchItem(heading, subheading, imageUrl, type, id) {
   var extra = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : "";
   var href = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : "";
-  var item = "" + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' + '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' + (type != "artist" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' : '') + (type == "song" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' : '') + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" data-href="' + href + '"class="search-item-share"></div>' + '</div>' + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-name">' + heading + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' + subheading + '</div>' + '</div>' + '</div>';
+  var item = "" + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image-container">' + '<img data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-image" src="' + imageUrl + '">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-fan">' + (type != "artist" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-play"></div>' : '') + (type == "song" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-queue"></div>' : '') + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" data-href="' + href + '"class="search-item-share"></div>' + (type == "playlist" ? '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-add"></div>' : '') + '</div>' + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-text-container">' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-name">' + heading + '</div>' + '<div data-extra="' + extra + '" data-type="' + type + '" data-id="' + id + '" class="search-item-artist">' + subheading + '</div>' + '</div>' + '</div>';
   return item;
 } // Function to make slide in popups
 
@@ -172,4 +276,94 @@ function makePopup(message) {
   setTimeout(function () {
     $("#popup-" + id).remove();
   }, 3500);
+} // PLAYER UI FUNCTIONS
+// Fade in search overlay
+
+
+function fadeInSearch() {
+  var playlist = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  screenBlock.css("display", "block");
+  screenBlock.animate({
+    opacity: 1
+  }, 250);
+  searchOverlay.css("display", "grid");
+
+  if (playlist) {
+    $(".search-type-container:not(#search-playlists-container)").css("display", "none");
+    $(".search-title:not(#search-playlists-title)").css("display", "none");
+  }
+
+  searchOverlay.animate({
+    opacity: 1
+  }, 250);
+} // Fade out search overlay
+
+
+function fadeOutSearch() {
+  screenBlock.animate({
+    opacity: 0
+  }, 250);
+  searchOverlay.animate({
+    opacity: 0
+  }, 250);
+  setTimeout(function () {
+    screenBlock.css("display", "none");
+    searchOverlay.css("display", "none");
+    $(".search-type-container").css("display", "flex");
+    $(".search-title").css("display", "block");
+  }, 250);
+} // Fade in share popup
+
+
+function fadeInShare(link) {
+  var media = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  screenBlockShare.css("display", "block");
+  screenBlockShare.animate({
+    opacity: 1
+  }, 250);
+  shareContainer.css("display", "flex");
+  shareContainer.animate({
+    opacity: 1
+  }, 250);
+
+  if (media) {
+    shareContainer.find(".grid-title").html("Share " + media);
+    $("#twitter").attr("href", "https://twitter.com/intent/tweet?url=" + link + "&text=Checkout this " + media + " on Spotify:");
+    $("#email").attr("href", "mailto:?subject=Checkout%20this%20" + media + "&body=Hey!%0D%0A%0D%0ACheckout%20this%20" + media + "%20on%20Spotify!%0D%0A" + link);
+    $("#link").html(link);
+    $("#fb").attr("href", "https://www.facebook.com/sharer/sharer.php?u=" + link);
+  } else {
+    shareContainer.find(".grid-title").html("Invite users");
+    $("#twitter").attr("href", "https://twitter.com/intent/tweet?url=https://morahman.me/musictogether/join.php?group_id=" + link + "&text=Join my Music Together group:");
+    $("#email").attr("href", "mailto:?subject=Join%20my%20Music%20Together%20group!&body=Hey!Join%20my%20Music%20Together%20group%20session%20here%3Ahttps%3A%2F%2Fmorahman.me%2Fmusictogether%2Fjoin.php%3Fgroup_id%3D" + link);
+    $("#link").html("https://morahman.me/musictogether/join.php?group_id=" + link);
+    $("#fb").attr("href", "https://www.facebook.com/sharer/sharer.php?u=https://morahman.me/musictogether/join.php?group_id=" + link);
+  }
+} // Fade out search overlay
+
+
+function fadeOutShare() {
+  screenBlockShare.animate({
+    opacity: 0
+  }, 250);
+  shareContainer.animate({
+    opacity: 0
+  }, 250);
+  setTimeout(function () {
+    screenBlockShare.css("display", "none");
+    shareContainer.css("display", "none");
+  }, 250);
+} // Add a message in the message panel when song changes
+
+
+function addSongChangeMessage(personId) {
+  console.log("ADD SONG CHANGE MESSAGE");
+  spotifyPlayer.getCurrentState().then(function (state) {
+    if (!state) {
+      console.error("No music playing.");
+      return;
+    }
+
+    addMessage(personId, "Now playing " + state.track_window.current_track.name, true);
+  });
 }
