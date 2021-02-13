@@ -37,6 +37,11 @@ class User {
      */
     public $prof_pic;
     /**
+     * A URL to the user's profile picture on Spotify.
+     * @var string $prof_pic_orig
+     */
+    public $prof_pic_orig;
+    /**
      * Whether the user is banned or not.
      * @var boolean $banned
      */
@@ -74,8 +79,8 @@ class User {
         // Get the user's data from Spotify
         $this->access_token = $access_token;
         $user_data = $this->getUserData();
-        echo "<br><br>USER DATA<br><br><br><br>";
-        var_dump($user_data);
+        // echo "<br><br>USER DATA<br><br><br><br>";
+        // var_dump($user_data);
         $id = $user_data->{"id"};
         if ($user_data->{"product"} == "premium") {
             $this->premium = True;
@@ -112,22 +117,42 @@ class User {
                 $this->dashboard_muted = False;
             } else {
                 $this->nickname = $db_data["nickname"];
-                echo $db_data["dashboardMuted"];
+                // echo $db_data["dashboardMuted"];
                 $this->dashboard_muted = $db_data["dashboardMuted"];
             }
 
             $this->email = $user_data->{"email"};
 
             // Set the profile picture
-            if (count($user_data->{"images"}) == 0) {
-                $userProfPic = "defaultProfilePicture.png";
+            if ($db_data["profilePicture"] == "defaultProfilePicture.png" ||
+            substr($db_data["profilePicture"], 0, 20) != "https://morahman.me/") {
+                if (count($user_data->{"images"}) == 0) {
+                    $userProfPic = "defaultProfilePicture.png";
+                } else {
+                    $userProfPic = $user_data->{"images"}[0]->{"url"};
+                }
             } else {
-                $userProfPic = $user_data->{"images"}[0]->{"url"};
+                $userProfPic = $db_data["profilePicture"];
             }
+
             $this->prof_pic = $userProfPic;
+            $db_con->updateUser($this);
         } else {
             $this->premium = False;
         }
+    }
+
+    /**
+     * Update a user's nickname and profile picture.
+     * 
+     * Get the latest nickname and profile picture from the datbase.
+     * 
+     * @param DatabaseConnection $db_con
+     */
+    public function update($db_con) {
+        $db_data = $db_con->getUser($this->id);
+        $this->nickname = $db_data["nickname"];
+        $this->prof_pic = $db_data["profilePicture"];
     }
 
     /**
@@ -193,6 +218,22 @@ class User {
 
         // Return an object of the JSON response
         return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * Get the user's image from Spotify API
+     * 
+     * @return string|null The image from the user's profile. Null if none set.
+     */
+    public function getProfPic() {
+        $response = $this->getRequest("me");
+        $response = json_decode($response->getBody()->getContents());
+        
+        if (count($response->{"images"}) == 0) {
+            return null;
+        } else {
+            return $response->{"images"}[0]->{"url"};
+        }
     }
 
     /**

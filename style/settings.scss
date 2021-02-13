@@ -1,2 +1,110 @@
 @import "base";
 @import "constants";
+
+body {
+    background-color: $messageOtherBackground;
+    padding: 2.5em;
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    .details {
+        display: flex;
+        flex-direction: column;
+        margin-right: 2.5em;
+        text-align: right;
+    }
+    img {
+        width: 7.5em;
+        height: 7.5em;
+        border-radius: 50%;
+        @include imgShadow;
+    }
+    #nickname {
+        font-size: 6vw;
+    }
+    #org-name {
+        font-size: 4vw;
+    }
+}
+
+.inp-cont {
+    #change-nickname {
+        position: relative;
+        float: right;
+        margin-right: 20px;
+        top: -50%;
+    }
+}
+
+.pic-container {
+    display: flex;
+    margin-bottom: 1.5em;
+    img {
+        width: 5em;
+        height: 5em;
+        @include imgShadow;
+        border-radius: 50%;
+    }
+    .pic-btn-cont {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 1.5em;
+    }
+    #change-pic {
+        margin-bottom: 0.5em;
+    }
+}
+
+#reset-btn, #logout {
+    margin-top: 1.5em;
+}
+
+#reset-btn {
+    margin-bottom: 1em;
+}
+
+#logout {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.label {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+}
+
+* {
+    @include textShadow
+}
+
+input {
+    @include textInput;
+    font-size: 1.3em;
+    padding-left: 0;
+    width: 100%;
+}
+
+::placeholder {
+    opacity: 0.6;
+}
+
+.sub-text {
+    font-size: 0.75em;
+}
+
+.yellow-btn:not(#change-nickname) {
+    width: auto;
+}
+
+.yellow-btn:not(#logout) {
+    margin-right: auto;
+}
+
+.yellow-btn {
+    cursor: pointer;
+}

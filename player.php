@@ -1,12 +1,13 @@
 <?php
 Namespace MusicTogether;
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
 
 require_once "constants.php";
 require_once "functions.php";
 require_once "user.php";
+require_once "db/db.php";
 
 session_start();
 checkSessionExists();
@@ -15,6 +16,10 @@ if (!isset($_GET["group_id"])) {
     header("Location: " . $homepage . "/dashboard.php");
     exit();
 }
+
+$db_con = new DatabaseConnection();
+$db_con->connect();
+$_SESSION["current_user"]->update($db_con);
 
 ?>
 <!DOCTYPE html>
@@ -28,7 +33,7 @@ if (!isset($_GET["group_id"])) {
         echo '"</script>';
         echo '<script>
         var user_name = "';
-        echo $_SESSION["current_user"]->name;
+        echo ($_SESSION["current_user"]->nickname == null ? $_SESSION["current_user"]->name : $_SESSION["current_user"]->nickname);
         echo '"</script>';
         echo '<script>
         var user_prof_pic = "';
@@ -200,15 +205,15 @@ if (!isset($_GET["group_id"])) {
             <div class="settings-container">
                 <div class="settings-inner-container">
                     <div class="settings-text-container">
-                        <div class="settings-name">
-                            <?php echo $_SESSION["current_user"]->name; ?>
+                        <div class="settings-name nickname-text">
+                        <?php echo ($_SESSION["current_user"]->nickname == null ? $_SESSION["current_user"]->name : $_SESSION["current_user"]->nickname); ?>
                         </div>
-                        <a class="settings-btn yellow-btn">
+                        <a class="settings-btn yellow-btn" onclick="showSettings()">
                             Settings
                         </a>
                     </div>
                     <div class="settings-image">
-                    <img id="prof-pic" src="<?php echo $_SESSION["current_user"]->prof_pic; ?>" />
+                    <img id="prof-pic" class="prof-pic" src="<?php echo $_SESSION["current_user"]->prof_pic; ?>" />
                     </div>
                 </div>
             </div>
@@ -254,4 +259,5 @@ if (!isset($_GET["group_id"])) {
 <script src="js/media-session.js"></script>
 <script src="js/spotify-api.js"></script>
 <script src="js/util.js"></script>
+<script src="js/create-settings.js"></script>
 </html>

@@ -349,5 +349,66 @@ class DatabaseConnection {
             return $activeGroups;
         }
     }
+
+    /**
+     * Update user's data.
+     * 
+     * Update a user's data inside the database. Updates the
+     * profile picture and the access token.
+     * 
+     * @param User $user The user object.
+     * @return bool Whether any changes were made or not.
+     */
+    public function updateUser($user) {
+        $stmt = $this->mysqli->prepare("UPDATE users SET userAccessToken=?, userProfilePicture=? WHERE userSpotifyID=?");
+        $stmt->bind_param("sss", $user->access_token, $user->prof_pic, $user->id);
+        $stmt->execute();
+        if ($this->mysqli->affected_rows == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Update user's nickname.
+     * 
+     * @param string $access_token The user's access token.
+     * @param string $nickname The nickname to set.
+     * @return bool Whether any changes were made or not.
+     */
+    public function updateNickname($access_token, $nickname) {
+        $stmt = $this->mysqli->prepare("UPDATE users SET userNickname=? WHERE userAccessToken=?");
+        $stmt->bind_param("ss", $nickname, $access_token);
+        $stmt->execute();
+        if ($stmt === false) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Update user's profile picture by access token.
+     * 
+     * @param string $access_token The user's access token.
+     * @param string $pic_url The image's URL.
+     * @return bool Whether any changes where made or not.
+     */
+    public function updateProfPic($access_token, $pic_url, $id=null) {
+        if ($access_token != null) {
+            $stmt = $this->mysqli->prepare("UPDATE users SET userProfilePicture=? WHERE userAccessToken=?");
+            $stmt->bind_param("ss", $pic_url, $access_token);
+        } else {
+            $stmt = $this->mysqli->prepare("UPDATE users SET userProfilePicture=? WHERE userSpotifyID=?");
+            $stmt->bind_param("ss", $pic_url, $id);
+        }
+        $stmt->execute();
+        if ($stmt === false) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
 ?>

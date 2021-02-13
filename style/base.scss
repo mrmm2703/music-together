@@ -143,6 +143,7 @@ html, body {
     color: $yellow;
     font-weight: 700;
     @include textShadow;
+    cursor: pointer;
 }
 
 .yellow-btn:not(.no-anim) {

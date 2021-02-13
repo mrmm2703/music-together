@@ -52,6 +52,10 @@ session_destroy();
     function showErrorAlert($msg) {
         echo "<script>makePopup('" . $msg . "', true)</script>";
     }
+    
+    function showSuccessAlert($msg) {
+        echo "<script>makePopup('" . $msg . "')</script>";
+    }
 
     if (isset($_GET["error"])) {
         if ($_GET["error"] == "no_premium") {
@@ -70,6 +74,10 @@ session_destroy();
     if (isset($_GET["action"])) {
         if ($_GET["action"] == "banned") {
             showErrorAlert("You have been banned");
+        } elseif ($_GET["action"] == "logout") {
+            showSuccessAlert("Successfully logged out");
+        } elseif ($_GET["action"] == "reset") {
+            showSuccessAlert("Account reset");
         }
     }
 

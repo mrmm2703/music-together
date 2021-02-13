@@ -64,7 +64,7 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
                 echo '
                 <div class="song-container" id="' . $track->id . '-cont">
                     <audio class="preview-sound" id="' . $track->id . '-audio" preload="auto" loop src="' . $track->preview_sound . '"></audio>
-                    <a class="song-cover" href="#" id="' . $track->id . '" data-context="' . $track->context . '">
+                    <a class="song-cover" id="' . $track->id . '" data-context="' . $track->context . '">
                         <img src="' . $track->cover_image .'" class="hvr-grow"/>
                     </a>
                     <div class="song-details-container">
@@ -85,15 +85,15 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
         <div class="settings-container">
             <div class="settings-inner-container">
                 <div class="settings-text-container">
-                    <div class="settings-name">
-                        <?php echo $_SESSION["current_user"]->name; ?>
+                    <div class="settings-name nickname-text">
+                        <?php echo ($_SESSION["current_user"]->nickname == null ? $_SESSION["current_user"]->name : $_SESSION["current_user"]->nickname); ?>
                     </div>
-                    <a class="settings-btn yellow-btn" href="#">
+                    <a class="settings-btn yellow-btn" onclick="showSettings()">
                         Settings
                     </a>
                 </div>
                 <div class="settings-image">
-                    <img id="prof-pic" src="<?php echo $_SESSION["current_user"]->prof_pic; ?>" />
+                    <img class="prof-pic" src="<?php echo $_SESSION["current_user"]->prof_pic; ?>" />
                 </div>
             </div>
         </div>
@@ -102,11 +102,11 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
     <div class="group-id-container">
         <div class="group-id-inner-container">
             <input id="group-id-entry" type="text" placeholder="Group ID"/>
-            <a href="#" class="yellow-btn" onclick="joinBtn()">Join</a>
+            <a class="yellow-btn" onclick="joinBtn()">Join</a>
         </div>
     </div>
     <div class="create-group-btn-container">
-        <a class="create-group-btn yellow-btn" onclick="createBtn()" href="#">
+        <a class="create-group-btn yellow-btn" onclick="createBtn()">
             Create new group
         </a>
     </div> 
@@ -115,6 +115,7 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
 </body>
 <script src="js/dashboard.js"></script>
 <script src="js/player-ui.js"></script>
+<script src="js/create-settings.js"></script>
 </html>
 
 <?php

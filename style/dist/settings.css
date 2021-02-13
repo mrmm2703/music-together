@@ -58,6 +58,7 @@ html, body {
   color: #FFD166;
   font-weight: 700;
   text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 
 .footer {
@@ -145,4 +146,124 @@ html, body {
 }
 .popup-container > div {
   font-weight: 600;
+}
+
+body {
+  background-color: #1A7FA0;
+  padding: 2.5em;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.top .details {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2.5em;
+  text-align: right;
+}
+.top img {
+  width: 7.5em;
+  height: 7.5em;
+  border-radius: 50%;
+  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  -webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  -moz-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+}
+.top #nickname {
+  font-size: 6vw;
+}
+.top #org-name {
+  font-size: 4vw;
+}
+
+.inp-cont #change-nickname {
+  position: relative;
+  float: right;
+  margin-right: 20px;
+  top: -50%;
+}
+
+.pic-container {
+  display: flex;
+  margin-bottom: 1.5em;
+}
+.pic-container img {
+  width: 5em;
+  height: 5em;
+  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  -webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  -moz-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  border-radius: 50%;
+}
+.pic-container .pic-btn-cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 1.5em;
+}
+.pic-container #change-pic {
+  margin-bottom: 0.5em;
+}
+
+#reset-btn, #logout {
+  margin-top: 1.5em;
+}
+
+#reset-btn {
+  margin-bottom: 1em;
+}
+
+#logout {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.label {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+
+* {
+  text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+input {
+  border: none;
+  border-bottom: 2px solid #FFFFFF;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  font-family: "Raleway", sans-serif;
+  font-size: 24px;
+  background: none;
+  color: #FFFFFF;
+  font-size: 1.3em;
+  padding-left: 0;
+  width: 100%;
+}
+input:focus {
+  outline: none;
+}
+
+::placeholder {
+  opacity: 0.6;
+}
+
+.sub-text {
+  font-size: 0.75em;
+}
+
+.yellow-btn:not(#change-nickname) {
+  width: auto;
+}
+
+.yellow-btn:not(#logout) {
+  margin-right: auto;
+}
+
+.yellow-btn {
+  cursor: pointer;
 }
