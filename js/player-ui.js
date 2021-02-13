@@ -2,10 +2,17 @@
 const users_container = $(".group-users-container")
 const messages_container = $(".messages-container")
 
+const likeBtn = $(".player-share-like")
+const shareBtn = $(".player-share-share")
+const playlistBtn = $(".player-share-playlist")
+const playlistChooser = $(".playlist-chooser")
+
 const songs_container = $("#search-songs-container")
 const artists_container = $("#search-artists-container")
 const albums_container = $("#search-albums-container")
 const playlists_container = $("#search-playlists-container")
+
+const tracks_container = $(".recent-tracks-container")
 
 // Add a user to the My Group panel
 function addUser(id, name, prof_pic) {
@@ -31,6 +38,10 @@ function removeUser(id) {
     $("#group-user-" + id).remove()
 }
 
+function getNameFromId(id) {
+    return $("#group-user-" + id + " .group-user-text-name").text()
+}
+
 // Add a chat to the Messages panel
 function addMessage(id, message, emphasise=false) {
     // Check if the message is from the current user or other user
@@ -45,7 +56,7 @@ function addMessage(id, message, emphasise=false) {
         now.getMinutes().toString().padStart(2, "0")
 
     // Get the name from the My Group panel
-    let name = $("#group-user-"+id+" .group-user-text-name").text()
+    let name = getNameFromId(id)
 
     if (!emphasise) {
         messages_container.append("" +
@@ -283,6 +294,11 @@ function addPlaylistsResults(response) {
     let playlists = response["items"]
     if (!playlists.length == 0) {
         playlists.forEach(function(playlist) {
+            console.log("GLOB: " + globCollabUri)
+            console.log("CUR: " + playlist["id"])
+            if (playlist["id"] == globCollabUri) {
+                return
+            }
             let img = "defaultProfilePicture.png"
             if (!playlist["images"].length == 0) {
                 img = playlist["images"][0]["url"]
@@ -416,4 +432,49 @@ function addSongChangeMessage(personId) {
         }
         addMessage(personId, "Now playing " + state.track_window.current_track.name, true)
     })
+}
+
+// Update the collaborative playlist
+function updateCollabPlaylist(id) {
+    getPlaylist(id).then(
+        function(result) {
+            tracks_container.empty()
+            result.tracks.items.forEach(function(item) {
+                tracks_container.append(trackListItem(
+                    item.track.name,
+                    item.track.artists[0].name,
+                    item.track.album.images[0].url,
+                    item.track.id,
+                    item.added_by.id
+                ))
+            })
+        },
+        function(error) {
+            makePopup("Could not update collab playlist", true)
+        }
+    )
+}
+
+// Create a new recent-track-container object
+function trackListItem(name, artist, img, songId, addedById) {
+    let addedByName = getNameFromId(addedById)
+    return `
+        <div data-added-by="${addedById}" data-id="${songId}" class="recent-track-container">
+            <div class="recent-track-image-container">
+                <img class="recent-track-image" src="${img}">
+                <div class="recent-track-image-likes-container">
+                    <img class="recent-track-image-likes-icon" src="img/like.png">
+                    <div class="recent-track-image-likes-number">7</div>
+                </div>
+            </div>
+            <div class="recent-track-text-container">
+                <div class="recent-track-name">
+                    ${name}
+                </div>
+                <div class="recent-track-artist">
+                    ${artist}
+                </div>
+            </div>
+        </div>
+    `
 }

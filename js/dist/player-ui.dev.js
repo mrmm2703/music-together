@@ -3,10 +3,15 @@
 // Get reference to HTML elements
 var users_container = $(".group-users-container");
 var messages_container = $(".messages-container");
+var likeBtn = $(".player-share-like");
+var shareBtn = $(".player-share-share");
+var playlistBtn = $(".player-share-playlist");
+var playlistChooser = $(".playlist-chooser");
 var songs_container = $("#search-songs-container");
 var artists_container = $("#search-artists-container");
 var albums_container = $("#search-albums-container");
-var playlists_container = $("#search-playlists-container"); // Add a user to the My Group panel
+var playlists_container = $("#search-playlists-container");
+var tracks_container = $(".recent-tracks-container"); // Add a user to the My Group panel
 
 function addUser(id, name, prof_pic) {
   users_container.append("" + "<div id='group-user-" + id + "' class='group-user-container'>" + "<div class='group-user-image'>" + "<img src='" + prof_pic + "'>" + "</div>" + "<div class='group-user-text-container'>" + "<div class='group-user-text-name'>" + name + "</div>" + "<div class='group-user-text-typing'>" + "typing..." + "</div>" + "</div>" + "</div>" + "");
@@ -15,6 +20,10 @@ function addUser(id, name, prof_pic) {
 
 function removeUser(id) {
   $("#group-user-" + id).remove();
+}
+
+function getNameFromId(id) {
+  return $("#group-user-" + id + " .group-user-text-name").text();
 } // Add a chat to the Messages panel
 
 
@@ -31,7 +40,7 @@ function addMessage(id, message) {
   var now = new Date();
   var time = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0"); // Get the name from the My Group panel
 
-  var name = $("#group-user-" + id + " .group-user-text-name").text();
+  var name = getNameFromId(id);
 
   if (!emphasise) {
     messages_container.append("" + '<div class="message ' + person + ' message-' + id + '">' + '<div class="message-name">' + name + '</div>' + '<div class="message-text">' + message + '</div>' + '<div class="message-time">' + time + '</div>' + '</div>');
@@ -230,6 +239,13 @@ function addPlaylistsResults(response) {
 
   if (!playlists.length == 0) {
     playlists.forEach(function (playlist) {
+      console.log("GLOB: " + globCollabUri);
+      console.log("CUR: " + playlist["id"]);
+
+      if (playlist["id"] == globCollabUri) {
+        return;
+      }
+
       var img = "defaultProfilePicture.png";
 
       if (!playlist["images"].length == 0) {
@@ -366,4 +382,22 @@ function addSongChangeMessage(personId) {
 
     addMessage(personId, "Now playing " + state.track_window.current_track.name, true);
   });
+} // Update the collaborative playlist
+
+
+function updateCollabPlaylist(id) {
+  getPlaylist(id).then(function (result) {
+    tracks_container.empty();
+    result.tracks.items.forEach(function (item) {
+      tracks_container.append(trackListItem(item.track.name, item.track.artists[0].name, item.track.album.images[0].url, item.track.id, item.added_by.id));
+    });
+  }, function (error) {
+    makePopup("Could not update collab playlist", true);
+  });
+} // Create a new recent-track-container object
+
+
+function trackListItem(name, artist, img, songId, addedById) {
+  var addedByName = getNameFromId(addedById);
+  return "\n        <div data-added-by=\"".concat(addedById, "\" data-id=\"").concat(songId, "\" class=\"recent-track-container\">\n            <div class=\"recent-track-image-container\">\n                <img class=\"recent-track-image\" src=\"").concat(img, "\">\n                <div class=\"recent-track-image-likes-container\">\n                    <img class=\"recent-track-image-likes-icon\" src=\"img/like.png\">\n                    <div class=\"recent-track-image-likes-number\">7</div>\n                </div>\n            </div>\n            <div class=\"recent-track-text-container\">\n                <div class=\"recent-track-name\">\n                    ").concat(name, "\n                </div>\n                <div class=\"recent-track-artist\">\n                    ").concat(artist, "\n                </div>\n            </div>\n        </div>\n    ");
 }

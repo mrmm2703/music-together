@@ -221,7 +221,78 @@ function addToPlaylist(songId, playlistId) {
                 resolve(result)
             },
             error: function(error) {
-                console.error("ADD TO PLAYYLIST FAILED")
+                console.error("ADD TO PLAYLIST FAILED")
+                console.error(error)
+                reject(error)
+            }
+        })
+    })
+}
+
+// Create a new collab playlist
+function createPlaylist(name, desc) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: "https://api.spotify.com/v1/users/" + user_id + "/playlists",
+            type: "POST",
+            data: JSON.stringify({
+                "name": name,
+                "public": false,
+                "collaborative": true,
+                "description": desc
+            }),
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            },
+            success: function(result) {
+                resolve(result)
+            },
+            error: function(error) {
+                console.error("CREATE PLAYLIST FAILED")
+                console.error(error)
+                reject(error)
+            }
+        })
+    })
+}
+
+// Follow a playlist
+function followPlaylist(playlistId) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: "https://api.spotify.com/v1/playlists/" + playlistId + "/followers",
+            type: "PUT",
+            headers: {
+                "Authorization": "Bearer " + accessToken,
+                "Content-Type": "application/json"
+            },
+            success: function(result) {
+                resolve(result)
+            },
+            error: function(error) {
+                console.error("FOLLOW PLAYLIST FAILED")
+                console.error(error)
+                reject(error)
+            }
+        })
+    })
+}
+
+// Get the contents of a playlist
+function getPlaylist(playlistId) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: "https://api.spotify.com/v1/playlists/" + playlistId +
+            "?fields=tracks.items(track(name,artists(name),id,album(images)),added_by(id))",
+            type: "GET",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            },
+            success: function(result) {
+                resolve(result)
+            },
+            error: function(error) {
+                console.error("GET PLAYLIST FAILED")
                 console.error(error)
                 reject(error)
             }

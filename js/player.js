@@ -5,14 +5,13 @@ const screenBlock = $(".screen-block")
 const screenBlockShare = $(".screen-block-share")
 const searchOverlay = $(".search-overlay")
 const shareContainer = $("#share-container")
-const likeBtn = $(".player-share-like")
-const shareBtn = $(".player-share-share")
-const playlistBtn = $(".player-share-playlist")
 const dummySearch = document.getElementById("dummy-search")
 const actualSearch = document.getElementById("search-input-input")
 const playerImg = $("#player-image")
 const playerName = $("#player-name")
 const playerArtist = $("#player-artist")
+
+var globCollabUri = ""
 
 if (urlParams.get("action") == "join") {
     fadeOutSearch()
@@ -185,8 +184,23 @@ shareBtn.click(function() {
     })
 })
 
-// Playlist button
-playlistBtn.click(function() {
+// Add to playlist button hover listeners
+playlistBtn.mouseover(function() {
+    playlistChooser.finish()
+    playlistChooser.fadeIn(250)
+})
+
+playlistChooser.mouseleave(function() {
+    playlistChooser.finish()
+    playlistChooser.fadeOut(250)
+})
+
+// Playlist choice
+$("#collab-choice").click(function() {
+    addToCollab()
+})
+
+$("#other-choice").click(function() {
     getPlaylists().then(result => {
         console.log(result)
         addPlaylistsResults(result)

@@ -109,11 +109,12 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
         <a class="create-group-btn yellow-btn" onclick="createBtn()" href="#">
             Create new group
         </a>
-    </div>
+    </div> 
 
     <div id="mute-btn"></div>
 </body>
 <script src="js/dashboard.js"></script>
+<script src="js/player-ui.js"></script>
 </html>
 
 <?php
@@ -122,4 +123,9 @@ if (isset($_SESSION["join_group_id"])) {
     unset($_SESSION["join_group_id"]);
 }
 
+if (isset($_GET["error"])) {
+    if ($_GET["error"] == "server_connection") {
+        echo '<script>makePopup("Could not connect to server", true)</script>';
+    }
+}
 ?>

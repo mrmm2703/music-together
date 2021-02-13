@@ -486,11 +486,37 @@ html, body {
   cursor: pointer;
   transition: 0.3s;
 }
-.player-share-container > div:hover {
+.player-share-container > div:not(.player-share-playlist):hover {
   opacity: 0.7;
 }
 .player-share-container .player-share-playlist {
   background-image: url("../../img/share-playlist.svg");
+  cursor: auto;
+}
+.player-share-container .player-share-playlist .playlist-chooser {
+  position: relative;
+  width: 150px;
+  padding: 1em;
+  background-color: #1A7FA0;
+  border-radius: 21px;
+  right: 150px;
+  top: -10px;
+  display: none;
+}
+.player-share-container .player-share-playlist .playlist-chooser .playlist-choice {
+  background-color: #1B7795;
+  border-radius: 21px;
+  padding: 0.5em 1.3em;
+  text-align: center;
+  margin-top: 1em;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.player-share-container .player-share-playlist .playlist-chooser .playlist-choice:first-child {
+  margin-top: 0;
+}
+.player-share-container .player-share-playlist .playlist-chooser .playlist-choice:hover {
+  opacity: 0.7;
 }
 .player-share-container .player-share-like {
   background-image: url("../../img/share-like.svg");

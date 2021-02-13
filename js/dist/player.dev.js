@@ -7,14 +7,12 @@ var screenBlock = $(".screen-block");
 var screenBlockShare = $(".screen-block-share");
 var searchOverlay = $(".search-overlay");
 var shareContainer = $("#share-container");
-var likeBtn = $(".player-share-like");
-var shareBtn = $(".player-share-share");
-var playlistBtn = $(".player-share-playlist");
 var dummySearch = document.getElementById("dummy-search");
 var actualSearch = document.getElementById("search-input-input");
 var playerImg = $("#player-image");
 var playerName = $("#player-name");
 var playerArtist = $("#player-artist");
+var globCollabUri = "";
 
 if (urlParams.get("action") == "join") {
   fadeOutSearch();
@@ -188,9 +186,21 @@ shareBtn.click(function () {
 
     fadeInShare("https://open.spotify.com/track/" + state.track_window.current_track.id, "song");
   });
-}); // Playlist button
+}); // Add to playlist button hover listeners
 
-playlistBtn.click(function () {
+playlistBtn.mouseover(function () {
+  playlistChooser.finish();
+  playlistChooser.fadeIn(250);
+});
+playlistChooser.mouseleave(function () {
+  playlistChooser.finish();
+  playlistChooser.fadeOut(250);
+}); // Playlist choice
+
+$("#collab-choice").click(function () {
+  addToCollab();
+});
+$("#other-choice").click(function () {
   getPlaylists().then(function (result) {
     console.log(result);
     addPlaylistsResults(result);

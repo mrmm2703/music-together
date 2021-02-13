@@ -333,11 +333,37 @@
         cursor: pointer;
         transition: 0.3s;
     }
-    & > div:hover {
+    & > div:not(.player-share-playlist):hover {
         opacity: 0.7;
     }
     .player-share-playlist {
         background-image: url("../../img/share-playlist.svg");
+        cursor: auto;
+        .playlist-chooser {
+            position: relative;
+            width: 150px;
+            padding: 1em;
+            background-color: $messageOtherBackground;
+            border-radius: $smallBorderRadius;
+            right: 150px;
+            top: -10px;
+            display: none;
+            .playlist-choice {
+                background-color: #1B7795;
+                border-radius: $smallBorderRadius;
+                padding: 0.5em 1.3em;
+                text-align: center;
+                margin-top: 1em;
+                transition: 0.3s;
+                cursor: pointer;
+            }
+            .playlist-choice:first-child {
+                margin-top: 0;
+            }
+            .playlist-choice:hover {
+                opacity: 0.7;
+            }
+        }
     }
     .player-share-like {
         background-image: url("../../img/share-like.svg");

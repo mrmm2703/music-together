@@ -187,63 +187,9 @@ if (!isset($_GET["group_id"])) {
 
         <div class="grid-recent">
             <div class="grid-title">
-                Recently played
+                Collab playlist
             </div>
             <div class="recent-tracks-container">
-
-                <div class="recent-track-container">
-                    <div class="recent-track-image-container">
-                        <img class="recent-track-image" src="defaultProfilePicture.png">
-                        <div class="recent-track-image-likes-container">
-                            <img class="recent-track-image-likes-icon" src="img/like.png">
-                            <div class="recent-track-image-likes-number">7</div>
-                        </div>
-                    </div>
-                    <div class="recent-track-text-container">
-                        <div class="recent-track-name">
-                            The Sound
-                        </div>
-                        <div class="recent-track-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-
-                <div class="recent-track-container">
-                    <div class="recent-track-image-container">
-                        <img class="recent-track-image" src="defaultProfilePicture.png">
-                        <div class="recent-track-image-likes-container">
-                            <img class="recent-track-image-likes-icon" src="img/like.png">
-                            <div class="recent-track-image-likes-number">7</div>
-                        </div>
-                    </div>
-                    <div class="recent-track-text-container">
-                        <div class="recent-track-name">
-                            The Sound
-                        </div>
-                        <div class="recent-track-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
-
-                <div class="recent-track-container">
-                    <div class="recent-track-image-container">
-                        <img class="recent-track-image" src="defaultProfilePicture.png">
-                        <div class="recent-track-image-likes-container">
-                            <img class="recent-track-image-likes-icon" src="img/like.png">
-                            <div class="recent-track-image-likes-number">7</div>
-                        </div>
-                    </div>
-                    <div class="recent-track-text-container">
-                        <div class="recent-track-name">
-                            The Sound
-                        </div>
-                        <div class="recent-track-artist">
-                            The 1975
-                        </div>
-                    </div>
-                </div>
 
             </div>
 
@@ -287,7 +233,12 @@ if (!isset($_GET["group_id"])) {
                     <div class="player-control" id="player-control-forward"></div>
                 </div>
                 <div class="player-share-container">
-                        <div class="player-share-playlist"></div>
+                        <div class="player-share-playlist">
+                            <div class="playlist-chooser">
+                                <div class="playlist-choice" id="collab-choice">collab playlist</div>
+                                <div class="playlist-choice" id="other-choice">other playlist</div>
+                            </div>
+                        </div>
                         <div class="player-share-like"></div>
                         <div class="player-share-share"></div>
                     </div>
@@ -296,11 +247,11 @@ if (!isset($_GET["group_id"])) {
         </div>
     </div>
 </body>
+<script src="js/player-ui.js"></script>
 <script src="js/player-server.js"></script>
 <script src="js/player.js"></script>
 <script src="js/client-events.js"></script>
 <script src="js/media-session.js"></script>
 <script src="js/spotify-api.js"></script>
 <script src="js/util.js"></script>
-<script src="js/player-ui.js"></script>
 </html>

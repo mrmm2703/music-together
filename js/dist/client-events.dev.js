@@ -35,11 +35,18 @@ actualSearch.addEventListener("keyup", function (e) {
     searchQuery = actualSearch.value;
     searchSpotify(searchQuery);
   }
-}); // When screen block is pressed
+}); // When search screen block is pressed
 
 screenBlock.click(function () {
   fadeOutSearch();
-});
+}); // When the share screen block is pressed
+
 screenBlockShare.click(function () {
   fadeOutShare();
-});
+}); // Add a song to collaborative playlist
+
+function addToCollab() {
+  spotifyPlayer.getCurrentState().then(function (state) {
+    socket.emit("doesCollabExist", state.track_window.current_track.id);
+  });
+}

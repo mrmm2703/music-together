@@ -1,6 +1,8 @@
 // SERVER EVENT LISTENERS
 
 function initSocketListeners() {
+    socket.on("connect_error")
+
     // Event handler when received usersInGroup message
     socket.on("usersInGroup", (data) => {
         console.log("usersInGroup:")
@@ -118,5 +120,56 @@ function initSocketListeners() {
     socket.on("addToQueue", (data) => {
         addToSpotifyQueue(data.uri)
         addMessage(data.id, "Added " + data.name + " by " + data.artist + " to the queue", true)
+    })
+
+    // When no collab playlist exists, make one
+    socket.on("noCollabPlaylist", (songId) => {
+        let date = new Date()
+        createPlaylist("Collab (" + group_id + ")",
+        `Music Together session on ${date.getDate()}/` +
+        `${date.getMonth()+1}/${date.getFullYear()}. Group ID: ${group_id}`).then(
+            function(result) {
+                socket.emit("newPlaylist", {
+                    songId: songId,
+                    collabUri: result["id"]
+                })
+            },
+            function(error) {
+                makePopup("Could not create collab playlist", true)
+            }
+        )
+    })
+
+    // When someone else makes a new collab playlist, follow it
+    socket.on("followPlaylist", (collabUri) => {
+        console.log("FOLLOW PLAYLIST")
+        console.log(collabUri)
+        followPlaylist(collabUri).then(
+            function(result) { },
+            function(error) {
+                makePopup("Could not follow collab playlist", true)
+            }
+        )
+    })
+
+    // When the collab URI is returned from the server to add a song to collab
+    socket.on("collabUri", (data) => {
+        addToPlaylist(data.songId, data.collabUri).then(
+            function(result) {
+                socket.emit("newPlaylistItem")
+                makePopup("Added to collab playlist")
+                globCollabUri = data.collabUri
+                updateCollabPlaylist(data.collabUri)
+            },
+            function(error) {
+                makePopup("Could not add to collaborative playlist", true)
+            }
+        )
+    })
+
+    // When an update playlist request is received
+    socket.on("updatePlaylist", (collabId) => {
+        globCollabUri = collabId
+        updateCollabPlaylist(collabId)
     })
 }

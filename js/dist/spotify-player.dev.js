@@ -62,6 +62,13 @@ window.onSpotifyWebPlaybackSDKReady = function () {
     var device_id = _ref5.device_id;
     deviceId = device_id;
     console.log("READY! DEVICE ID: " + device_id);
+
+    if (socket.disconnected) {
+      console.error("NO SERVER CONNECTION");
+      window.location.replace("dashboard.php?error=server_connection");
+      return;
+    }
+
     initSocketListeners();
     socket.emit("joinedGroup", {
       group: group_id,
