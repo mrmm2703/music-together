@@ -1,1 +1,1 @@
-"use strict";function msToMinutesSeconds(t){var o=t/1e3,r=Math.floor(t/60),n=Math.floor(o-r);return r.toString()+":"+n.toString().padStart(2,"0")}
+"use strict";function msToMinutesSeconds(e){var t=Math.floor(e/6e4),o=(e%6e4/1e3).toFixed(0);return t+":"+(o<10?"0":"")+o}

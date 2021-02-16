@@ -19,7 +19,7 @@ if (urlParams.get("action") == "join") {
 } // PLAYER FUNCTIONS
 
 
-var paused = false; // Play/Pause button
+var paused = true; // Play/Pause button
 
 $("#player-control-pause").click(function () {
   paused = !paused;
@@ -192,7 +192,7 @@ playlistBtn.mouseover(function () {
   playlistChooser.finish();
   playlistChooser.fadeIn(250);
 });
-playlistChooser.mouseleave(function () {
+playlistBtn.mouseleave(function () {
   playlistChooser.finish();
   playlistChooser.fadeOut(250);
 }); // Playlist choice

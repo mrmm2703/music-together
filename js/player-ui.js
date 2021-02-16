@@ -14,6 +14,10 @@ const playlists_container = $("#search-playlists-container")
 
 const tracks_container = $(".recent-tracks-container")
 
+const seekBar = $("#seek-bar")
+const seekBarCurText = $("#seek-left")
+const seekBarTotalText = $("#seek-right")
+
 // Add a user to the My Group panel
 function addUser(id, name, prof_pic) {
     users_container.append("" + 
@@ -149,6 +153,7 @@ function searchSpotifyResponse(result) {
     )
     // Add click listeners to the play buttons in search
     $(".search-item-play").click(function() {
+        initScreenBlock()
         socket.emit("makeMeHost")
         if ($(this).data("type") == "song") {
             spotifyPlay("spotify:track:"+$(this).data("id"), "spotify:album:"+$(this).data("extra"), null, true)
@@ -208,6 +213,7 @@ function searchSpotifyResponse(result) {
     $(".search-item-fan").css("width", "0")
     $(".search-item-fan").css("padding-left", "0")
     $(".search-item-fan").css("padding-right", "0")
+    fadeOutLoading()
 }
 
 // Add search results for songs
@@ -422,6 +428,15 @@ function fadeOutShare() {
     }, 250);
 }
 
+// Fade out loading overlay
+function fadeInLoading() {
+    $("#loading-block, lottie-player").fadeIn(300);
+}
+
+function fadeOutLoading() {
+    $("#loading-block, lottie-player").fadeOut(300);
+}
+
 // Add a message in the message panel when song changes
 function addSongChangeMessage(personId) {
     console.log("ADD SONG CHANGE MESSAGE")
@@ -477,4 +492,17 @@ function trackListItem(name, artist, img, songId, addedById) {
             </div>
         </div>
     `
+}
+
+// Seek bar updater
+var seekBarUpdateLoop = null;
+function seekBarBegin() {
+    console.log("hi")
+    seekBarUpdateLoop = setInterval(function() {
+        if (!paused) {
+            let s = parseInt(seekBar.val())
+            seekBar.val(s + 100)
+            seekBarCurText.text((msToMinutesSeconds(s + 100)))
+        }
+    }, 100)
 }

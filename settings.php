@@ -40,6 +40,9 @@ $user = new User($_GET["access_token"], $db);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
+    <div id="loading-block"></div>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_Q2FX6B.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
     <div class="top">
         <div class="details">
             <div id="nickname"><?php echo ($user->nickname == null ? $user->name : $user->nickname) ?></div>
@@ -88,3 +91,9 @@ $user = new User($_GET["access_token"], $db);
 </body>
 </html>
 <script src="js/settings.js"></script>
+<script src="js/player-ui.js"></script>
+<script>
+$(document).ready(function() {
+    fadeOutLoading()
+})
+</script>

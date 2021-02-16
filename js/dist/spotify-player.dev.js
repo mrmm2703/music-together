@@ -41,8 +41,12 @@ window.onSpotifyWebPlaybackSDKReady = function () {
     if (state.track_window.current_track.uri != currentTrack) {
       changedSong();
       updatePlayer();
-      addSongChangeMessage(user_id);
+      addSongChangeMessage(user_id); // Update seek bar
+
+      seekBar.attr("max", state.track_window.current_track.duration_ms);
     }
+
+    paused = state.paused;
 
     if (state.paused != paused) {
       if (state.paused) {
@@ -57,6 +61,9 @@ window.onSpotifyWebPlaybackSDKReady = function () {
 
       paused = !paused;
     }
+
+    seekBarTotalText.text(msToMinutesSeconds(seekBar.attr("max")));
+    seekBar.val(state.position);
   });
   spotifyPlayer.addListener("ready", function (_ref5) {
     var device_id = _ref5.device_id;
@@ -79,6 +86,7 @@ window.onSpotifyWebPlaybackSDKReady = function () {
 
     if (urlParams.get("action") == "join") {
       socket.emit("whereAreWe");
+      initScreenBlock();
     } else {
       if (urlParams.has("startSong")) {
         if (urlParams.get("startContext") == "null") {
@@ -88,11 +96,15 @@ window.onSpotifyWebPlaybackSDKReady = function () {
         }
 
         makePopup("Web player ready");
-        fadeOutSearch();
+        initScreenBlock();
       } else {
         makePopup("Player ready! Play a song to get the party started!");
+        fadeInSearch();
       }
     }
+
+    fadeOutLoading();
+    seekBarBegin();
   });
   spotifyPlayer.addListener("not_ready", function (_ref6) {
     var device_id = _ref6.device_id;

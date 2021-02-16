@@ -65,6 +65,10 @@ $_SESSION["current_user"]->update($db_con);
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="js/spotify-player.js"></script>
 
+    <div id="loading-block"></div>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_Q2FX6B.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+
     <!-- SEARCH OVERLAY -->
     <div class="screen-block"></div>
     <div class="search-overlay">
@@ -184,7 +188,7 @@ $_SESSION["current_user"]->update($db_con);
             </div>
             <div class="messages-input-container">
                 <input id="messages-input" type="text" spellcheck="true" placeholder="Message">
-                <a class="messages-input-btn yellow-btn">
+                <a class="messages-input-btn yellow-btn" id="send-btn">
                     Send
                 </a>
             </div>
@@ -231,6 +235,13 @@ $_SESSION["current_user"]->update($db_con);
                 <div class="player-text-container">
                     <div class="player-text-name" id="player-name">Martin & Gina</div>
                     <div class="player-text-artist" id="player-artist">Polo G</div>
+                </div>
+                <div class="player-seek-container">
+                    <input type="range" id="seek-bar" value="0" start="min" max="180000" class="slider">
+                    <div class="seek-text-container">
+                        <div class="seek-text" id="seek-left">0:00</div>
+                        <div class="seek-text" id="seek-right">0:00</div>
+                </div>
                 </div>
                 <div class="player-controls-container">
                     <div class="player-control" id="player-control-back"></div>

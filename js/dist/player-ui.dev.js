@@ -11,7 +11,10 @@ var songs_container = $("#search-songs-container");
 var artists_container = $("#search-artists-container");
 var albums_container = $("#search-albums-container");
 var playlists_container = $("#search-playlists-container");
-var tracks_container = $(".recent-tracks-container"); // Add a user to the My Group panel
+var tracks_container = $(".recent-tracks-container");
+var seekBar = $("#seek-bar");
+var seekBarCurText = $("#seek-left");
+var seekBarTotalText = $("#seek-right"); // Add a user to the My Group panel
 
 function addUser(id, name, prof_pic) {
   users_container.append("" + "<div id='group-user-" + id + "' class='group-user-container'>" + "<div class='group-user-image'>" + "<img src='" + prof_pic + "'>" + "</div>" + "<div class='group-user-text-container'>" + "<div class='group-user-text-name'>" + name + "</div>" + "<div class='group-user-text-typing'>" + "typing..." + "</div>" + "</div>" + "</div>" + "");
@@ -106,6 +109,7 @@ function searchSpotifyResponse(result) {
   }); // Add click listeners to the play buttons in search
 
   $(".search-item-play").click(function () {
+    initScreenBlock();
     socket.emit("makeMeHost");
 
     if ($(this).data("type") == "song") {
@@ -167,6 +171,7 @@ function searchSpotifyResponse(result) {
   $(".search-item-fan").css("width", "0");
   $(".search-item-fan").css("padding-left", "0");
   $(".search-item-fan").css("padding-right", "0");
+  fadeOutLoading();
 } // Add search results for songs
 
 
@@ -369,6 +374,15 @@ function fadeOutShare() {
     screenBlockShare.css("display", "none");
     shareContainer.css("display", "none");
   }, 250);
+} // Fade out loading overlay
+
+
+function fadeInLoading() {
+  $("#loading-block, lottie-player").fadeIn(300);
+}
+
+function fadeOutLoading() {
+  $("#loading-block, lottie-player").fadeOut(300);
 } // Add a message in the message panel when song changes
 
 
@@ -400,4 +414,18 @@ function updateCollabPlaylist(id) {
 function trackListItem(name, artist, img, songId, addedById) {
   var addedByName = getNameFromId(addedById);
   return "\n        <div data-added-by=\"".concat(addedById, "\" data-id=\"").concat(songId, "\" class=\"recent-track-container\">\n            <div class=\"recent-track-image-container\">\n                <img class=\"recent-track-image\" src=\"").concat(img, "\">\n                <div class=\"recent-track-image-likes-container\">\n                    <img class=\"recent-track-image-likes-icon\" src=\"img/like.png\">\n                    <div class=\"recent-track-image-likes-number\">7</div>\n                </div>\n            </div>\n            <div class=\"recent-track-text-container\">\n                <div class=\"recent-track-name\">\n                    ").concat(name, "\n                </div>\n                <div class=\"recent-track-artist\">\n                    ").concat(artist, "\n                </div>\n            </div>\n        </div>\n    ");
+} // Seek bar updater
+
+
+var seekBarUpdateLoop = null;
+
+function seekBarBegin() {
+  console.log("hi");
+  seekBarUpdateLoop = setInterval(function () {
+    if (!paused) {
+      var s = parseInt(seekBar.val());
+      seekBar.val(s + 100);
+      seekBarCurText.text(msToMinutesSeconds(s + 100));
+    }
+  }, 100);
 }

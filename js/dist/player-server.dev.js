@@ -2,8 +2,7 @@
 
 // SERVER EVENT LISTENERS
 function initSocketListeners() {
-  socket.on("connect_error"); // Event handler when received usersInGroup message
-
+  // Event handler when received usersInGroup message
   socket.on("usersInGroup", function (data) {
     console.log("usersInGroup:");
 
@@ -66,6 +65,14 @@ function initSocketListeners() {
       playbackResume();
       addMessage(id, "Resumed playback", true);
     }
+  }); // When a song's position is seeked
+
+  socket.on("seek", function (data) {
+    console.log("SEEK REC");
+    spotifyPlayer.seek(data.pos).then(function () {
+      addMessage(data.id, "Seeked to " + msToMinutesSeconds(data.pos), true);
+      seekBarCurText.val(msToMinutesSeconds(data.pos));
+    });
   }); // When another user wants to know where the group is at
 
   socket.on("whereAreWe", function (socketId) {
@@ -81,7 +88,8 @@ function initSocketListeners() {
         context: state.context.uri,
         position: state.position,
         paused: state.paused,
-        socketId: socketId
+        socketId: socketId,
+        duration: state.track_window.current_track.duration_ms
       });
     });
   }); // Response from whereAreWe
@@ -103,6 +111,9 @@ function initSocketListeners() {
       });
     }, 5000);
     makePopup("All caught up!");
+    seekBar.val(data.position);
+    seekBar.attr("max", data.duration);
+    seekBarTotalText.text(msToMinutesSeconds(seekBar.attr("max")));
   }); // When a request to add to queue is received
 
   socket.on("addToQueue", function (data) {
@@ -144,5 +155,16 @@ function initSocketListeners() {
   socket.on("updatePlaylist", function (collabId) {
     globCollabUri = collabId;
     updateCollabPlaylist(collabId);
+  }); // When a user changes their name
+
+  socket.on("updateName", function (data) {
+    console.log("Change name");
+    console.log(data);
+    $("#group-user-" + data.id + " .group-user-text-name").text(data.name);
+    $(".message-" + data.id + " .message-name").text(data.name);
+  }); // When a user changes their profile picture
+
+  socket.on("updateProfPic", function (data) {
+    $("#group-user-" + data.id + " .group-user-image img").attr("src", data.profPic);
   });
 }

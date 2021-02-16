@@ -13,6 +13,11 @@ document.getElementById("messages-input").addEventListener("keyup", function(e) 
     }
 })
 
+document.getElementById("send-btn").addEventListener("click", function() {
+    socket.emit("message", message_input.value)
+    message_input.value = ""
+})
+
 // Player search input event
 dummySearch.addEventListener("keyup", function(e) {
     // When enter key is pressed
@@ -24,6 +29,7 @@ dummySearch.addEventListener("keyup", function(e) {
         setTimeout(() => {
             dummySearch.value = ""
         }, 500);
+        fadeInLoading()
         searchSpotify(searchQuery)
     }
 })
@@ -33,14 +39,20 @@ actualSearch.addEventListener("keyup", function(e) {
     if (e.keyCode === 13) {
         e.preventDefault()
         searchQuery = actualSearch.value
+        fadeInLoading()
         searchSpotify(searchQuery)
     }
 })
 
+
+
 // When search screen block is pressed
-screenBlock.click(function() {
-    fadeOutSearch()
-})
+function initScreenBlock() {
+    screenBlock.css("cursor", "pointer")
+    screenBlock.click(function() {
+        fadeOutSearch()
+    })
+}
 
 // When the share screen block is pressed
 screenBlockShare.click(function() {
@@ -53,3 +65,16 @@ function addToCollab() {
         socket.emit("doesCollabExist", state.track_window.current_track.id)
     })
 }
+
+// Seek bar events
+seekBar.change(function() {
+    console.log($(this).val())
+    spotifyPlayer.seek($(this).val()).then(() => {
+        socket.emit("seek", $(this).val())
+        addMessage(user_id, "Seeked to " + msToMinutesSeconds($(this).val()), true)
+    })
+})
+
+seekBar.on("input", function() {
+    seekBarCurText.text(msToMinutesSeconds($(this).val()))
+})

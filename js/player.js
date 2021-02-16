@@ -19,7 +19,7 @@ if (urlParams.get("action") == "join") {
 
 // PLAYER FUNCTIONS
 
-var paused = false
+var paused = true
 
 // Play/Pause button
 $("#player-control-pause").click(function() {
@@ -190,7 +190,7 @@ playlistBtn.mouseover(function() {
     playlistChooser.fadeIn(250)
 })
 
-playlistChooser.mouseleave(function() {
+playlistBtn.mouseleave(function() {
     playlistChooser.finish()
     playlistChooser.fadeOut(250)
 })

@@ -276,6 +276,52 @@
         }
     }
 
+    .player-seek-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 20px;
+        .seek-text-container {
+            width: 17vw;
+        }
+        .seek-text {
+            @include textShadow;
+        }
+        #seek-left {
+            float: left;
+        }
+        #seek-right {
+            float: right;
+        }
+        .slider {
+            width: 17vw;
+            height: 4px;
+            background-color: white;
+            border-radius: 2px;
+            outline: none;
+            appearance: none;
+            @include shadow;
+        }
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: $green;
+            cursor: pointer;
+            @include shadow;
+        }
+        .slider::-moz-range-thumb {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: $green;
+            cursor: pointer;
+            @include shadow;
+        }
+    }
+
     .player-controls-container {
         margin-top: 2em;
         display: flex;
@@ -303,7 +349,7 @@
         }
 
         #player-control-pause {
-            background-image: url("../../img/control-pause.svg");
+            background-image: url("../../img/control-play.svg");
             margin-left: 2vw;
             margin-right: 2vw;
         }
@@ -346,7 +392,7 @@
             background-color: $messageOtherBackground;
             border-radius: $smallBorderRadius;
             right: 150px;
-            top: -10px;
+            top: -5em;
             display: none;
             .playlist-choice {
                 background-color: #1B7795;
@@ -429,11 +475,12 @@
     z-index: 100;
     position: fixed;
     width: 100%;
+    display: none;
     height: 100%;
     // filter: blur(3px);
     // backdrop-filter: blur(3px);
     background-color: rgba(0,0,0,0.3);
-    cursor: pointer;
+    cursor: auto;
 }
 
 .search-overlay {
@@ -443,7 +490,7 @@
     top: 3vh;
     bottom: 3vh;
     z-index: 150;
-    display: grid;
+    display: none;
     grid-template-columns: 1fr;
     grid-template-rows: 70px 1fr;
     gap: 0px 0px;
@@ -615,6 +662,7 @@
     display: none;
     opacity: 0;
     @extend .screen-block;
+    cursor: pointer;
 }
 
 

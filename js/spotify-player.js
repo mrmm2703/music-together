@@ -43,7 +43,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
             changedSong()
             updatePlayer()
             addSongChangeMessage(user_id)
+            // Update seek bar
+            seekBar.attr("max", state.track_window.current_track.duration_ms)
         }
+        paused = state.paused
         if (state.paused != paused)  {
             if (state.paused) {
                 playbackPause()
@@ -58,6 +61,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
         }
 
+        seekBarTotalText.text((msToMinutesSeconds(seekBar.attr("max"))))
+        seekBar.val(state.position)
     })
 
     spotifyPlayer.addListener("ready", ({device_id}) => {
@@ -77,6 +82,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         })
         if (urlParams.get("action") == "join") {
             socket.emit("whereAreWe")
+            initScreenBlock()
         } else {
             if (urlParams.has("startSong")) {
                 if (urlParams.get("startContext") == "null") {
@@ -85,11 +91,14 @@ window.onSpotifyWebPlaybackSDKReady = () => {
                     spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"))
                 }
                 makePopup("Web player ready")
-                fadeOutSearch()
+                initScreenBlock()
             } else {
                 makePopup("Player ready! Play a song to get the party started!")
+                fadeInSearch()
             }
         }
+        fadeOutLoading()
+        seekBarBegin()
     })
 
     spotifyPlayer.addListener("not_ready", ({device_id}) => {
