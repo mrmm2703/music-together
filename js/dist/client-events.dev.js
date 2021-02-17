@@ -57,7 +57,7 @@ screenBlockShare.click(function () {
 
 function addToCollab() {
   spotifyPlayer.getCurrentState().then(function (state) {
-    socket.emit("doesCollabExist", state.track_window.current_track.id);
+    socket.emit("addToPlaylist", state.track_window.current_track.id);
   });
 } // Seek bar events
 

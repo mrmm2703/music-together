@@ -62,7 +62,7 @@ screenBlockShare.click(function() {
 // Add a song to collaborative playlist
 function addToCollab() {
     spotifyPlayer.getCurrentState().then(state => {
-        socket.emit("doesCollabExist", state.track_window.current_track.id)
+        socket.emit("addToPlaylist", state.track_window.current_track.id)
     })
 }
 
