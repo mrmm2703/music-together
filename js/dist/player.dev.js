@@ -201,11 +201,13 @@ $("#collab-choice").click(function () {
   addToCollab();
 });
 $("#other-choice").click(function () {
+  fadeInLoading();
   getPlaylists().then(function (result) {
     console.log(result);
     addPlaylistsResults(result);
     fadeInSearch(true);
-    searchSpotifyResponse(null);
+    searchSpotifyResponse(null); // Call to initialise event listeners only
+
     makePopup("Choose a playlist to add song to");
   });
 });
