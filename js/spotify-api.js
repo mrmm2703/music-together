@@ -299,3 +299,20 @@ function getPlaylist(playlistId) {
         })
     })
 }
+
+function getRefreshedToken(access_token, refresh_token) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+                url: `api/refreshToken.php?access_token=${accessToken}`
+                + `&id=${user_id}&refresh_token=${refreshToken}`,
+                method: "GET",
+                dataType: "json",
+                success: function(result) {
+                    resolve(result)
+                },
+                error: function(e) {
+                    reject(e)
+                }
+            })
+    })
+}

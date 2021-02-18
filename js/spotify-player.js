@@ -11,7 +11,17 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     spotifyPlayer = new Spotify.Player({
         name: "Music Together!",
         getOAuthToken: callback => {
-            callback(accessToken)
+            getRefreshedToken(accessToken, refreshToken).then((result) => {
+                document.cookie = "access_token=" + result.access_token + "; path=/"
+                document.cookie = "refresh_token=" + result.refresh_token + "; path=/"
+                accessToken = result.access_token
+                refreshToken = result.refresh_token
+                $("#settings").attr("src", "settings.php?access_token=" + accessToken)
+                callback(accessToken)
+            }, (error) => {
+                console.error(error)
+                window.location.href = "dashboard.php?error=spotify_auth"
+            })
         }
     })
 
@@ -37,12 +47,12 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     spotifyPlayer.addListener("player_state_changed", state => {
         updateMediaSession()
         updatePlayer()
-        updateLikedButton()
         // Check only check for song changes
         if (state.track_window.current_track.uri != currentTrack) {
             changedSong()
             updatePlayer()
             addSongChangeMessage(user_id)
+            updateLikedButton()
             // Update seek bar
             seekBar.attr("max", state.track_window.current_track.duration_ms)
         }
@@ -58,7 +68,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
                 addMessage(user_id, "Resumed playback", true)
             }
             paused = !paused
-
         }
 
         seekBarTotalText.text((msToMinutesSeconds(seekBar.attr("max"))))

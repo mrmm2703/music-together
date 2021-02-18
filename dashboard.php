@@ -12,7 +12,11 @@ require_once "functions.php";
 session_start();
 checkSessionExists();
 
+// var_dump($_COOKIE);
+$_SESSION["current_user"]->access_token = $_COOKIE["access_token"];
+$_SESSION["access_token"] = $_COOKIE["access_token"];
 $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -130,6 +134,8 @@ if (isset($_SESSION["join_group_id"])) {
 if (isset($_GET["error"])) {
     if ($_GET["error"] == "server_connection") {
         echo '<script>makePopup("Could not connect to server", true)</script>';
+    } elseif ($_GET["error"] == "spotify_auth") {
+        echo '<script>makePopup("Could not authorise with Spotify", true)</script>';
     }
 }
 ?>

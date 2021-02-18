@@ -10,6 +10,7 @@ session_start();
 
 use GuzzleHttp;
 
+
 // Check if query parameters exist
 if (isset($_GET["state"])) {
     // Check state to prevent CSRF attacks
@@ -44,12 +45,16 @@ if (isset($_GET["state"])) {
                 errorToHome("post");
             }
             
-            // Parse the response object, e.g. read the headers, body, etc.
-            $headers = $response->getHeaders();
+            // Parse the response object
             $body = json_decode($response->getBody()->getContents());
             
             $_SESSION["access_token"] = $body->{"access_token"};
             $_SESSION["refresh_token"] = $body->{"refresh_token"};
+            setcookie("access_token", $_SESSION["access_token"], 0, "/");
+            setcookie("refresh_token", $_SESSION["refresh_token"], 0, "/");
+
+            var_dump($_SESSION);
+            var_dump($_COOKIE);
 
             header("Location: {$homepage}/auth/login.php");
             exit();

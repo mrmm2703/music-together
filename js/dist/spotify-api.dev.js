@@ -315,3 +315,19 @@ function getPlaylist(playlistId) {
     });
   });
 }
+
+function getRefreshedToken(access_token, refresh_token) {
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      url: "api/refreshToken.php?access_token=".concat(accessToken) + "&id=".concat(user_id, "&refresh_token=").concat(refreshToken),
+      method: "GET",
+      dataType: "json",
+      success: function success(result) {
+        resolve(result);
+      },
+      error: function error(e) {
+        reject(e);
+      }
+    });
+  });
+}

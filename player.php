@@ -20,6 +20,8 @@ if (!isset($_GET["group_id"])) {
 $db_con = new DatabaseConnection();
 $db_con->connect();
 $_SESSION["current_user"]->update($db_con);
+$_SESSION["current_user"]->access_token = $_COOKIE["access_token"];
+$_SESSION["access_token"] = $_COOKIE["access_token"];
 
 ?>
 <!DOCTYPE html>
@@ -45,11 +47,11 @@ $_SESSION["current_user"]->update($db_con);
         echo '"</script>';
         echo '<script>
         var accessToken = "';
-        echo $_SESSION["current_user"]->access_token;
+        echo $_COOKIE["access_token"];
         echo '"</script>';
         echo '<script>
         var refreshToken = "';
-        echo $_SESSION["refresh_token"];
+        echo $_COOKIE["refresh_token"];
         echo '"</script>';
 
     ?>
@@ -62,6 +64,7 @@ $_SESSION["current_user"]->update($db_con);
 </head>
 <body>
     <!-- SPOTIFY WEB PLAYER -->
+    <script src="js/spotify-api.js"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="js/spotify-player.js"></script>
 
@@ -268,7 +271,6 @@ $_SESSION["current_user"]->update($db_con);
 <script src="js/player.js"></script>
 <script src="js/client-events.js"></script>
 <script src="js/media-session.js"></script>
-<script src="js/spotify-api.js"></script>
 <script src="js/util.js"></script>
 <script src="js/create-settings.js"></script>
 </html>
