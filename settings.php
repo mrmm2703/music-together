@@ -77,7 +77,7 @@ $user = new User($_GET["access_token"], $db);
         </div>
     </div>
     <div class="sub-text">
-        This is the profile picture which users in Music Together will see. Your Spotify profile picture will be unchanged.
+    This is the profile picture which users in Music Together will see. Your Spotify profile picture will be unchanged. Pressing reset will reset your profile picture to the image currently set on Spotify.
     </div>
 
     <div class="yellow-btn" id="reset-btn">

@@ -51,7 +51,13 @@ window.onSpotifyWebPlaybackSDKReady = function () {
       changedSong();
       updatePlayer();
       addSongChangeMessage(user_id);
-      updateLikedButton(); // Update seek bar
+      updateLikedButton();
+
+      if (screenBlock.css("cursor") != "pointer") {
+        initScreenBlock();
+        fadeOutSearch();
+      } // Update seek bar
+
 
       seekBar.attr("max", state.track_window.current_track.duration_ms);
     }
@@ -74,6 +80,7 @@ window.onSpotifyWebPlaybackSDKReady = function () {
 
     seekBarTotalText.text(msToMinutesSeconds(seekBar.attr("max")));
     seekBar.val(state.position);
+    seekBarCurText.text(msToMinutesSeconds(state.pos));
   });
   spotifyPlayer.addListener("ready", function (_ref5) {
     var device_id = _ref5.device_id;

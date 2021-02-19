@@ -53,6 +53,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
             updatePlayer()
             addSongChangeMessage(user_id)
             updateLikedButton()
+            if (screenBlock.css("cursor") != "pointer") {
+                initScreenBlock()
+                fadeOutSearch()
+            }
             // Update seek bar
             seekBar.attr("max", state.track_window.current_track.duration_ms)
         }
@@ -72,6 +76,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
         seekBarTotalText.text((msToMinutesSeconds(seekBar.attr("max"))))
         seekBar.val(state.position)
+        seekBarCurText.text(msToMinutesSeconds(state.pos))
     })
 
     spotifyPlayer.addListener("ready", ({device_id}) => {
