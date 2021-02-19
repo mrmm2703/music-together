@@ -44,8 +44,6 @@ actualSearch.addEventListener("keyup", function(e) {
     }
 })
 
-
-
 // When search screen block is pressed
 function initScreenBlock() {
     screenBlock.css("cursor", "pointer")
