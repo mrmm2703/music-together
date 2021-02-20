@@ -60,7 +60,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
             // Update seek bar
             seekBar.attr("max", state.track_window.current_track.duration_ms)
         }
-        paused = state.paused
+        
         if (state.paused != paused)  {
             if (state.paused) {
                 playbackPause()
@@ -71,12 +71,13 @@ window.onSpotifyWebPlaybackSDKReady = () => {
                 socket.emit("resume")
                 addMessage(user_id, "Resumed playback", true)
             }
-            paused = !paused
         }
+
+        paused = state.paused
 
         seekBarTotalText.text((msToMinutesSeconds(seekBar.attr("max"))))
         seekBar.val(state.position)
-        seekBarCurText.text(msToMinutesSeconds(state.pos))
+        seekBarCurText.text(msToMinutesSeconds(state.position))
     })
 
     spotifyPlayer.addListener("ready", ({device_id}) => {

@@ -16,6 +16,7 @@ checkSessionExists();
 $_SESSION["current_user"]->access_token = $_COOKIE["access_token"];
 $_SESSION["access_token"] = $_COOKIE["access_token"];
 $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
+$_SESSION["current_user"]->first_login = true;
 
 ?>
 <!DOCTYPE html>
@@ -51,7 +52,34 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
 <body>
     <div id="loading-block"></div>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_Q2FX6B.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_Q2FX6B.json" background="transparent"
+    speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+    
+    <?php if ($_SESSION["current_user"]->first_login) : ?>
+    <div class="tutorial-container">
+        <img id="1" src="img/tutorial/dashboard.png">
+        <img id="2" style="top: -100%" src="img/tutorial/settings.png">
+        <img id="3" style="top: -200%" src="img/tutorial/player.png">
+        <img id="4" style="top: -300%" src="img/tutorial/collab_share.png">
+        <img id="5" style="top: -400%" src="img/tutorial/search.png">
+    </div>
+    <div id="tut-next" class="yellow-btn">Next</div>
+
+    <script>
+        var currentImg = 1
+        $("#tut-next").click(function() {
+            $(`.tutorial-container img:nth-of-type(${currentImg})`)
+                .animate({left: "-110%"}, 500)
+            currentImg += 1
+            $(`.tutorial-container img:nth-of-type(${currentImg})`)
+                .animate({left: "0"}, 500)
+            if (currentImg == 6) {
+                $(".tutorial-container, #tut-next").fadeOut(500)
+            }
+        })
+    </script>
+    <?php endif; ?>
+    
     <div class="header">
         Music Together!
     </div>
@@ -144,3 +172,10 @@ $(document).ready(function() {
     fadeOutLoading()
 })
 </script>
+
+<script>
+<?php
+
+$_SESSION["current_user"]->first_login = false;
+
+?>

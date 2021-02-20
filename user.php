@@ -62,7 +62,11 @@ class User {
      * @var string $access_token
      */
     public $access_token;
-
+    /**
+     * Whether it is the user's first logon or not.
+     * @var bool $first_login
+     */
+    public $first_login = false;
 
     /**
      * Constructor method for User class.
@@ -89,11 +93,11 @@ class User {
                 // If db_con error occured
                 errorToHome("db_data_is_false");
             } else if ($db_data == "not_found") {
-                // If the user is not found
-                // Attempt to insert user
+                // If the user is not found, attempt to insert user
                 if (!($db_con->insertUser($user_data))) {
                     errorToHome("db_con_insert_user_1");
                 }
+                $this->first_login = true;
                 $this->banned = false;
             } else {
                 // If user exists in the database
