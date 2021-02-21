@@ -198,6 +198,7 @@
             align-items: center;
             width: 3.9em;
             height: 2em;
+            cursor: pointer;
             border-radius: 1em;
             background-color: $green;
             top: -5.75em;
@@ -229,6 +230,58 @@
         .recent-track-artist {
             font-size: 20px;
             @include textShadow;
+        }
+    }
+}
+
+.liked-users-container {
+    position: relative;
+    height: 0;
+    width: 0;
+    display: none;
+    left: -16vw;
+    z-index: 100;
+    .inner {
+        background-color: $green;
+        width: calc(16vw - 2em);
+        border-radius: 1em;
+        padding: 1em;
+        @include shadow;
+    }
+    .header {
+        width: 100%;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+    }
+    .users-container {
+        width: calc(100% + 1em);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-left: -1em;
+    }
+    .user {
+        min-width: 5em;
+        max-width: 5em;
+        margin-left: 1em;
+        padding-bottom: 1em;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        img {
+            width: 5em;
+            height: 5em;
+            border-radius: 50%;
+            @include imgShadow;
+        }
+        div {
+            font-size: 1.1em;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 0.5em;
         }
     }
 }

@@ -46,6 +46,10 @@ function getNameFromId(id) {
     return $("#group-user-" + id + " .group-user-text-name").text()
 }
 
+function getImgFromId(id) {
+    return $("#group-user-" + id + " img").attr("src")
+}
+
 // Add a chat to the Messages panel
 function addMessage(id, message, emphasise=false) {
     // Check if the message is from the current user or other user
@@ -451,17 +455,41 @@ function addSongChangeMessage(personId) {
 
 // Update the collaborative playlist
 function updateCollabPlaylist(id) {
+    // Get playlist from Spotify add elements
     getPlaylist(id).then(
         function(result) {
-            tracks_container.empty()
             result.tracks.items.forEach(function(item) {
-                tracks_container.append(trackListItem(
-                    item.track.name,
-                    item.track.artists[0].name,
-                    item.track.album.images[0].url,
-                    item.track.id,
-                    item.added_by.id
-                ))
+                if (tracks_container.find($(".recent-track-container[data-id='" + item.track.id + "']")).length == 0) {
+                    tracks_container.append(trackListItem(
+                        item.track.name,
+                        item.track.artists[0].name,
+                        item.track.album.images[0].url,
+                        item.track.id,
+                        item.added_by.id
+                    ))
+                }
+            })
+
+            // Add event listener for like button
+            $(".recent-track-image-likes-container").click(function() {
+                if ($(this).attr("data-liked") == "1") {
+                    socket.emit("unlikeSong", $(this).attr("data-id"))
+                    $(this).attr("data-liked", "0")
+                } else {
+                    socket.emit("likeSong", $(this).attr("data-id"))
+                    $(this).attr("data-liked", "1")
+                }
+            })
+
+            $(".recent-track-image-likes-container").hover(function() {
+                console.log($(this).find("div").text())
+                if ($(this).find("div").text() != "0") {
+                    $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").fadeIn(250)
+                }
+            }, function() {
+                if ($(this).find(".div").text() != "0") {
+                    $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").fadeOut(250)
+                }
             })
         },
         function(error) {
@@ -477,9 +505,9 @@ function trackListItem(name, artist, img, songId, addedById) {
         <div data-added-by="${addedById}" data-id="${songId}" class="recent-track-container">
             <div class="recent-track-image-container">
                 <img class="recent-track-image" src="${img}">
-                <div class="recent-track-image-likes-container">
+                <div class="recent-track-image-likes-container" data-id="${songId}" data-liked="0">
                     <img class="recent-track-image-likes-icon" src="img/like.png">
-                    <div class="recent-track-image-likes-number">7</div>
+                    <div data-id="${songId}" class="recent-track-image-likes-number">0</div>
                 </div>
             </div>
             <div class="recent-track-text-container">
@@ -490,6 +518,27 @@ function trackListItem(name, artist, img, songId, addedById) {
                     ${artist}
                 </div>
             </div>
+            <div data-id="${songId}" class="liked-users-container">
+                <div class="inner">
+                    <div class="header">
+                        Liked by
+                    </div>
+                    <div data-id="${songId}" class="users-container">
+  
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+function likedByUserItem(userId) {
+    let addedByName = getNameFromId(userId)
+    let addedByImg = getImgFromId(userId)
+    return `
+        <div class="user">
+            <img class="user-image=${userId}"src="${addedByImg}">
+            <div class="user-name-${userId}">${addedByName}</div>
         </div>
     `
 }

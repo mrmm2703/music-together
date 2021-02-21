@@ -162,9 +162,20 @@ function initSocketListeners() {
     console.log(data);
     $("#group-user-" + data.id + " .group-user-text-name").text(data.name);
     $(".message-" + data.id + " .message-name").text(data.name);
+    $(".user-name-" + data.id).text(data.name);
   }); // When a user changes their profile picture
 
   socket.on("updateProfPic", function (data) {
     $("#group-user-" + data.id + " .group-user-image img").attr("src", data.profPic);
+    $(".user-image-" + data.id).attr("src", data.profPic);
+  }); // Update the collab playlist likes
+
+  socket.on("updateLikes", function (data) {
+    console.log(data);
+    $(".recent-track-image-likes-number[data-id='" + data.songId + "']").text(data.users.length);
+    $(".users-container[data-id='" + data.songId + "']").empty();
+    data.users.forEach(function (user) {
+      $(".users-container[data-id='" + data.songId + "']").append(likedByUserItem(user));
+    });
   });
 }

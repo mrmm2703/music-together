@@ -27,6 +27,10 @@ function removeUser(id) {
 
 function getNameFromId(id) {
   return $("#group-user-" + id + " .group-user-text-name").text();
+}
+
+function getImgFromId(id) {
+  return $("#group-user-" + id + " img").attr("src");
 } // Add a chat to the Messages panel
 
 
@@ -400,10 +404,33 @@ function addSongChangeMessage(personId) {
 
 
 function updateCollabPlaylist(id) {
+  // Get playlist from Spotify add elements
   getPlaylist(id).then(function (result) {
-    tracks_container.empty();
     result.tracks.items.forEach(function (item) {
-      tracks_container.append(trackListItem(item.track.name, item.track.artists[0].name, item.track.album.images[0].url, item.track.id, item.added_by.id));
+      if (tracks_container.find($(".recent-track-container[data-id='" + item.track.id + "']")).length == 0) {
+        tracks_container.append(trackListItem(item.track.name, item.track.artists[0].name, item.track.album.images[0].url, item.track.id, item.added_by.id));
+      }
+    }); // Add event listener for like button
+
+    $(".recent-track-image-likes-container").click(function () {
+      if ($(this).attr("data-liked") == "1") {
+        socket.emit("unlikeSong", $(this).attr("data-id"));
+        $(this).attr("data-liked", "0");
+      } else {
+        socket.emit("likeSong", $(this).attr("data-id"));
+        $(this).attr("data-liked", "1");
+      }
+    });
+    $(".recent-track-image-likes-container").hover(function () {
+      console.log($(this).find("div").text());
+
+      if ($(this).find("div").text() != "0") {
+        $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").fadeIn(250);
+      }
+    }, function () {
+      if ($(this).find(".div").text() != "0") {
+        $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").fadeOut(250);
+      }
     });
   }, function (error) {
     makePopup("Could not update collab playlist", true);
@@ -413,7 +440,13 @@ function updateCollabPlaylist(id) {
 
 function trackListItem(name, artist, img, songId, addedById) {
   var addedByName = getNameFromId(addedById);
-  return "\n        <div data-added-by=\"".concat(addedById, "\" data-id=\"").concat(songId, "\" class=\"recent-track-container\">\n            <div class=\"recent-track-image-container\">\n                <img class=\"recent-track-image\" src=\"").concat(img, "\">\n                <div class=\"recent-track-image-likes-container\">\n                    <img class=\"recent-track-image-likes-icon\" src=\"img/like.png\">\n                    <div class=\"recent-track-image-likes-number\">7</div>\n                </div>\n            </div>\n            <div class=\"recent-track-text-container\">\n                <div class=\"recent-track-name\">\n                    ").concat(name, "\n                </div>\n                <div class=\"recent-track-artist\">\n                    ").concat(artist, "\n                </div>\n            </div>\n        </div>\n    ");
+  return "\n        <div data-added-by=\"".concat(addedById, "\" data-id=\"").concat(songId, "\" class=\"recent-track-container\">\n            <div class=\"recent-track-image-container\">\n                <img class=\"recent-track-image\" src=\"").concat(img, "\">\n                <div class=\"recent-track-image-likes-container\" data-id=\"").concat(songId, "\" data-liked=\"0\">\n                    <img class=\"recent-track-image-likes-icon\" src=\"img/like.png\">\n                    <div data-id=\"").concat(songId, "\" class=\"recent-track-image-likes-number\">0</div>\n                </div>\n            </div>\n            <div class=\"recent-track-text-container\">\n                <div class=\"recent-track-name\">\n                    ").concat(name, "\n                </div>\n                <div class=\"recent-track-artist\">\n                    ").concat(artist, "\n                </div>\n            </div>\n            <div data-id=\"").concat(songId, "\" class=\"liked-users-container\">\n                <div class=\"inner\">\n                    <div class=\"header\">\n                        Liked by\n                    </div>\n                    <div data-id=\"").concat(songId, "\" class=\"users-container\">\n  \n                    </div>\n                </div>\n            </div>\n        </div>\n    ");
+}
+
+function likedByUserItem(userId) {
+  var addedByName = getNameFromId(userId);
+  var addedByImg = getImgFromId(userId);
+  return "\n        <div class=\"user\">\n            <img class=\"user-image=".concat(userId, "\"src=\"").concat(addedByImg, "\">\n            <div class=\"user-name-").concat(userId, "\">").concat(addedByName, "</div>\n        </div>\n    ");
 } // Seek bar updater
 
 

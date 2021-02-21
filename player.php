@@ -202,9 +202,7 @@ $_SESSION["access_token"] = $_COOKIE["access_token"];
                 Collab playlist
             </div>
             <div class="recent-tracks-container">
-
             </div>
-
         </div>
 
         <div class="grid-player">
