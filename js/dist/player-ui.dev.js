@@ -419,16 +419,19 @@ function updateCollabPlaylist(id) {
       } else {
         socket.emit("likeSong", $(this).attr("data-id"));
         $(this).attr("data-liked", "1");
+        $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").fadeIn(250);
       }
     });
     $(".recent-track-image-likes-container").hover(function () {
       console.log($(this).find("div").text());
 
       if ($(this).find("div").text() != "0") {
+        $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").finish();
         $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").fadeIn(250);
       }
     }, function () {
       if ($(this).find(".div").text() != "0") {
+        $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").finish();
         $(".liked-users-container[data-id='" + $(this).attr("data-id") + "']").fadeOut(250);
       }
     });

@@ -178,8 +178,9 @@
 }
 
 .recent-track-container {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 6em 1fr;
+    grid-template-rows: 1fr;
     align-items: center;
     margin-bottom: 1em;
     .recent-track-image-container {
@@ -239,13 +240,14 @@
     height: 0;
     width: 0;
     display: none;
-    left: -16vw;
+    top: -3em;
     z-index: 100;
     .inner {
         background-color: $green;
         width: calc(16vw - 2em);
         border-radius: 1em;
         padding: 1em;
+        padding-bottom: 0;
         @include shadow;
     }
     .header {
