@@ -172,14 +172,87 @@ lottie-player {
   opacity: 0.5;
 }
 
+/* For different widths of screens */
+@media screen and (max-width: 1100px) {
+  .grid-container {
+    grid-template-columns: 45% 25% 30% !important;
+  }
+
+  .grid-group {
+    display: none;
+  }
+}
+@media screen and (max-width: 750px) {
+  .grid-container {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
+    grid-template-areas: ". ." "player player" !important;
+  }
+  .grid-container > div {
+    height: calc(50vh - 2vw) !important;
+  }
+  .grid-container .grid-player {
+    grid-area: player !important;
+  }
+  .grid-container .search-input-container {
+    width: 90% !important;
+    height: 60px !important;
+  }
+  .grid-container .player-search-container {
+    width: 100% !important;
+    flex: 1 0 100% !important;
+    margin-bottom: 1em !important;
+  }
+  .grid-container .player-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+  .grid-container .player-image-container {
+    width: 10em !important;
+  }
+  .grid-container .player-image-container img {
+    width: 7em !important;
+    height: 7em !important;
+    border-radius: 21px !important;
+  }
+  .grid-container .player-text-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: baseline !important;
+    width: 50% !important;
+  }
+  .grid-container #seek-bar {
+    width: 90% !important;
+  }
+  .grid-container .seek-text-container {
+    width: 90% !important;
+  }
+  .grid-container .player-controls-container {
+    margin-top: 0 !important;
+    width: 50% !important;
+  }
+  .grid-container .player-share-container {
+    margin-top: 0 !important;
+    width: 50% !important;
+  }
+  .grid-container .player-share-container > div {
+    width: 1em !important;
+    height: 1em !important;
+  }
+
+  .grid-group {
+    display: none !important;
+  }
+}
 .grid-container {
   display: grid;
   grid-template-columns: 17% 40% 17% 27%;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas: ". . . .";
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
 }
 .grid-container > div > div {
@@ -295,7 +368,6 @@ lottie-player {
   font-size: 20px;
 }
 .grid-messages .messages-container {
-  height: 80vh;
   overflow-x: visible;
   overflow-y: auto;
   margin-left: 0 !important;

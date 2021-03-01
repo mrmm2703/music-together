@@ -23,25 +23,32 @@ dummySearch.addEventListener("keyup", function (e) {
   // When enter key is pressed
   if (e.keyCode === 13) {
     e.preventDefault();
-    searchQuery = dummySearch.value;
-    actualSearch.value = searchQuery;
+    actualSearch.value = dummySearch.value;
     fadeInSearch();
     setTimeout(function () {
       dummySearch.value = "";
     }, 500);
-    fadeInLoading();
-    searchSpotify(searchQuery);
+    searchFromInput();
   }
 }); // When enter is pressed on the dummy search box
 
 actualSearch.addEventListener("keyup", function (e) {
   if (e.keyCode === 13) {
     e.preventDefault();
-    searchQuery = actualSearch.value;
-    fadeInLoading();
-    searchSpotify(searchQuery);
+    searchFromInput();
   }
-}); // When search screen block is pressed
+}); // Execute a search query from the search text input
+
+function searchFromInput() {
+  if (actualSearch.value.strip() == "") {
+    makePopup("Enter a search query", true);
+    return;
+  }
+
+  fadeInLoading();
+  searchSpotify(actualSearch.value);
+} // When search screen block is pressed
+
 
 function initScreenBlock() {
   screenBlock.css("cursor", "pointer");
