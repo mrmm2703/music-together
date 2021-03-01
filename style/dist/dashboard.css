@@ -381,13 +381,16 @@ body {
   left: calc(100% + 10em);
 }
 
-#tut-next {
+.tut-btn-cont {
   z-index: 9999999;
-  position: fixed;
+  position: fixed !important;
   bottom: 2em;
   left: 50%;
-  margin-left: -50px;
-  width: 100px;
+  margin-left: -95px;
   text-align: center;
+  width: 190px;
   font-size: 32px;
+}
+.tut-btn-cont #tut-back {
+  margin-right: 30px;
 }

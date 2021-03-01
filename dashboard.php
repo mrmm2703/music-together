@@ -63,7 +63,10 @@ $_SESSION["current_user"]->first_login = true;
         <img id="4" style="top: -300%" src="img/tutorial/collab_share.png">
         <img id="5" style="top: -400%" src="img/tutorial/search.png">
     </div>
-    <div id="tut-next" class="yellow-btn">Next</div>
+    <div class="tut-btn-cont">
+        <div id="tut-back" class="yellow-btn tut-btn">Back</div>
+        <div id="tut-next" class="yellow-btn tut-btn">Next</div>
+    </div>
 
     <script>
         var currentImg = 1
@@ -74,7 +77,17 @@ $_SESSION["current_user"]->first_login = true;
             $(`.tutorial-container img:nth-of-type(${currentImg})`)
                 .animate({left: "0"}, 500)
             if (currentImg == 6) {
-                $(".tutorial-container, #tut-next").fadeOut(500)
+                $(".tutorial-container, #tut-next, #tut-back").fadeOut(500)
+            }
+        })
+
+        $("#tut-back").click(function() {
+            if (currentImg != 1) {
+                $(`.tutorial-container img:nth-of-type(${currentImg})`)
+                .animate({left: "110%"}, 500)
+                currentImg -= 1
+                $(`.tutorial-container img:nth-of-type(${currentImg})`)
+                    .animate({left: "0"}, 500)
             }
         })
     </script>
