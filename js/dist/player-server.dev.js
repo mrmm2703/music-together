@@ -2,7 +2,20 @@
 
 // SERVER EVENT LISTENERS
 function initSocketListeners() {
-  // Event handler when received usersInGroup message
+  // When the user connects to the server
+  socket.on("connect", function () {
+    if (!firstRun) {
+      window.location.replace("player.php?action=join&group_id=" + group_id);
+    }
+  }); // When the user disconnects from the server
+
+  socket.on("disconnect", function () {
+    fadeInLoading();
+    playbackPause();
+    makePopup("Disconnected from server", true);
+    console.log("Disconnected from server");
+  }); // Event handler when received usersInGroup message
+
   socket.on("usersInGroup", function (data) {
     console.log("usersInGroup:");
 

@@ -290,7 +290,7 @@ function makePopup(message) {
     src = "img/error.png";
   }
 
-  var item = "" + '<div style="z-index: ' + (250 + id) + '" id="popup-' + id + '" class="popup-container">' + '<img src="' + src + '">' + '<div>' + message + '</div>' + '</div>';
+  var item = "" + '<div style="z-index: ' + (999999999999 + id) + '" id="popup-' + id + '" class="popup-container">' + '<img src="' + src + '">' + '<div>' + message + '</div>' + '</div>';
   $("body").append(item);
   $("#popup-" + id).animate({
     top: "30px"

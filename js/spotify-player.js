@@ -1,6 +1,7 @@
 var deviceId
 var spotifyPlayer
 var currentTrack
+var firstRun = true
 
 // Connect to Node.js server
 var socket = io.connect("https://morahman.me:3000")
@@ -83,37 +84,42 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     spotifyPlayer.addListener("ready", ({device_id}) => {
         deviceId = device_id
         console.log("READY! DEVICE ID: " + device_id)
-        if (socket.disconnected) {
-            console.error("NO SERVER CONNECTION")
-            window.location.replace("dashboard.php?error=server_connection")
-            return
-        }
-        initSocketListeners()
-        socket.emit("joinedGroup", {
-            group: group_id,
-            name: user_name,
-            prof_pic: user_prof_pic,
-            id: user_id
-        })
-        if (urlParams.get("action") == "join") {
-            socket.emit("whereAreWe")
-            initScreenBlock()
-        } else {
-            if (urlParams.has("startSong")) {
-                if (urlParams.get("startContext") == "null") {
-                    spotifyPlay(urlParams.get("startSong"))
-                } else {
-                    spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"))
-                }
-                makePopup("Web player ready")
+        if (firstRun) {
+            if (socket.disconnected) {
+                console.error("NO SERVER CONNECTION")
+                window.location.replace("dashboard.php?error=server_connection")
+                return
+            }
+            initSocketListeners()
+            socket.emit("joinedGroup", {
+                group: group_id,
+                name: user_name,
+                prof_pic: user_prof_pic,
+                id: user_id
+            })
+            if (urlParams.get("action") == "join") {
+                socket.emit("whereAreWe")
                 initScreenBlock()
             } else {
-                makePopup("Player ready! Play a song to get the party started!")
-                fadeInSearch()
+                if (urlParams.has("startSong")) {
+                    if (urlParams.get("startContext") == "null") {
+                        spotifyPlay(urlParams.get("startSong"))
+                    } else {
+                        spotifyPlay(urlParams.get("startSong"), urlParams.get("startContext"))
+                    }
+                    makePopup("Web player ready")
+                    initScreenBlock()
+                } else {
+                    makePopup("Player ready! Play a song to get the party started!")
+                    fadeInSearch()
+                }
             }
+        } else {
+            window.location.replace("player.php?action=join&group_id=" + group_id)
         }
         fadeOutLoading()
         seekBarBegin()
+        firstRun = false
     })
 
     spotifyPlayer.addListener("not_ready", ({device_id}) => {

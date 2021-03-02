@@ -364,7 +364,7 @@ function makePopup(message, error=false) {
         src = "img/error.png"
     }
     let item = "" +
-    '<div style="z-index: ' + (250+id) + '" id="popup-' + id + '" class="popup-container">' +
+    '<div style="z-index: ' + (999999999999+id) + '" id="popup-' + id + '" class="popup-container">' +
         '<img src="' + src + '">' +
         '<div>' + message + '</div>' +
     '</div>'
