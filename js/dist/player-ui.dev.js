@@ -410,8 +410,9 @@ function updateCollabPlaylist(id) {
       if (tracks_container.find($(".recent-track-container[data-id='" + item.track.id + "']")).length == 0) {
         tracks_container.append(trackListItem(item.track.name, item.track.artists[0].name, item.track.album.images[0].url, item.track.id, item.added_by.id));
       }
-    }); // Add event listener for like button
+    }); // Remove then add event listener for like button
 
+    $(".recent-track-image-likes-container").unbind("mouseenter mouseleave mouseout mouseover click");
     $(".recent-track-image-likes-container").click(function () {
       if ($(this).attr("data-liked") == "1") {
         socket.emit("unlikeSong", $(this).attr("data-id"));

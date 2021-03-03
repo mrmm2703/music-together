@@ -470,7 +470,8 @@ function updateCollabPlaylist(id) {
                 }
             })
 
-            // Add event listener for like button
+            // Remove then add event listener for like button
+            $(".recent-track-image-likes-container").unbind("mouseenter mouseleave mouseout mouseover click")
             $(".recent-track-image-likes-container").click(function() {
                 if ($(this).attr("data-liked") == "1") {
                     socket.emit("unlikeSong", $(this).attr("data-id"))
