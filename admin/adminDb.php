@@ -178,7 +178,7 @@ class AdminDatabaseConnection extends DatabaseConnection {
          . "banUsgGroupID AS groupID, (SELECT word FROM bannedWords "
          . "WHERE bannedWords.wordID=bannedWordsUse.banUsgWordID) "
          . "AS word FROM bannedWordsUse WHERE banUsgSenderID=? AND "
-         . "banUsgDate >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)");
+         . "banUsgDate >= DATE_ADD(CURRENT_DATE(), INTERVAL -7 DAY)");
         $stmt->bind_param("s", $id);
         $stmt->execute();
         $res = $stmt->get_result();
@@ -540,16 +540,24 @@ class AdminDatabaseConnection extends DatabaseConnection {
     /**
      * Get all banned words in the database
      * 
+     * @param bool|null Whether to get custom banned words only or not. Set
+     * to null to get all words regardless of custom status.
+     * 
      * @return array|int 0 if no banned words. Otherwise an array of
      * an associative array containing all the banned words and their details.
      */
-    public function getAllBannedWords() {
+    public function getAllBannedWords($custom = true) {
         // Get the required data
         $sql = "SELECT wordID AS 'id', word AS 'word', wordAddedDate 
         AS 'addedDate', (SELECT COUNT(banUsgID) FROM bannedWordsUse 
         WHERE bannedWords.wordID=bannedWordsUse.banUsgWordID) AS 
         'useCount', (SELECT adminUsername FROM adminUsers WHERE 
         adminUsers.adminID=wordAddedByID) AS 'addedBy' FROM bannedWords";
+        if ($custom == false) {
+            $sql = $sql . " WHERE wordCustom=0";
+        } else {
+            $sql = $sql . " WHERE wordCustom=1";
+        }
         // Check the results of the query
         $res = $this->mysqli->query($sql);
         if ($res->num_rows == 0) {

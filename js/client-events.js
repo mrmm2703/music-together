@@ -42,7 +42,7 @@ actualSearch.addEventListener("keyup", function(e) {
 
 // Execute a search query from the search text input
 function searchFromInput() {
-    if (actualSearch.value.strip() == "") {
+    if (actualSearch.value.trim() == "") {
         makePopup("Enter a search query", true)
         return
     }

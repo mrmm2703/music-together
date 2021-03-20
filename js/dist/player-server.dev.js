@@ -42,7 +42,7 @@ function initSocketListeners() {
   }); // When client sends a banned word
 
   socket.on("messageBanned", function (word) {
-    alert("The message you sent is banned for containing the word \"".concat(word, "\""));
+    makePopup("The message you sent is banned for containing the word \"".concat(word, "\""), true);
   }); // When a new message is received
 
   socket.on("newMessage", function (data) {
