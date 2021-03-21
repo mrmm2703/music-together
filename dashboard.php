@@ -16,7 +16,6 @@ checkSessionExists();
 $_SESSION["current_user"]->access_token = $_COOKIE["access_token"];
 $_SESSION["access_token"] = $_COOKIE["access_token"];
 $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
-$_SESSION["current_user"]->first_login = true;
 
 ?>
 <!DOCTYPE html>

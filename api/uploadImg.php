@@ -24,7 +24,7 @@ if ($_FILES["file"]["size"] > 500000) {
 
 // Check the file type
 if($imgFileType != "image/jpg" && $imgFileType != "image/png" && $imgFileType != "image/jpeg" && $imgFileType != "image/gif" ) {
-  die("Invalid file type");
+    die("Invalid file type");
 }
 
 // Attempt to upload the file
@@ -32,6 +32,13 @@ if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file) == false) {
     die("Server error");
 }
 
+// Check if image is corrupt and delete it if so
+if (getimagesize($target_file) === false) {
+    die("Corrupt image");
+    unlink($target_file);
+}
+
+// Update profile picture in database
 if ($db->updateProfPic(null, "https://morahman.me/musictogether/userupload/" . $file_name, $_POST["id"])) {
     echo "https://morahman.me/musictogether/userupload/" . $file_name;
 } else {
