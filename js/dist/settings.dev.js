@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 var changeNicknameBtn = $("#change-nickname");
 var changeProfPicBtn = $("#change-pic");
 var resetProfPicBtn = $("#reset-pic");
@@ -39,6 +41,7 @@ changeProfPicBtn.click(function () {
 });
 fileForm.on("submit", function (e) {
   e.preventDefault();
+  fadeInLoading();
   var data = new FormData(this);
   $.ajax({
     url: "api/uploadImg.php",
@@ -48,21 +51,34 @@ fileForm.on("submit", function (e) {
     contentType: false,
     success: function success(res) {
       console.log(res);
-      profImages.attr("src", res + "?" + new Date().getTime());
-      window.top.postMessage("newProfPic-" + res + "?" + new Date().getTime(), "*");
+
+      if (res == "Invalid file type") {
+        window.top.postMessage("settingsError-Image must be JPEG, GIF or PNG");
+      } else if (res == "Server error") {
+        window.top.postMessage("settingsError-Internal server error");
+      } else if (res == "Too large") {
+        window.top.postMessage("settingsError-Image must be under 500KB");
+      } else if (res == "Corrupt image") {
+        window.top.postMessage("settingsError-Image is corrupt");
+      } else {
+        console.log(_typeof(res));
+
+        if (res.slice(-4) != ".png" && res.slice(-4) != ".jpg" && res.slice(-4) != ".gif" && res.slice(-5) != ".jpeg") {
+          window.top.postMessage("settingsError-Internal server error");
+          fadeOutLoading();
+          return;
+        }
+
+        profImages.attr("src", res + "?" + new Date().getTime());
+        window.top.postMessage("newProfPic-" + res + "?" + new Date().getTime(), "*");
+      }
+
+      fadeOutLoading();
     },
     error: function error(err) {
       console.error(err);
-
-      if (err == "Invalid file type") {
-        alert("Invalid file type");
-      } else if (err == "Server error") {
-        alert("Server error occured");
-      } else if (err == "Too large") {
-        alert("File is too large");
-      } else {
-        alert("Unknown error");
-      }
+      window.top.postMessage("settingsError-An unknown error occured.");
+      fadeOutLoading();
     }
   });
 });
@@ -77,16 +93,19 @@ fileInput.change(function (e) {
 }); // Reset profile picture button
 
 resetProfPicBtn.click(function () {
+  fadeInLoading();
   $.ajax({
     url: "api/resetProfPic.php?access_token=".concat(accessToken),
     method: "GET",
     success: function success(res) {
       profImages.attr("src", res + "?" + new Date().getTime());
       window.top.postMessage("newProfPic-" + res + "?" + new Date().getTime(), "*");
+      fadeOutLoading();
     },
     error: function error(err) {
       console.error(err);
       alert("Could not reset image");
+      fadeOutLoading();
     }
   });
 }); // Reset account button

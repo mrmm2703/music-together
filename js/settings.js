@@ -41,6 +41,7 @@ changeProfPicBtn.click(function() {
 
 fileForm.on("submit", function(e) {
     e.preventDefault()
+    fadeInLoading()
     let data = new FormData(this)
 
     $.ajax({
@@ -51,20 +52,30 @@ fileForm.on("submit", function(e) {
         contentType: false,
         success: function(res) {
             console.log(res)
-            profImages.attr("src", res + "?" + new Date().getTime())
-            window.top.postMessage("newProfPic-" + res + "?" + new Date().getTime(), "*")
+            if (res == "Invalid file type") {
+                window.top.postMessage("settingsError-Image must be JPEG, GIF or PNG")
+            } else if (res == "Server error") {
+                window.top.postMessage("settingsError-Internal server error")
+            } else if (res == "Too large") {
+                window.top.postMessage("settingsError-Image must be under 500KB")
+            } else if (res == "Corrupt image") {
+                window.top.postMessage("settingsError-Image is corrupt")
+            } else {
+                console.log(typeof res)
+                if (res.slice(-4) != ".png" && res.slice(-4) != ".jpg" && res.slice(-4) != ".gif" && res.slice(-5) != ".jpeg") {
+                    window.top.postMessage("settingsError-Internal server error")
+                    fadeOutLoading()
+                    return
+                }
+                profImages.attr("src", res + "?" + new Date().getTime())
+                window.top.postMessage("newProfPic-" + res + "?" + new Date().getTime(), "*")   
+            }
+            fadeOutLoading()
         },
         error: function(err) {
             console.error(err)
-            if (err == "Invalid file type") {
-                alert("Invalid file type")
-            } else if (err == "Server error") {
-                alert("Server error occured")
-            } else if (err == "Too large") {
-                alert("File is too large")
-            } else {
-                alert("Unknown error")
-            }
+            window.top.postMessage("settingsError-An unknown error occured.")
+            fadeOutLoading()
         }
     })
 })
@@ -79,16 +90,19 @@ fileInput.change(function(e) {
 
 // Reset profile picture button
 resetProfPicBtn.click(function() {
+    fadeInLoading()
     $.ajax({
         url: `api/resetProfPic.php?access_token=${accessToken}`,
         method: "GET",
         success: function(res) {
             profImages.attr("src", res + "?" + new Date().getTime())
             window.top.postMessage("newProfPic-" + res + "?" + new Date().getTime(), "*")
+            fadeOutLoading()
         },
         error: function(err) {
             console.error(err)
             alert("Could not reset image")
+            fadeOutLoading()
         }
     })
 })

@@ -90,8 +90,8 @@ $user = new User($_GET["access_token"], $db);
     </div>
 </body>
 </html>
-<script src="js/settings.js"></script>
 <script src="js/player-ui.js"></script>
+<script src="js/settings.js"></script>
 <script>
 $(document).ready(function() {
     fadeOutLoading()
