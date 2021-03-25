@@ -138,22 +138,7 @@ $_SESSION["access_token"] = $_COOKIE["access_token"];
             </div>
 
             <div class="group-users-container">
-<!-- 
-                <div class="group-user-container">
-                    <div class="group-user-image">
-                        <img src="PROF_PIC">
-                    </div>
-                    <div class="group-user-text-container">
-                        <div class="group-user-text-name">
-                            NAME HERE
-                        </div>
-                        <div class="group-user-text-typing">
-                            typing...
-                        </div>
-                    </div>
-                </div>
--->
-
+            
             </div>
 
         </div>
@@ -163,30 +148,6 @@ $_SESSION["access_token"] = $_COOKIE["access_token"];
                 Messages
             </div>
             <div class="messages-container">
-
-                <!-- <div class="message other">
-                    <div class="message-name">
-                        Carol Anne
-                    </div>
-                    <div class="message-text">
-                        Hi there blah blah blah.
-                    </div>
-                    <div class="message-time">
-                        15:09
-                    </div>
-                </div>
-
-                <div class="message me">
-                    <div class="message-name">
-                        Carol Anne
-                    </div>
-                    <div class="message-text">
-                        Hi there blah blah blah.
-                    </div>
-                    <div class="message-time">
-                        15:09
-                    </div>
-                </div> -->
 
             </div>
             <div class="messages-input-container">

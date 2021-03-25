@@ -21,7 +21,7 @@ if (!(isset($_GET["limit"])) || !(isset($_GET["page"]))) {
 $db = new AdminDatabaseConnection();
 $db->connect();
 
-// Check fro banned_word in URL parameter
+// Check for banned_word in URL parameter
 $lim = $_GET["limit"];
 $offset = ($_GET["page"]-1) * ($_GET["limit"]);
 if (isset($_GET["banned_word"])) {

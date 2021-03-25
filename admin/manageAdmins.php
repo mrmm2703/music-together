@@ -10,6 +10,7 @@ if (!(isset($_SESSION["admin_id"]))) {
     exit();
 }
 
+// Check if user is superuser level
 if ($_SESSION["admin_level"] != 0) {
     header("Location: dashboard.php?error=forbidden");
     exit();
@@ -170,6 +171,7 @@ $(".change-btn").click(function() {
 </script>
 <?php
 
+// Check for origin in URL parameter
 if (isset($_GET["origin"])) {
     if ($_GET["origin"] == "create_success") {
         echo '<script>makePopup("Created new admin user")</script>';

@@ -86,6 +86,21 @@ Search.appendIndex(
             "summary": "Get\u0020list\u0020of\u0020active\u0020groups.",
             "url": "classes/MusicTogether-DatabaseConnection.html#method_getActiveGroups"
         },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AupdateUser\u0028\u0029",
+            "name": "updateUser",
+            "summary": "Update\u0020user\u0027s\u0020data.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_updateUser"
+        },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AupdateNickname\u0028\u0029",
+            "name": "updateNickname",
+            "summary": "Update\u0020user\u0027s\u0020nickname.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_updateNickname"
+        },                {
+            "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003AupdateProfPic\u0028\u0029",
+            "name": "updateProfPic",
+            "summary": "Update\u0020user\u0027s\u0020profile\u0020picture\u0020by\u0020access\u0020token.",
+            "url": "classes/MusicTogether-DatabaseConnection.html#method_updateProfPic"
+        },                {
             "fqsen": "\\MusicTogether\\DatabaseConnection\u003A\u003A\u0024db_name",
             "name": "db_name",
             "summary": "The\u0020database\u0020name.",
@@ -125,6 +140,11 @@ Search.appendIndex(
             "name": "showErrorAlert",
             "summary": "Show\u0020a\u0020JavaScript\u0020alert",
             "url": "namespaces/musictogether.html#function_showErrorAlert"
+        },                {
+            "fqsen": "\\MusicTogether\\showSuccessAlert\u0028\u0029",
+            "name": "showSuccessAlert",
+            "summary": "",
+            "url": "namespaces/musictogether.html#function_showSuccessAlert"
         },                {
             "fqsen": "\\MusicTogether\\Track",
             "name": "Track",
@@ -186,6 +206,11 @@ Search.appendIndex(
             "summary": "Constructor\u0020method\u0020for\u0020User\u0020class.",
             "url": "classes/MusicTogether-User.html#method___construct"
         },                {
+            "fqsen": "\\MusicTogether\\User\u003A\u003Aupdate\u0028\u0029",
+            "name": "update",
+            "summary": "Update\u0020a\u0020user\u0027s\u0020nickname\u0020and\u0020profile\u0020picture.",
+            "url": "classes/MusicTogether-User.html#method_update"
+        },                {
             "fqsen": "\\MusicTogether\\User\u003A\u003AlogLogin\u0028\u0029",
             "name": "logLogin",
             "summary": "Logs\u0020a\u0020login\u0020on\u0020the\u0020databse.",
@@ -200,6 +225,11 @@ Search.appendIndex(
             "name": "getUserData",
             "summary": "Get\u0020the\u0020user\u0027s\u0020data\u0020from\u0020the\u0020Spotify\u0020API",
             "url": "classes/MusicTogether-User.html#method_getUserData"
+        },                {
+            "fqsen": "\\MusicTogether\\User\u003A\u003AgetProfPic\u0028\u0029",
+            "name": "getProfPic",
+            "summary": "Get\u0020the\u0020user\u0027s\u0020image\u0020from\u0020Spotify\u0020API",
+            "url": "classes/MusicTogether-User.html#method_getProfPic"
         },                {
             "fqsen": "\\MusicTogether\\User\u003A\u003AgetRecentTracks\u0028\u0029",
             "name": "getRecentTracks",
@@ -236,6 +266,11 @@ Search.appendIndex(
             "summary": "A\u0020URL\u0020to\u0020the\u0020user\u0027s\u0020profile\u0020picture.\u0020Set\u0020to\u0020\u0022defaultProfPic.png\u0022\nif\u0020none\u0020exists\u0020from\u0020Spotify.",
             "url": "classes/MusicTogether-User.html#property_prof_pic"
         },                {
+            "fqsen": "\\MusicTogether\\User\u003A\u003A\u0024prof_pic_orig",
+            "name": "prof_pic_orig",
+            "summary": "A\u0020URL\u0020to\u0020the\u0020user\u0027s\u0020profile\u0020picture\u0020on\u0020Spotify.",
+            "url": "classes/MusicTogether-User.html#property_prof_pic_orig"
+        },                {
             "fqsen": "\\MusicTogether\\User\u003A\u003A\u0024banned",
             "name": "banned",
             "summary": "Whether\u0020the\u0020user\u0020is\u0020banned\u0020or\u0020not.",
@@ -255,6 +290,11 @@ Search.appendIndex(
             "name": "access_token",
             "summary": "An\u0020access\u0020token\u0020to\u0020make\u0020requests\u0020to\u0020the\u0020Spotify\u0020API\u0020with.\u0020Used\u0020by\nmethods\u0020part\u0020of\u0020this\u0020class.",
             "url": "classes/MusicTogether-User.html#property_access_token"
+        },                {
+            "fqsen": "\\MusicTogether\\User\u003A\u003A\u0024first_login",
+            "name": "first_login",
+            "summary": "Whether\u0020it\u0020is\u0020the\u0020user\u0027s\u0020first\u0020logon\u0020or\u0020not.",
+            "url": "classes/MusicTogether-User.html#property_first_login"
         },                {
             "fqsen": "\\composerRequire96f210f3215afb116ca1c11c6398ce70\u0028\u0029",
             "name": "composerRequire96f210f3215afb116ca1c11c6398ce70",
@@ -5621,10 +5661,90 @@ Search.appendIndex(
             "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020\u0028online\u0029\u0020users.",
             "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getUsers"
         },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetUserDetails\u0028\u0029",
+            "name": "getUserDetails",
+            "summary": "Get\u0020a\u0020user\u0027s\u0020details",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getUserDetails"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetBannedWords\u0028\u0029",
+            "name": "getBannedWords",
+            "summary": "Get\u0020banned\u0020words\u0020use\u0020by\u0020a\u0020user",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getBannedWords"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetLoginLogs\u0028\u0029",
+            "name": "getLoginLogs",
+            "summary": "Get\u0020a\u0020user\u0027s\u0020login\u0020logs",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getLoginLogs"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetGroupLogs\u0028\u0029",
+            "name": "getGroupLogs",
+            "summary": "Get\u0020group\u0020logs\u0020of\u0020a\u0020user.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getGroupLogs"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetMessageLog\u0028\u0029",
+            "name": "getMessageLog",
+            "summary": "Get\u0020messages\u0020log\u0020from\u0020database.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getMessageLog"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AcheckAdminAccessToken\u0028\u0029",
+            "name": "checkAdminAccessToken",
+            "summary": "Check\u0020if\u0020admin\u0020access\u0020token\u0020is\u0020valid.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_checkAdminAccessToken"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AtoggleBan\u0028\u0029",
+            "name": "toggleBan",
+            "summary": "Toggle\u0020the\u0020ban\u0020status\u0020for\u0020a\u0020user.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_toggleBan"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetAdminUsers\u0028\u0029",
+            "name": "getAdminUsers",
+            "summary": "Get\u0020all\u0020admin\u0020users.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getAdminUsers"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AinsertAdminUser\u0028\u0029",
+            "name": "insertAdminUser",
+            "summary": "Insert\u0020a\u0020new\u0020admin\u0020user.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_insertAdminUser"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AcheckAdminExists\u0028\u0029",
+            "name": "checkAdminExists",
+            "summary": "Check\u0020if\u0020admin\u0020details\u0020exist.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_checkAdminExists"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AremoveAdminUser\u0028\u0029",
+            "name": "removeAdminUser",
+            "summary": "Remove\u0020an\u0020admin\u0020user.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_removeAdminUser"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AchangeAdminPassword\u0028\u0029",
+            "name": "changeAdminPassword",
+            "summary": "Change\u0020an\u0020admin\u0027s\u0020password.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_changeAdminPassword"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AgetAllBannedWords\u0028\u0029",
+            "name": "getAllBannedWords",
+            "summary": "Get\u0020all\u0020banned\u0020words\u0020in\u0020the\u0020database",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_getAllBannedWords"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AinsertBannedWord\u0028\u0029",
+            "name": "insertBannedWord",
+            "summary": "Insert\u0020a\u0020new\u0020banned\u0020word.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_insertBannedWord"
+        },                {
+            "fqsen": "\\MusicTogether\\AdminDatabaseConnection\u003A\u003AremoveBannedWord\u0028\u0029",
+            "name": "removeBannedWord",
+            "summary": "Remove\u0020a\u0020banned\u0020word.",
+            "url": "classes/MusicTogether-AdminDatabaseConnection.html#method_removeBannedWord"
+        },                {
             "fqsen": "\\MusicTogether\\goPage\u0028\u0029",
             "name": "goPage",
             "summary": "",
             "url": "namespaces/musictogether.html#function_goPage"
+        },                {
+            "fqsen": "\\MusicTogether\\goHome\u0028\u0029",
+            "name": "goHome",
+            "summary": "",
+            "url": "namespaces/musictogether.html#function_goHome"
         },                {
             "fqsen": "\\",
             "name": "\\",

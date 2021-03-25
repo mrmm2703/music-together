@@ -7,10 +7,9 @@ echo $_GET["code"]
 <script src="../js/socket.io.js"></script>
 <script>
 
+// Send access token to server
 var socket = io.connect("https://morahman.me:3000")
 socket.emit("auth_code", "<?php echo $_GET["code"] ?>")
 
 </script>
 </html>
-
-

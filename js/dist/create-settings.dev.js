@@ -1,6 +1,8 @@
 "use strict";
 
-$("body").append("\n<iframe id=\"settings\" src=\"settings.php?access_token=".concat(accessToken, "\" \ntitle=\"Settings\" sandbox=\"allow-same-origin allow-scripts\"></iframe>\n<div id=\"settings-block\"></div>\n"));
+// Add settings.php iframe to page
+$("body").append("\n<iframe id=\"settings\" src=\"settings.php?access_token=".concat(accessToken, "\" \ntitle=\"Settings\" sandbox=\"allow-same-origin allow-scripts\"></iframe>\n<div id=\"settings-block\"></div>\n")); // Add styling
+
 $("#settings").css({
   "position": "fixed",
   "top": 0,
@@ -25,21 +27,22 @@ $("#settings-block").css({
   "opacity": "0.4",
   "display": "none",
   "cursor": "pointer"
-});
+}); // Slide in settings
 
 function showSettings() {
   $("#settings").animate({
     "right": 0
   }, 500);
   $("#settings-block").fadeIn(500);
-}
+} // Fade out settings background block
+
 
 $("#settings-block").click(function () {
   $("#settings").animate({
     "right": "-35em"
   }, 500);
   $(this).fadeOut(500);
-});
+}); // Handle events sent from the iframe
 
 window.onmessage = function (event) {
   if (typeof event.data != "string") {

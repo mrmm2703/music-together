@@ -22,6 +22,7 @@ session_destroy();
     <script src="js/dist/ui.prod.js"></script>
     <script>
     $(document).ready(function() {
+        // Check for errors in URL parameter
         <?php
             if (isset($_GET["error"])) {
                 if ($_GET["error"] == "password") {

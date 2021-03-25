@@ -152,7 +152,7 @@ function serverRefresh() {
     socket.emit("refreshBannedWords")
 }
 
-// WHen a user clicks the remove button
+// When a user clicks the remove button
 function removeClick() {
     let id = $(this).data("id")
     let dialog = confirm("Are you sure you want to remove this banned word?")

@@ -7,10 +7,6 @@ require_once '../vendor/autoload.php';
 
 use GuzzleHttp;
 
-// ini_set('display_errors', '1');
-// ini_set('display_startup_errors', '1');
-// error_reporting(E_ALL);
-
 // Check if access_token is given
 if (!isset($_GET["access_token"])) {
     header("HTTP/1.1 403 Forbidden");

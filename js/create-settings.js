@@ -1,9 +1,11 @@
+// Add settings.php iframe to page
 $("body").append(`
 <iframe id="settings" src="settings.php?access_token=${accessToken}" 
 title="Settings" sandbox="allow-same-origin allow-scripts"></iframe>
 <div id="settings-block"></div>
 `)
 
+// Add styling
 $("#settings").css({
     "position": "fixed",
     "top": 0,
@@ -31,16 +33,19 @@ $("#settings-block").css({
     "cursor": "pointer"
 })
 
+// Slide in settings
 function showSettings() {
     $("#settings").animate({"right": 0}, 500)
     $("#settings-block").fadeIn(500)
 }
 
+// Fade out settings background block
 $("#settings-block").click(function() {
     $("#settings").animate({"right": "-35em"}, 500)
     $(this).fadeOut(500)
 })
 
+// Handle events sent from the iframe
 window.onmessage = function(event) {
     if (typeof event.data != "string") {
         return
