@@ -31,11 +31,11 @@
 
 @font-face {
   font-family: "Crete Round";
-  src: url("fonts/CreteRound.ttf");
+  src: url("../fonts/CreteRound.ttf");
 }
 @font-face {
   font-family: "Raleway";
-  src: url("fonts/Raleway.ttf");
+  src: url("../fonts/Raleway.ttf");
 }
 a {
   text-decoration: none;
