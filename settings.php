@@ -55,7 +55,7 @@ $user = new User($_GET["access_token"], $db);
         Nickname:
     </div>
     <div class="inp-cont">
-        <input id="nickname-input" value="<?php echo $user->nickname ?>" placeholder="Enter nickname">
+        <input autocomplete="off" id="nickname-input" value="<?php echo $user->nickname ?>" placeholder="Enter nickname">
         <div class="yellow-btn" id="change-nickname">Change</div>
     </div>
     <div class="sub-text">

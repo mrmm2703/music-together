@@ -147,3 +147,43 @@ if (typeof sess_val == "number") {
     groupIdInput.value = sess_val
     joinBtn()
 }
+
+var songsContainer = $(".songs-container")
+var scrollForward = $("#scroll-forward")
+var scrollBack = $("#scroll-back")
+const speed = 0.5
+
+// Hover handler for back and forward scroll buttons
+scrollForward.hover(function() {
+    scrollBack.fadeIn(250)
+    let totalScrollDistance = songsContainer.get(0).scrollWidth - songsContainer.outerWidth()
+    let duration = (totalScrollDistance - songsContainer.scrollLeft()) / speed
+    songsContainer.animate({scrollLeft: totalScrollDistance}, duration, "linear", () => { scrollForward.fadeOut(250) })
+}, function() {
+    songsContainer.stop(true, false)
+})
+
+scrollBack.hover(function() {
+    scrollForward.fadeIn(250)
+    let totalScrollDistance = songsContainer.get(0).scrollWidth - songsContainer.outerWidth()
+    let duration = (totalScrollDistance - (totalScrollDistance - songsContainer.scrollLeft())) / speed
+    songsContainer.animate({scrollLeft: 0}, duration, "linear", () => { scrollBack.fadeOut(250) })
+}, function() {
+    songsContainer.stop(true, false)
+})
+
+songsContainer.scroll(function() {
+    let totalScrollDistance = songsContainer.get(0).scrollWidth - songsContainer.outerWidth()
+    if (songsContainer.scrollLeft() == 0) {
+        scrollBack.fadeOut(250)
+        scrollForward.fadeIn(250)
+    } else if (songsContainer.scrollLeft() == totalScrollDistance) {
+        scrollBack.fadeIn(250)
+        scrollForward.fadeOut(250)
+    } else {
+        scrollBack.fadeIn(250)
+        scrollForward.fadeIn(250)
+    }
+})
+
+scrollBack.fadeOut(0)

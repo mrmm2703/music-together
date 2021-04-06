@@ -30,7 +30,8 @@ $("#settings-block").css({
     "background-color": "black",
     "opacity": "0.4",
     "display": "none",
-    "cursor": "pointer"
+    "cursor": "pointer",
+    "z-index": "999999"
 })
 
 // Slide in settings

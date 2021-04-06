@@ -15,7 +15,7 @@ checkSessionExists();
 // var_dump($_COOKIE);
 $_SESSION["current_user"]->access_token = $_COOKIE["access_token"];
 $_SESSION["access_token"] = $_COOKIE["access_token"];
-$recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
+$recent_tracks = $_SESSION["current_user"]->getRecentTracks(10);
 
 ?>
 <!DOCTYPE html>
@@ -125,8 +125,14 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(3);
                 </div>
                 ';
             }
+            
         ?>
-        
+        <sth class="fade-to-blue scroll" id="scroll-forward">
+            <img src="img/control-forward.svg">
+        </sth>
+        <sth class="fade-to-blue scroll back" id="scroll-back">
+            <img src="img/control-back.svg">
+        </sth>
         </div>
 
         <div class="settings-container">

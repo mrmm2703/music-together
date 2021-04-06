@@ -58,7 +58,7 @@ if ($_SESSION["admin_level"] != 0) {
             <option value="1">Administrator</option>
             <option value="2">Viewer</option>
         </select>
-        <div href="addAdmin.php" id="btn-continue" class="hvr-shrink">Create user</div>
+        <div id="btn-continue" class="hvr-shrink">Create user</div>
     </form>
 </body>
 </html>
