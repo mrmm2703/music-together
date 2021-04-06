@@ -244,7 +244,8 @@ class User {
      * Get the user's recently played tracks
      * 
      * @param int $limit The number of tracks to receive.
-     * @return Track[] An array of Track objects of the length specified in paramter.
+     * @return mixed[] An array containing an array of Track objects of the length specified in paramter
+     * at index 0 and a string containing the next href at index 1.
      * @see User::getRequest() Method to handle GET request.
      */
     public function getRecentTracks($limit) {
@@ -259,7 +260,7 @@ class User {
             array_push($tracks, new Track($track, $this->access_token));
         }
 
-        return $tracks;
+        return array($tracks, $response->{"next"});
     }
 
     /**

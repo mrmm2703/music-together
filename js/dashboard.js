@@ -82,26 +82,34 @@ muteBtn.click(function() {
 })
 
 // Event handler for on hover
-$(".song-cover").hover(function() {
-    if (!dashboardMuted) {
-        let audioPlayer = document.getElementById(this.id + "-audio")
-        audioPlayer.play()
-        $("#" + this.id + "-audio").stop(true, false)
-        $("#" + this.id + "-audio").animate({volume: 0.25}, 500)
+function setHoverPreviewListener() {
+    let audioPlayers = document.getElementsByClassName("preview-sound")
+    let i
+    for (i=0; i<audioPlayers.length; i++) {
+        audioPlayers[i].volume = 0.0
     }
-}, function() {
-    if (!dashboardMuted) {
-        let audioPlayer = document.getElementById(this.id + "-audio")
-        $("#" + this.id + "-audio").stop(true, false);
-        $("#" + this.id + "-audio").animate({volume: 0}, 500, function() {
-            audioPlayer.pause();
-        })
-    }
-})
+    $(".song-cover").hover(function() {
+        if (!dashboardMuted) {
+            let audioPlayer = document.getElementById(this.id + "-audio")
+            audioPlayer.play()
+            $("#" + this.id + "-audio").stop(true, false)
+            $("#" + this.id + "-audio").animate({volume: 0.25}, 500)
+        }
+    }, function() {
+        if (!dashboardMuted) {
+            let audioPlayer = document.getElementById(this.id + "-audio")
+            $("#" + this.id + "-audio").stop(true, false);
+            $("#" + this.id + "-audio").animate({volume: 0}, 500, function() {
+                audioPlayer.pause();
+            })
+        }
+    })
+    $(".song-cover").click(function() {
+        createBtn($(this).attr("id"), $(this).data("context"))
+    })
+}
 
-$(".song-cover").click(function() {
-    createBtn($(this).attr("id"), $(this).data("context"))
-})
+setHoverPreviewListener()
 
 function joinBtn() {
     try {
@@ -180,6 +188,7 @@ songsContainer.scroll(function() {
     } else if (songsContainer.scrollLeft() == totalScrollDistance) {
         scrollBack.fadeIn(250)
         scrollForward.fadeOut(250)
+        addNewTracks()
     } else {
         scrollBack.fadeIn(250)
         scrollForward.fadeIn(250)
@@ -187,3 +196,67 @@ songsContainer.scroll(function() {
 })
 
 scrollBack.fadeOut(0)
+
+function getNextTracks(url) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "json",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            },
+            success: function(result) {
+                resolve(result)
+            }, error: function(e) {
+                reject(e)
+            }
+        })
+    })
+}
+
+function createRecentlyPlayedSong(data) {
+    let context = "null"
+    if (data["context"] != null) {
+        context = data["context"]["uri"]
+    }
+    console.log(data["track"])
+    songsContainer.append(
+        `
+            <div style="opacity: 0" class="song-container ${data["track"]["id"]}-cont" id="${data["track"]["id"]}-cont">
+                    <audio class="preview-sound" id="${data["track"]["id"]}-audio" preload="auto" loop="" src="${data["track"]["preview_url"]}"></audio>
+                    <a class="song-cover" id="${data["track"]["id"]}" data-context="null">
+                        <img src="${data["track"]["album"]["images"][0]["url"]}" class="hvr-grow">
+                    </a>
+                    <div class="song-details-container">
+                        <div class="song-name">
+                            ${data["track"]["name"]}
+                        </div>
+                        <div class="song-artist">
+                            ${data["track"]["artists"][0]["name"]}
+                        </div>
+                    </div>
+                </div>
+        `
+    )
+    $(`.${data["track"]["id"]}-cont`).animate({opacity: 1}, 250)
+}
+
+function addNewTracks() {
+    return new Promise((resolve, reject) => {
+        getNextTracks(nextRecentlyPlayedHref).then(result => {
+            console.log(result)
+            nextRecentlyPlayedHref = result["next"]
+            result["items"].forEach(item => {
+                createRecentlyPlayedSong(item)
+            })
+            scrollForward.fadeIn(250)
+            $(".song-cover").unbind("mouseenter mouseleave")
+            setHoverPreviewListener()
+            resolve()
+        }, e => {
+            console.error(e)
+            reject(e)
+        })
+    })
+}

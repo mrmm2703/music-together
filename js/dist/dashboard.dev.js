@@ -83,29 +83,40 @@ muteBtn.click(function () {
   });
 }); // Event handler for on hover
 
-$(".song-cover").hover(function () {
-  if (!dashboardMuted) {
-    var audioPlayer = document.getElementById(this.id + "-audio");
-    audioPlayer.play();
-    $("#" + this.id + "-audio").stop(true, false);
-    $("#" + this.id + "-audio").animate({
-      volume: 0.25
-    }, 500);
+function setHoverPreviewListener() {
+  var audioPlayers = document.getElementsByClassName("preview-sound");
+  var i;
+
+  for (i = 0; i < audioPlayers.length; i++) {
+    audioPlayers[i].volume = 0.0;
   }
-}, function () {
-  if (!dashboardMuted) {
-    var audioPlayer = document.getElementById(this.id + "-audio");
-    $("#" + this.id + "-audio").stop(true, false);
-    $("#" + this.id + "-audio").animate({
-      volume: 0
-    }, 500, function () {
-      audioPlayer.pause();
-    });
-  }
-});
-$(".song-cover").click(function () {
-  createBtn($(this).attr("id"), $(this).data("context"));
-});
+
+  $(".song-cover").hover(function () {
+    if (!dashboardMuted) {
+      var audioPlayer = document.getElementById(this.id + "-audio");
+      audioPlayer.play();
+      $("#" + this.id + "-audio").stop(true, false);
+      $("#" + this.id + "-audio").animate({
+        volume: 0.25
+      }, 500);
+    }
+  }, function () {
+    if (!dashboardMuted) {
+      var audioPlayer = document.getElementById(this.id + "-audio");
+      $("#" + this.id + "-audio").stop(true, false);
+      $("#" + this.id + "-audio").animate({
+        volume: 0
+      }, 500, function () {
+        audioPlayer.pause();
+      });
+    }
+  });
+  $(".song-cover").click(function () {
+    createBtn($(this).attr("id"), $(this).data("context"));
+  });
+}
+
+setHoverPreviewListener();
 
 function joinBtn() {
   try {
@@ -190,9 +201,62 @@ songsContainer.scroll(function () {
   } else if (songsContainer.scrollLeft() == totalScrollDistance) {
     scrollBack.fadeIn(250);
     scrollForward.fadeOut(250);
+    addNewTracks();
   } else {
     scrollBack.fadeIn(250);
     scrollForward.fadeIn(250);
   }
 });
 scrollBack.fadeOut(0);
+
+function getNextTracks(url) {
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      url: url,
+      method: "GET",
+      dataType: "json",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      },
+      success: function success(result) {
+        resolve(result);
+      },
+      error: function error(e) {
+        reject(e);
+      }
+    });
+  });
+}
+
+function createRecentlyPlayedSong(data) {
+  var context = "null";
+
+  if (data["context"] != null) {
+    context = data["context"]["uri"];
+  }
+
+  console.log(data["track"]);
+  songsContainer.append("\n            <div style=\"opacity: 0\" class=\"song-container ".concat(data["track"]["id"], "-cont\" id=\"").concat(data["track"]["id"], "-cont\">\n                    <audio class=\"preview-sound\" id=\"").concat(data["track"]["id"], "-audio\" preload=\"auto\" loop=\"\" src=\"").concat(data["track"]["preview_url"], "\"></audio>\n                    <a class=\"song-cover\" id=\"").concat(data["track"]["id"], "\" data-context=\"null\">\n                        <img src=\"").concat(data["track"]["album"]["images"][0]["url"], "\" class=\"hvr-grow\">\n                    </a>\n                    <div class=\"song-details-container\">\n                        <div class=\"song-name\">\n                            ").concat(data["track"]["name"], "\n                        </div>\n                        <div class=\"song-artist\">\n                            ").concat(data["track"]["artists"][0]["name"], "\n                        </div>\n                    </div>\n                </div>\n        "));
+  $(".".concat(data["track"]["id"], "-cont")).animate({
+    opacity: 1
+  }, 250);
+}
+
+function addNewTracks() {
+  return new Promise(function (resolve, reject) {
+    getNextTracks(nextRecentlyPlayedHref).then(function (result) {
+      console.log(result);
+      nextRecentlyPlayedHref = result["next"];
+      result["items"].forEach(function (item) {
+        createRecentlyPlayedSong(item);
+      });
+      scrollForward.fadeIn(250);
+      $(".song-cover").unbind("mouseenter mouseleave");
+      setHoverPreviewListener();
+      resolve();
+    }, function (e) {
+      console.error(e);
+      reject(e);
+    });
+  });
+}

@@ -300,6 +300,7 @@ function getPlaylist(playlistId) {
     })
 }
 
+// Get a refreshed token from local API
 function getRefreshedToken(access_token, refresh_token) {
     return new Promise((resolve, reject) => {
         $.ajax({

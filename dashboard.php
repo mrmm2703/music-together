@@ -15,7 +15,7 @@ checkSessionExists();
 // var_dump($_COOKIE);
 $_SESSION["current_user"]->access_token = $_COOKIE["access_token"];
 $_SESSION["access_token"] = $_COOKIE["access_token"];
-$recent_tracks = $_SESSION["current_user"]->getRecentTracks(10);
+[$recent_tracks, $next_recent_tracks_href] = $_SESSION["current_user"]->getRecentTracks(10);
 
 ?>
 <!DOCTYPE html>
@@ -35,6 +35,11 @@ $recent_tracks = $_SESSION["current_user"]->getRecentTracks(10);
         echo '<script>
         var accessToken = "';
         echo $_SESSION["current_user"]->access_token;
+        echo '"</script>';
+        // Store the next href for recently played as a variable
+        echo '<script>
+        var nextRecentlyPlayedHref = "';
+        echo $next_recent_tracks_href;
         echo '"</script>';
     ?>
     <?php
