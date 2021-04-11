@@ -220,12 +220,11 @@ function createRecentlyPlayedSong(data) {
     if (data["context"] != null) {
         context = data["context"]["uri"]
     }
-    console.log(data["track"])
     songsContainer.append(
         `
             <div style="opacity: 0" class="song-container ${data["track"]["id"]}-cont" id="${data["track"]["id"]}-cont">
                     <audio class="preview-sound" id="${data["track"]["id"]}-audio" preload="auto" loop="" src="${data["track"]["preview_url"]}"></audio>
-                    <a class="song-cover" id="${data["track"]["id"]}" data-context="null">
+                    <a class="song-cover" id="${data["track"]["id"]}" data-context="${context}">
                         <img src="${data["track"]["album"]["images"][0]["url"]}" class="hvr-grow">
                     </a>
                     <div class="song-details-container">
